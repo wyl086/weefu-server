@@ -1,0 +1,182 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*拼团列表，查看拼团商品，拼团团长，拼团订单等信息。</p>
+                        <p>*拼团失败的订单系统原路退款，退款失败时可在订单管理手动退款。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="team_sn" class="layui-form-label">拼团编号：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="team_sn" name="team_sn" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="nickname" class="layui-form-label">团长：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="nickname" name="nickname" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="goods" class="layui-form-label">拼团商品：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="goods" name="goods" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="datetime" class="layui-form-label">开团时间：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="datetime" name="datetime" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <div class="layui-tab layui-tab-card" lay-filter="like-tab">
+                <ul class="layui-tab-title">
+                    <li lay-id="100" class="layui-this">全部拼团({$statistics.total})</li>
+                    <li lay-id="0">拼团中({$statistics.stayStatus})</li>
+                    <li lay-id="1">拼团成功({$statistics.successStatus})</li>
+                    <li lay-id="2">拼团失败({$statistics.failStatus})</li>
+                </ul>
+                <div class="layui-tab-content" style="padding:20px;">
+                    <table id="like-table-lists" lay-filter="like-table-lists"></table>
+                    <script type="text/html" id="table-teamGoods">
+                        <img src="{{d.goods_snap.image}}" alt="图" style="width:50px;height:50px;">
+                        <div class="layui-inline">{{d.goods_snap.name}}</div>
+                    </script>
+                    <script type="text/html" id="table-user">
+                        <img src="{{d.avatar}}" alt="图" style="width:50px;height:50px;">
+                        <div class="layui-inline">
+                            <p>会员编号：{{d.sn}}</p>
+                            <p>会员昵称：{{d.nickname}}</p>
+                        </div>
+                    </script>
+                    <script type="text/html" id="table-orderSn">
+                        <img src="{{d.goods_snap.image}}" alt="图" style="width:50px;height:50px;">
+                        <div class="layui-inline">{{d.goods_snap.name}}</div>
+                    </script>
+                    <script type="text/html" id="table-operation">
+                        <a class="layui-btn layui-btn-sm layui-btn-primary" lay-event="detail">拼团详情</a>
+                    </script>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form", "element", "laydate"], function(){
+        var table   = layui.table;
+        var form    = layui.form;
+        var element = layui.element;
+        var laydate = layui.laydate;
+
+        laydate.render({elem:"#datetime", range: true, trigger:"click"});
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {field:"id", width:80, align:"center", title:"ID"}
+            ,{field:"team_sn", width:200, align:"center",title:"拼团编号"}
+            ,{field:"user", width:220, title:"团长", templet:"#table-user"}
+            ,{field:"teamGoods", width:220, title:"拼团商品", templet:"#table-teamGoods"}
+            ,{field:"peopleJoin", width:130, align:"center", title:"参团/成团人数"}
+            ,{field:"status_text", width:100, align:"center", title:"拼团状态"}
+            ,{field:"kaituan_time", width:160, align:"center", title:"开团时间"}
+            ,{title:"操作", width:100, align:"center", fixed:"right", toolbar:"#table-operation"}
+        ]);
+
+
+        var active = {
+            detail: function (obj) {
+                layer.open({
+                    type: 2
+                    ,title: "拼团详细"
+                    ,content: "{:url('team.Found/detail')}?id="+obj.data.id
+                    ,area: ["60%", "80%"]
+                });
+            },
+            statistics: function () {
+                like.ajax({
+                    url: "{:url('team.Found/statistics')}",
+                    data: {},
+                    type: "GET",
+                    success:function(res) {
+                        if(res.code === 1) {
+                            $(".layui-tab-title li[lay-id=100]").html("全部拼团("+res.data.total+")");
+                            $(".layui-tab-title li[lay-id=0]").html("拼团中("+res.data.stayStatus+")");
+                            $(".layui-tab-title li[lay-id=1]").html("拼团成功("+res.data.successStatus+")");
+                            $(".layui-tab-title li[lay-id=2]").html("拼团失败("+res.data.failStatus+")");
+                        }
+                    }
+                });
+            }
+        };
+        like.eventClick(active);
+
+
+        element.on("tab(like-tab)", function(){
+            active.statistics();
+            var type = this.getAttribute("lay-id");
+            table.reload("like-table-lists", {
+                where: {type: type},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(search)", function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(clear-search)", function(){
+            $("#team_sn").val("");
+            $("#nickname").val("");
+            $("#goods").val("");
+            $("#datetime").val("");
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+    })
+</script>

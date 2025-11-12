@@ -1,0 +1,69 @@
+<?php
+// +----------------------------------------------------------------------
+// | multshop多商户商城系统
+// +----------------------------------------------------------------------
+// | 禁止对系统程序代码以任何目的，任何形式的再发布
+// | multshop团队版权所有并拥有最终解释权
+// +----------------------------------------------------------------------
+// | author: multshop.cn.team
+// +----------------------------------------------------------------------
+namespace app\admin\validate\decoration;
+use app\common\basics\Validate;
+use app\common\enum\MenuEnum;
+
+class MenuDecorateValidate extends Validate{
+    protected $rule = [
+        'id'        => 'require',
+        'name'      => 'require|unique:menu_decorate,name^del^decorate_type',
+        'image'     => 'require',
+        'menu'      => 'checkMenu',
+        'sort'      => 'integer|gt:0'
+    ];
+    protected $message = [
+        'id.require'        => '请选择菜单',
+        'name.require'      => '请输入菜单名称',
+        'name.unique'       => '菜单名称重复',
+        'image.unique'      => '请上传图标',
+        'sort.integer'      => '排序值须为整型',
+        'sort.gt'      => '排序值须大于0',
+    ];
+
+    public function sceneAdd(){
+        return $this->remove('id',['require']);
+    }
+
+    public function sceneEdit(){
+        return $this->remove('id',['require']);
+    }
+
+    public function sceneDel(){
+        return $this->only(['id']);
+    }
+
+    public function sceneSwtich(){
+        return $this->only(['id']);
+    }
+
+    public function checkMenu($value,$rule,$data){
+        if( 1 == $data['link_type']){
+            $menu_list = MenuEnum::INDEX;
+
+            if(2 == $data['type']){
+                $menu_list = MenuEnum::CENTRE;
+            }
+            $menu_index = array_column($menu_list,'index');
+
+            if(!in_array($value,$menu_index)) {
+                return '菜单不存在';
+            }
+
+        }else{
+            if(empty($value)){
+                return '请输入自定义链接';
+            }
+
+        }
+
+        return true;
+    }
+}

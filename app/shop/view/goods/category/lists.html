@@ -1,0 +1,226 @@
+{layout name="layout1" /}
+<!-- 样式 -->
+<style>
+    .layui-table-cell {
+        height: auto;
+    }
+</style>
+<!-- 操作提示 -->
+<div class="layui-fluid">
+    <div class="layui-card" style="margin-top: 15px;">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*商家发布商品时可以选择对应的商家商品分类，方便用户在商家内根据商家商品分类搜索商品。</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="layui-card-body">
+            <div class="add">
+                <button class="layui-btn layui-btn-sm layui-btn-goods_category {$view_theme_color}"
+                        id="goods_category-add">新增商品分类
+                </button>
+            </div>
+            <!-- 数据表格 -->
+            <table id="shop_goods_category_lists" lay-filter="shop_goods_category_lists"></table>
+            <!-- 分类图标 -->
+            <script type="text/html" id="image">
+                <img src="{{d.image}}" style="height:80px;width:80px" class="image-show">
+            </script>
+            <!-- 是否显示 -->
+            <script type="text/html" id="is_show">
+                <input type="checkbox" lay-filter="switch-is_show" data-id={{d.id}} data-field='is_show'
+                       lay-skin="switch" lay-text="显示|隐藏" {{# if(d.is_show){ }} checked {{# } }}/>
+            </script>
+            <!-- 操作列 -->
+            <script type="text/html" id="operate">
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+            </script>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+    layui.config({
+        version: "{$front_version}",
+        base: '/static/lib/'
+    }).use(['layer', 'table', 'form', 'element'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var table = layui.table;
+
+        table.render({
+            id: 'shop_goods_category_lists'
+            , elem: '#shop_goods_category_lists'
+            , url: "{:url('goods.category/lists')}"
+            , parseData: function (res) { // res 原始返回数据
+                return {
+                    'code': res.code  // 0 代表正常返回
+                    , 'msg': res.msg  // 提示消息
+                    , 'count': res.data.count // 数据长度
+                    , 'data': res.data.lists  // 数据列表
+                }
+            }
+            , response: { // 重新设定返回的数据格式
+                statusCode: 1, // 成功的状态码，默认0
+            }
+            , page: true // 开启分页
+            , limit: 10
+            , limits: [10, 20, 30, 40, 50]
+            , text: {
+                none: '暂无数据'
+            }
+            , cols: [[ // 设置表头，二维数组，方法渲染必填
+                {field: 'name', title: '分类名称', width: 120, align: 'center'},
+                {title: '分类图标', width: 250, templet: '#image', align: 'center'},
+                {title: '状态', templet: '#is_show', width: 120, align: 'center'},
+                {field: 'sort', title: '排序', width: 120, align: 'center'},
+                {fixed: 'right', title: '操作', align: 'center', toolbar: '#operate'}
+            ]]
+        });
+
+        // 新增商品分类
+        $('#goods_category-add').click(function () {
+            layer.open({
+                type: 2
+                , title: '新增店铺商品分类'
+                , content: '/shop/goods.category/add'
+                , area: ['90%', '90%']
+                , btn: ['确认', '返回']
+                , btnAlign: 'c'
+                , yes: function (index, layero) {
+                    var iframeWindow = window['layui-layer-iframe' + index]
+                        , submitID = 'add-goods_category-submit'
+                        , submit = layero.find('iframe').contents().find('#' + submitID);
+                    //监听提交
+                    iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                        var field = data.field;
+                        console.log(data.field);
+                        like.ajax({
+                            url: '/shop/goods.category/add',
+                            data: field,
+                            type: "post",
+                            success: function (res) {
+                                if (res.code == 1) {
+                                    layui.layer.msg(res.msg, {
+                                        offset: '15px'
+                                        , icon: 1
+                                        , time: 1000
+                                    });
+                                    layer.close(index); //关闭弹层
+                                    location.reload();//刷新
+                                }
+                            }
+                        });
+                    });
+                    // 触发子窗口表单提交事件
+                    submit.trigger('click');
+                }
+            })
+        });
+
+        // 监听行工具条事件
+        table.on('tool(shop_goods_category_lists)', function (obj) {
+            var event = obj.event;
+            if (event === 'del') {
+                layer.confirm('确定删除商品分类:' + '<span style="color: red">' + obj.data.name + '</span>', function (index) {
+                    like.ajax({
+                        url: '/shop/goods.category/del',
+                        data: {id: obj.data.id},
+                        type: 'post',
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg, {
+                                    offset: '15px'
+                                    , icon: 1
+                                    , time: 1000
+                                }, function () {
+                                    layer.close(index); //关闭弹层
+                                    location.reload();//刷新
+                                });
+                            }
+                        }
+                    })
+                })
+            }
+
+            if (event === 'edit') {
+                layer.open({
+                    type: 2
+                    , title: '编辑店铺商品分类'
+                    , content: '{:url("shop/goods.category/edit")}?id=' + obj.data.id
+                    , area: ['90%', '90%']
+                    , btn: ['确定', '取消']
+                    , btnAlign: 'c'
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'edit-goods_category-submit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field; //获取提交的字段
+                            like.ajax({
+                                url: '{:url("shop/goods.category/edit")}',
+                                data: field,
+                                type: "post",
+                                success: function (res) {
+                                    if (res.code == 1) {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        }, function () {
+                                            layer.close(index); //关闭弹层
+                                            location.reload();//刷新
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                })
+            }
+        });
+
+        // 显示与隐藏
+        form.on('switch(switch-is_show)', function (obj) {
+            var id = obj.elem.attributes['data-id'].nodeValue
+            var status = 0;
+            if (this.checked) {
+                status = 1;
+            }
+            like.ajax({
+                url: '{:url("shop/goods.category/switchStatus")}',
+                data: {id: id, status: status},
+                type: 'post',
+                success: function (res) {
+                    if (res.code == 1) {
+                        layui.layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        });
+                    } else {
+                        layui.layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 2
+                            , time: 1000
+                        }, function () {
+                            location.reload();//刷新
+                        });
+                    }
+                }
+            })
+        })
+    });
+</script>

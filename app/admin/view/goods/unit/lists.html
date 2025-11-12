@@ -1,0 +1,159 @@
+{layout name="layout1" /}
+<div class="wrapper">
+    <div class="layui-card">
+
+        <!--操作提示-->
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*平台商品单位，商家发布商品的时候需要选择对应的商品单位。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <!--添加按钮-->
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layui-btn-sm layuiadmin-btn-unit {$view_theme_color}" data-type="add">新增商品单位</button>
+            </div>
+
+            <!--表格-->
+            <table id="unit-lists" lay-filter="unit-lists"></table>
+            
+            <script type="text/html" id="unit-operation">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    layui.use(['table'], function(){
+        var form = layui.form
+            ,table = layui.table;
+
+        //事件
+        var active = {
+            add: function(){
+                layer.open({
+                    type: 2
+                    ,title: '新增商品单位'
+                    ,content: '{:url("goods.unit/add")}'
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'unit-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("goods.unit/add")}',
+                               data:field,
+                               type:"post",
+                               success:function(res)
+                               {
+                                   if(res.code == 1) {
+                                       layui.layer.msg(res.msg, {
+                                           offset: '15px'
+                                           , icon: 1
+                                           , time: 1000
+                                       });
+                                       layer.close(index);
+                                       table.reload('unit-lists');
+                                   }
+                               }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            }
+        };
+        $('.layui-btn.layuiadmin-btn-unit').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+
+        like.tableLists('#unit-lists', '{:url("goods.unit/lists")}', [
+            {field: 'id', width: 60, title: 'ID', sort: true}
+            ,{field: 'name', title: '单位名称', align:"center"}
+            ,{field: 'sort', title: '排序', align:"center", sort:true}
+            ,{title: '操作', align: 'center', fixed: 'right', toolbar: '#unit-operation'}
+        ]);
+
+
+        //监听工具条
+        table.on('tool(unit-lists)', function(obj){
+            if(obj.event === 'del'){
+                var id = obj.data.id;
+                var unitName = "<span style='color: red;'>"+obj.data.name+"</span>";
+                layer.confirm('确定删除商品单位: '+unitName, function(index){
+                    like.ajax({
+                        url:'{:url("goods.unit/del")}',
+                        data:{'id':id},
+                        type:"post",
+                        success:function(res)
+                        {
+                            if(res.code == 1) {
+                                obj.del();
+                                layui.layer.msg(res.msg, {
+                                    offset: '15px'
+                                    , icon: 1
+                                    , time: 1000
+                                });
+                                layer.close(index);
+                            }
+                        }
+                    });
+                });
+
+            }else if(obj.event === 'edit'){
+                var id = obj.data.id;
+                layer.open({
+                    type: 2
+                    ,title: '编辑编辑商品单位'
+                    ,content: '{:url("goods.unit/edit")}?unit_id='+id
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'unit-submit-edit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("goods.unit/edit")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1) {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        });
+                                        layer.close(index);
+                                        table.reload('unit-lists');
+                                    }
+                                }
+                            });
+                        });
+
+                        submit.trigger('click');
+                    }
+                })
+            }
+        });
+    });
+</script>

@@ -1,0 +1,24 @@
+{layout name="layout1" /}
+<style>
+    .redReq::before {
+        content: '*';
+        color: red;
+        margin-right: 5px;
+    }
+</style>
+<div class="layui-form">
+    <input type="hidden" name="goods_id" value="{$goods_id}" />
+    <div class="layui-form-item" style="margin-top: 15px;">
+        <label class="layui-form-label redReq">违规原因</label>
+        <div class="layui-input-block" style="width: 800px;">
+            <textarea name="reason" class="layui-textarea" style="height: 150px;"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">违规重审会标记为审核未通过，商家可以查看审核说明</span>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="reaudit-submit" id="reaudit-submit" value="确认">
+    </div>
+</div>

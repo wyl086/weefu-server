@@ -1,0 +1,241 @@
+{layout name="layout1" /}
+<style>
+    .layui-form-label {
+        width: 120px;
+    }
+    .layui-input-block {
+        margin-left: 150px;
+    }
+    .show-text-img img{
+        border:1px solid #F8F8FF;
+        padding:10px;
+        background-color:#FFF;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*设置商家logo和背景图，没有设置则默认使用平台统一的素材</p>
+                        <p>*设置PC端店铺封面，没有设置则默认使用平台统一的素材</p>
+                        <p>*设置PC端店铺头图，设置则显示，不设置则不显示</p>
+                    </div>
+                </div>
+            </div>
+            <!--            表单区域-->
+            <!-- 商家LOGO -->
+            <div class="layui-form" style="margin-top: 15px;">
+                <div class="layui-form-item">
+                    <lable class="layui-form-label">商家LOGO</lable>
+                    <div class="layui-input-block">
+                        <div class="like-upload-image">
+                            {if $shopSet.logo}
+                            <div class="upload-image-div">
+                                <img class="image-show" src="{$shopSet.logo}" alt="img">
+                                <input type="hidden" name="logo" value="{$shopSet.logo}">
+                                <div class="del-upload-btn">x</div>
+                            </div>
+                            <div class="upload-image-elem" style="display:none;"><a class="add-upload-image" id="logo"> + 添加图片</a></div>
+                            {else}
+                            <div class="upload-image-elem"><a class="add-upload-image" id="logo"> + 添加图片</a></div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <span class="layui-word-aux">建议图片尺寸：200*200像素；图片格式：jpg、png、jpeg。</span>
+                    </div>
+                </div>
+
+                <!-- 商家背景图 -->
+                <div class="layui-form-item">
+                    <lable class="layui-form-label">商家背景图</lable>
+                    <div class="layui-input-block">
+                        <div class="like-upload-image">
+                            {if $shopSet.background}
+                            <div class="upload-image-div">
+                                <img class="image-show" src="{$shopSet.background}" alt="img">
+                                <input type="hidden" name="background" value="{$shopSet.background}">
+                                <div class="del-upload-btn">x</div>
+                            </div>
+                            <div class="upload-image-elem" style="display:none;"><a class="add-upload-image" id="background"> + 添加图片</a></div>
+                            {else}
+                            <div class="upload-image-elem"><a class="add-upload-image" id="background"> + 添加图片</a></div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <span class="layui-word-aux">
+                            建议图片尺寸：750*360像素；图片格式：jpg、png、jpeg。
+                            <a class="show-text-img" style="width:50px;height:50px;color:#4e8bff;">
+                                查看示例
+                        <img style="display:none; position: absolute; top: -265px; left: 448px;"
+                             src="{$shopSet.dome_background}"></img>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- PC端店铺封面 -->
+                <div class="layui-form-item">
+                    <lable class="layui-form-label">PC端店铺封面</lable>
+                    <div class="layui-input-block">
+                        <div class="like-upload-image">
+                            {if $shopSet.pc_cover}
+                            <div class="upload-image-div">
+                                <img class="image-show" src="{$shopSet.pc_cover}" alt="img">
+                                <input type="hidden" name="pc_cover" value="{$shopSet.pc_cover}">
+                                <div class="del-upload-btn">x</div>
+                            </div>
+                            <div class="upload-image-elem" style="display:none;"><a class="add-upload-image" id="pc_cover"> + 添加图片</a></div>
+                            {else}
+                            <div class="upload-image-elem"><a class="add-upload-image" id="pc_cover"> + 添加图片</a></div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <span class="layui-word-aux">
+                            建议图片尺寸：270*400像素；图片格式：jpg、png、jpeg。
+                            <a class="show-text-img" style="width:50px;height:50px;color:#4e8bff;">
+                                查看示例
+                        <img style="display:none; position: absolute; top: -295px; left:155px; "
+                             src="{$shopSet.dome_cover}"></img>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- PC端店铺头图 -->
+                <div class="layui-form-item">
+                    <lable class="layui-form-label">PC端店铺头图</lable>
+                    <div class="layui-input-block">
+                        <div class="like-upload-image">
+                            {if $shopSet.pc_banner}
+                            <div class="upload-image-div">
+                                <img class="image-show" src="{$shopSet.pc_banner}" alt="img">
+                                <input type="hidden" name="pc_banner" value="{$shopSet.pc_banner}">
+                                <div class="del-upload-btn">x</div>
+                            </div>
+                            <div class="upload-image-elem" style="display:none;"><a class="add-upload-image" id="pc_banner"> + 添加图片</a></div>
+                            {else}
+                            <div class="upload-image-elem"><a class="add-upload-image" id="pc_banner"> + 添加图片</a></div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <span class="layui-word-aux" id="imgContainer">
+                            建议图片尺寸：1920*150像素；图片格式：jpg、png、jpeg。
+                            <a class="show-text-img" style="width:50px;height:50px;color:#4e8bff;">
+                                查看示例
+                        <img style="display:none; position: absolute; top: -295px; left:155px; "
+                             src="{$shopSet.dome_banner}"></img>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="set">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form','element'], function(){
+        var $ = layui.$,form = layui.form,element = layui.element;
+
+        $(function(){
+            $('.show-text-img').hover(function(){
+                $(this).children('img').fadeIn('slow');
+            },function(){
+                $(this).children('img').fadeOut('slow',function(){
+                    $('.show-text-img').fadeIn();
+                });
+            });
+        })
+
+
+        // 图片上传
+        like.delUpload();
+        $(document).on("click", "#logo", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "logo",
+                that: $(this),
+                content: '{:url("file/lists")}?type=10'
+            });
+        })
+        $(document).on("click", "#background", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "background",
+                that: $(this),
+                content: '{:url("file/lists")}?type=10'
+            });
+        })
+        $(document).on("click", "#pc_cover", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "pc_cover",
+                that: $(this),
+                content: '{:url("file/lists")}?type=10'
+            });
+        })
+        $(document).on("click", "#pc_banner", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "pc_banner",
+                that: $(this),
+                content: '{:url("file/lists")}?type=10'
+            });
+        })
+
+        form.on('submit(set)', function(data) {
+            like.ajax({
+                url:'{:url("decoration.index/set")}',
+                data: data.field,
+                type:"post",
+                success:function(res)
+                {
+                    if(res.code == 1)
+                    {
+                        layui.layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        });
+                    }
+                }
+            });
+        });
+
+        //显示图片
+        $(document).on('click', '.image-show', function () {
+            var image = $(this).attr('src');
+            like.showImg(image, 400);
+        });
+
+    });
+</script>

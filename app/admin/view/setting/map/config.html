@@ -1,0 +1,88 @@
+{layout name="layout2" /}
+<style>
+    .layui-form-label {
+        width: 120px
+    }
+    #key-inline {
+        width: 350px;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" style="border:1px dashed #c4c4c4; margin-bottom: 30px;">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        *设置地图相关配置。
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body" pad15>
+            <div class="layui-form" lay-filter="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">腾讯地图key：</label>
+                    <div class="layui-input-inline" id="key-inline">
+                        <input type="text" name="tx_map_key" value="{$config.tx_map_key | default = ''}" lay-verify="required" lay-verType="tips" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">附近店铺</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="is_open_nearby" value="0" title="关闭" {if $config.is_open_nearby == 0}checked{/if}>
+                        <input type="radio" name="is_open_nearby" value="1" title="开启" {if $config.is_open_nearby == 1}checked{/if}>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"></label>
+                    <div class="layui-input-block layui-word-aux">
+                        关闭则表示商城首页城市定位不显示及附近店铺板块不显示 <a href="javascript:;" id="img_show">查看效果 <img id="img" style="position: absolute;max-width: 500px;display: none;" src="/static/admin/images/nearby_shops.png"></a>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn {$view_theme_color}" lay-submit lay-filter="setMap">确定</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    layui.use(['table'], function () {
+        var $ = layui.$
+            , form = layui.form;
+
+        form.on('submit(setMap)', function (data) {
+            like.ajax({
+                url: '{:url()}'
+                , data: data.field
+                , type: 'post'
+                , success: function (res) {
+                    if (res.code == 1) {
+                        layui.layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        }, function () {
+                            location.href = location.href;
+                        });
+                    }
+                }
+            });
+        });
+    });
+
+
+    $('#img_show').hover(function() {
+        $("#img").show();
+    }, function() {
+        $("#img").hide();
+    });
+
+</script>

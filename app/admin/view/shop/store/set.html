@@ -1,0 +1,48 @@
+{layout name="layout2" /}
+<style>
+    .layui-form-item .layui-form-label { width: 95px; }
+    .layui-form-item .layui-input-inline { width: 240px; }
+</style>
+
+<div class="layui-card layui-form" style="box-shadow:none;">
+
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label class="layui-form-label">推荐商家：</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="is_recommend" value="1" title="是" {if $detail.is_recommend}checked{/if}>
+                <input type="radio" name="is_recommend" value="0" title="否" {if !$detail.is_recommend}checked{/if}>
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商城首页会显示推荐的商家</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">分销功能：</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="is_distribution" value="1" title="是" {if $detail.is_distribution}checked{/if}>
+                <input type="radio" name="is_distribution" value="0" title="否" {if !$detail.is_distribution}checked{/if}>
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">开启或关闭分销功能，关闭后商家不参与分销推广</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">支付功能：</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="is_pay" value="1" title="开启" {if $detail.is_pay}checked{/if}>
+                <input type="radio" name="is_pay" value="0" title="关闭" {if !$detail.is_pay}checked{/if}>
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">默认开启,关闭时商品详情则显示咨询商家按钮</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="weight" class="layui-form-label"><span style="color:red;">*</span>排序权重：</label>
+            <div class="layui-input-inline">
+                <input type="number" name="weight" id="weight" value="{$detail.weight}" lay-verType="tips" lay-verify="require|number"
+                       switch-tab="0" autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商品排序权重，数字越小排序越前，权重越大</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+    </div>
+</div>

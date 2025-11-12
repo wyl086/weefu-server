@@ -1,0 +1,188 @@
+{layout name="layout1" /}
+<style>
+
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*可对社区文章评论进行管理审核.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="keyword" class="layui-form-label">会员信息：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="keyword" name="keyword" autocomplete="off" class="layui-input" placeholder="请输入昵称/编号/手机号">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="comment" class="layui-form-label">内容搜索：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="comment" name="comment" autocomplete="off" class="layui-input" placeholder="请输入评论内容">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="status" class="layui-form-label">审核状态：</label>
+                    <div class="layui-input-inline">
+                        <select name="status" id="status">
+                            <option value="">全部</option>
+                            {foreach $status as $item => $val}
+                            <option value="{$item}">{$val}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+            <script type="text/html" id="table-operation">
+                {{#  if(d.status == 0){ }}
+                    <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="audit">审核</a>
+                {{#  } }}
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+            </script>
+            <script type="text/html" id="table-userInfo">
+                <img src="{{d.avatar}}" alt="图标" style="width:60px;height:60px;margin-right:5px;">
+                <div class="layui-inline" style="text-align:left;">
+                    <p>编号：{{d.sn}}</p>
+                    <p>昵称：{{d.nickname}}</p>
+                </div>
+            </script>
+            <script type="text/html" id="table-articleContent">
+                <div>{{d.article.content}}</div>
+            </script>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form", "laydate"], function(){
+        var table   = layui.table;
+        var form   = layui.form;
+        var laydate   = layui.laydate;
+
+        laydate.render({
+            elem: '#start_time'
+            , type: 'datetime'
+        });
+
+        laydate.render({
+            elem: '#end_time'
+            , type: 'datetime'
+        });
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {field:"user",  align:"center",width: 240, title:"会员信息", templet: "#table-userInfo"}
+            ,{field:"article_content", width: 250,title:"种草内容", templet: "#table-articleContent"}
+            ,{field:"comment", width: 300,title:"评价内容"}
+            ,{field:"topic_name", width: 150, align:"center",title:"话题"}
+            ,{field:"status_desc", 　width: 120, align:"center", title:"审核状态"}
+            ,{field:"create_time", width: 180, align:"center", title:"评论时间"}
+            ,{title:"操作", align:"left", fixed:"right",width: 160, toolbar:"#table-operation"}
+        ]);
+
+        var active = {
+            audit: function(obj) {
+                layer.open({
+                    type: 2
+                    ,title: "评论审核"
+                    ,content: "{:url('community.CommunityComment/audit')}?id=" + obj.data.id
+                    ,area: ["60%", "60%"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field['id'] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('community.CommunityComment/audit')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            del: function(obj) {
+                var comment =  "<div style='width:200px;overflow:hidden;text-overflow: ellipsis;white-space:nowrap;'>" +
+                    "<span>确定删除评论：</span>" +
+                    "<span style='color: red;'>"+obj.data.comment +"</span></div>";
+                layer.confirm(comment, function(index) {
+                    like.ajax({
+                        url: "{:url('community.CommunityComment/del')}",
+                        data: {id: obj.data.id},
+                        type: "POST",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                                layer.close(index);
+                                obj.del();
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            }
+        };
+        like.eventClick(active);
+
+
+
+        //图片放大
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src,400);
+        });
+
+        form.on("submit(search)", function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        form.on("submit(clear-search)", function(){
+            $("#keyword").val("");
+            $("#comment").val("");
+            $("#status").val("");
+            form.render("select");
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+    })
+</script>

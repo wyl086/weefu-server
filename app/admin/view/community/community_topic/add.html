@@ -1,0 +1,80 @@
+{layout name="layout2" /}
+<div class="layui-card layui-form" >
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label"><span style="color:red;">*</span>话题名称：</label>
+            <div class="layui-input-block" style="width: 50%">
+                <input type="text" name="name" id="name" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color:red;">*</span>话题图标：</label>
+            <div class="layui-input-block">
+                <div class="like-upload-image" switch-tab="0" lay-verType="tips">
+                    <div class="upload-image-elem"><a class="add-upload-image"> + 添加</a></div>
+                </div>
+                <div class="layui-form-mid layui-word-aux">建议尺寸:宽200像素*高200像素的jpg,jpeg,png图片</div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="cid" class="layui-form-label"><span style="color:red;">*</span>关联分类：</label>
+            <div class="layui-input-inline">
+                <select name="cid" id="cid" lay-verType="tips" lay-verify="required">
+                    <option value="">全部</option>
+                    {volist name="cate" id="vo"}
+                    <option value="{$vo.id}">{$vo.name}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">推荐：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="is_recommend" value="1" title="是" >
+                <input type="radio" name="is_recommend" value="0" title="否" checked>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="is_show" value="1" title="显示" checked>
+                <input type="radio" name="is_show" value="0" title="隐藏" >
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="sort" class="layui-form-label">排序：</label>
+            <div class="layui-input-block" style="width: 50%">
+                <input type="number" name="sort" id="sort" value="255" lay-verType="tips" lay-verify="number" min="0"
+                       autocomplete="off" class="layui-input">
+                <div class=" layui-form-mid layui-word-aux">排序值必须为整数;数值越小,越靠前</div>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.config({
+        version: "{$front_version}",
+        base: '/static/lib/'
+    }).use(['form'], function () {
+        var form = layui.form;
+
+        like.delUpload();
+        $(document).on("click", ".add-upload-image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "image",
+                that: $(this)
+            });
+        });
+    });
+</script>

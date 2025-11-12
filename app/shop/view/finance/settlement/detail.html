@@ -1,0 +1,74 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">订单编号：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="order_sn" name="order_sn" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form"], function(){
+        var table   = layui.table;
+        var form    = layui.form;
+
+        like.tableLists("#like-table-lists", "{:url()}?settle_id={$settle_id}", [
+            {field:"id", width:60, title:"ID"}
+            ,{field:"settle_sn", width:200, align:"center", title:"结算批次号"}
+            ,{field:"order_sn", width:180, align:"center",title:"订单编号"}
+            ,{field:"order_amount", width:160, align:"center", title:"订单金额"}
+            ,{field:"refund_amount", width:160, align:"center", title:"退款订单金额"}
+            ,{field:"after_sales_amount", width:160, align:"center", title:"售后退款金额"}
+            ,{field:"distribution_amount", width:160, align:"center", title:"已结算分销佣金金额"}
+            ,{field:"entry_account_amount", width:160, align:"center", title:"已结算入账金额"}
+            ,{field:"order_complete_time", width:160, align:"center", title:"订单完成时间"}
+        ]);
+
+
+        /**
+         * 立即搜索
+         */
+        form.on("submit(search)", function(data){
+            data.field['settle_id'] = '{$settle_id}';
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        /**
+         * 重置搜索
+         */
+        form.on("submit(clear-search)", function(){
+            $("#order_sn").val("");
+            table.reload("like-table-lists", {
+                where: {settle_id:'{$settle_id}'},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+    })
+</script>

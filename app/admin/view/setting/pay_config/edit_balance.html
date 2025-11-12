@@ -1,0 +1,87 @@
+{layout name="layout2" /}
+<div class="layui-form" lay-filter="layuiadmin-form" id="layuiadmin-form" style="padding: 20px 30px 0 0;">
+    <!--支付简称-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">支付简称：</label>
+        <div class="layui-input-block">
+            <div class="layui-col-md4">
+                <input type="text" name="short_name" value="{$info.short_name | default = ''}" lay-verify="check_required" lay-verType="tips"  autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux">会员在商城看见的支付名称</div>
+            </div>
+        </div>
+    </div>
+
+    <!--支付图标-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">支付图标</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if $info.image}
+                <div class="upload-image-div">
+                    <img src="{$info.image}" alt="img">
+                    <input type="hidden" name="image" value="{$info.image}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">支付方式图标。建议尺寸：宽100px*高100px，jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+    <!--排序-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-block">
+            <div class="layui-col-md4">
+                <input type="number"  name="sort" value="{$info.sort | default = ''}" class="layui-input" >
+                <div class=" layui-form-mid layui-word-aux">排序越小越前</div>
+            </div>
+        </div>
+    </div>
+
+    <!--状态-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态:</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value=1 title="启用"{if condition="$info.status eq 1" }checked{/if}>
+            <input type="radio" name="status" value=0 title="关闭" {if condition="$info.status eq 0" }checked{/if}>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="edit-submit" id="edit-submit" value="确认">
+    </div>
+</div>
+</div>
+<script>
+    layui.use(['form'], function(){
+        var $ = layui.$
+            ,form = layui.form;
+
+        like.delUpload();
+        $(document).on("click", ".add-upload-image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "image",
+                that: $(this)
+            });
+        });
+
+        form.verify({
+            check_required: function (value, item) {
+                var status = $('input[name="status"]:checked').val();
+                value = value.trim();
+                if (status == 1 && value.length == 0) {
+                    return '请填写完整';
+                }
+            }
+        });
+
+    })
+</script>

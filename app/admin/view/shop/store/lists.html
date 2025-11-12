@@ -1,0 +1,382 @@
+{layout name="layout1" /}
+
+<style>
+    .layui-table-cell{
+        height:auto;
+        overflow:hidden;
+        text-overflow:inherit;
+    }
+</style>
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*查看并管理平台所有自营和入驻商家。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="name" class="layui-form-label">商家名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="name" name="name" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="type" class="layui-form-label">商家类型：</label>
+                    <div class="layui-input-inline">
+                        <select name="type" id="type">
+                            <option value="">全部</option>
+                            <option value="1">官方自营</option>
+                            <option value="2">入驻商家</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="cid" class="layui-form-label">主营类目：</label>
+                    <div class="layui-input-inline">
+                        <select name="cid" id="cid">
+                            <option value="">全部</option>
+                            {volist name="category" id="vo"}
+                                <option value="{$vo.id}">{$vo.name}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="is_recommend" class="layui-form-label">推荐商家：</label>
+                    <div class="layui-input-inline">
+                        <select name="is_recommend" id="is_recommend">
+                            <option value="">全部</option>
+                            <option value="1">推荐</option>
+                            <option value="0">不推荐</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="is_run" class="layui-form-label">营业状态：</label>
+                    <div class="layui-input-inline">
+                        <select name="is_run" id="is_run">
+                            <option value="">全部</option>
+                            <option value="1">营业中</option>
+                            <option value="0">暂停营业</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="is_freeze" class="layui-form-label">商家状态：</label>
+                    <div class="layui-input-inline">
+                        <select name="is_freeze" id="is_freeze">
+                            <option value="">全部</option>
+                            <option value="0">正常</option>
+                            <option value="1">冻结</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="is_freeze" class="layui-form-label">到期状态：</label>
+                    <div class="layui-input-inline">
+                        <select name="expire_status" id="expire_status">
+                            <option value="">全部</option>
+                            <option value="0">未到期</option>
+                            <option value="1">已到期</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">到期时间：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="expire_start_time" name="expire_start_time" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline"> - </div>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" style="margin-right:0;">
+                            <input type="text" id="expire_end_time" name="expire_end_time" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layEvent" lay-event="add">新增商家</button>
+            <button type="button" class="layui-btn layui-btn-primary layui-btn-sm layEvent" lay-event="business">批量营业</button>
+            <button type="button" class="layui-btn layui-btn-primary layui-btn-sm layEvent" lay-event="stop_business">暂停营业</button>
+            <button type="button" class="layui-btn layui-btn-primary layui-btn-sm layEvent" lay-event="freeze">冻结商家</button>
+            <button type="button" class="layui-btn layui-btn-primary layui-btn-sm layEvent" lay-event="cancel_freeze">取消冻结</button>
+
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+            <script type="text/html" id="table-storeInfo">
+                <img src="{{d.logo}}" alt="图标" style="width:60px;height:60px;margin-right:5px;">
+                <div class="layui-inline" style="text-align:left;">
+                    <p>商家编号：{{d.id}}</p>
+                    <p>商家名称：{{d.name}}</p>
+                    <p>商家类型：{{d.type}}</p>
+                </div>
+            </script>
+            <script type="text/html" id="table-operation">
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="set">设置</a>
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="account">账号管理</a>
+            </script>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form","laydate"], function(){
+        var table   = layui.table;
+        var form    = layui.form;
+        var laydate = layui.laydate;
+
+        //日期时间范围
+        laydate.render({
+            elem: '#expire_start_time'
+            , type: 'datetime'
+            ,theme: '#1E9FFF'
+        });
+
+        laydate.render({
+            elem: '#expire_end_time'
+            , type: 'datetime'
+            ,theme: '#1E9FFF'
+        });
+
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {type: 'checkbox'}
+            ,{field:"id", width:60, title:"ID"}
+            ,{field:"storeInfo", width:250, title:"商家信息", templet:"#table-storeInfo"}
+            ,{field:"account", width:100, align:"center",title:"商家账号"}
+            ,{field:"category", width:100, align:"center", title:"主营类目"}
+            ,{field:"is_run", width:90, align:"center", title:"营业状态"}
+            ,{field:"is_freeze", width:90, align:"center", title:"商家状态"}
+            ,{field:"is_recommend", width:90, align:"center", title:"推荐商家"}
+            ,{field:"create_time", width:160, align:"center", title:"开通日期"}
+            ,{field:"expire_desc", width:160, align:"center", title:"到期状态"}
+            ,{field:"expire_time", width:160, align:"center", title:"到期时间"}
+            ,{title:"操作", width:250, align:"center", fixed:"right", toolbar:"#table-operation"}
+        ]);
+
+
+        var active = {
+            add: function() {
+                layer.open({
+                    type: 2
+                    ,title: "新增商家"
+                    ,content: "{:url('shop.Store/add')}"
+                    ,area: ["90%", "90%"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            like.ajax({
+                                url: "{:url('shop.Store/add')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            edit: function(obj) {
+                layer.open({
+                    type: 2
+                    ,title: "编辑商家"
+                    ,content: "{:url('shop.Store/edit')}?id=" + obj.data.id
+                    ,area: ["90%", "90%"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field['id'] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('shop.Store/edit')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            set: function(obj) {
+                layer.open({
+                    type: 2
+                    ,title: "商家设置"
+                    ,content: "{:url('shop.Store/set')}?id=" + obj.data.id
+                    ,area: ["580px", "480px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field['id'] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('shop.Store/set')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            account: function(obj) {
+                layer.open({
+                    type: 2
+                    ,title: "账号管理"
+                    ,content: "{:url('shop.Store/account')}?id=" + obj.data.id
+                    ,area: ["480px", "420px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field['id'] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('shop.Store/account')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            business: function() {
+                batchOperation('is_run', 1);
+            },
+            stop_business: function() {
+                batchOperation('is_run', 0);
+            },
+            freeze: function() {
+                batchOperation('is_freeze', 1);
+            },
+            cancel_freeze: function() {
+                batchOperation('is_freeze', 0);
+            },
+        };
+        like.eventClick(active);
+
+
+        // 批量更新状态
+        function batchOperation(field, value) {
+            var checkStatus = table.checkStatus('like-table-lists');
+            var checkData = checkStatus.data;
+            var ids = [];
+            // 取出选中的行ID
+            checkData.forEach(function (item) {
+                ids.push(parseInt(item['id']));
+            });
+            if (ids.length <= 0) {
+                layui.layer.msg('请选择商家', {time: 1000});
+                return false;
+            }
+            // 提交数据
+            like.ajax({
+                url:'{:url("shop.Store/batchOperation")}',
+                data:{"ids":ids, 'field': field, 'value': value},
+                type:"post",
+                success:function(res) {
+                    if(res.code === 1) {
+                        layui.layer.msg(res.msg, {offset:'15px', icon:1 ,time: 1000});
+                        table.reload('like-table-lists', { where: [] });
+                    }
+                }
+            });
+        }
+
+
+
+        form.on("submit(search)", function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(clear-search)", function(){
+            $("#name").val("");
+            $("#type").val("");
+            $("#cid").val("");
+            $("#is_recommend").val("");
+            $("#is_run").val("");
+            $("#is_freeze").val("");
+            $("#expire_status").val("");
+            $("#expire_start_time").val("");
+            $("#expire_end_time").val("");
+            form.render("select");
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+    })
+</script>

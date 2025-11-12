@@ -1,0 +1,307 @@
+
+{layout name="layout1" /}
+<style>
+    .layui-table-cell {
+        height:auto;
+    }
+    .goods-content>div:not(:last-of-type) {
+        bwithdrawal-bottom:1px solid #DCDCDC;
+    }
+    .goods-data::after{
+        display: block;
+        content: '';
+        clear: both;
+    }
+    .goods_name_hide{
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow: ellipsis;
+    }
+    .operation-btn {
+        margin: 5px;
+    }
+    .table-operate{
+        text-align: left;
+        font-size:14px;
+        padding:0 5px;
+        height:auto;
+        overflow:visible;
+        text-overflow:inherit;
+        white-space:normal;
+        word-break: break-all;
+    }
+</style>
+
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+        <div class="layui-collapse like-layui-collapse" lay-accordion="" style="bwithdrawal:1px dashed #c4c4c4">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                <div class="layui-colla-content layui-show">
+                    <p>*查看会员佣金钱包资金变动记录。</p>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="layui-tab layui-tab-card" lay-filter="tab-all">
+
+            <div class="layui-card-body layui-form">
+                <div class="layui-form-item">
+                    <div class="layui-row">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">会员信息:</label>
+                            <div class="layui-input-block">
+                                <select name="search_key">
+                                    <option value="user_sn">会员编号</option>
+                                    <option value="nickname">会员昵称</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <input type="text" name="keyword" id="keyword" placeholder="请输入搜索内容"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">明细类型:</label>
+                            <div class="layui-input-block">
+                                <select name="source_type" id="source_type">
+                                    <option value="">全部</option>
+                                    {foreach $source_type as $item => $val}
+                                        <option value="{$item}">{$val}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">记录时间:</label>
+                            <div class="layui-input-inline">
+                                <div class="layui-input-inline">
+                                    <input type="text" name="start_time" class="layui-input" id="start_time"
+                                           placeholder="" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="layui-input-inline" style="margin-right: 5px;width: 20px;">
+                                <label class="layui-form-mid">至</label>
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" name="end_time" class="layui-input" id="end_time"
+                                       placeholder="" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <div class="layui-btn-group">
+                                <button type="button" id="today" day="1" class="layui-btn layui-btn-sm layui-btn-normal day">今天</button>
+                                <button type="button"  day="-1" class="layui-btn layui-btn-sm layui-btn-primary day">昨天</button>
+                                <button type="button"  day="7" class="layui-btn layui-btn-sm layui-btn-primary day">近7天</button>
+                                <button type="button"  day="30" class="layui-btn layui-btn-sm layui-btn-primary day">近30天</button>
+                            </div>
+                        </div>
+
+
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-sm layuiadmin-btn-ad {$view_theme_color}" lay-submit
+                                    lay-filter="withdrawal-search">查询
+                            </button>
+                            <button class="layui-btn layui-btn-sm layuiadmin-btn-ad layui-btn-primary " lay-submit
+                                    lay-filter="withdrawal-clear-search">重置
+                            </button>
+                            <button class="layui-btn layui-btn-sm layuiadmin-btn-ad layui-btn-primary " lay-submit
+                                    lay-filter="data-export">导出
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-tab-item layui-show">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <table id="withdrawal-lists" lay-filter="withdrawal-lists"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+      layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form'], function(){
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table
+            , element = layui.element
+            , laydate = layui.laydate;
+
+        //图片放大
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src,400);
+        });
+
+        //监听搜索
+        form.on('submit(withdrawal-search)', function (data) {
+            var field = data.field;
+            //执行重载
+            table.reload('withdrawal-lists', {
+                where: field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+        //清空查询
+        form.on('submit(withdrawal-clear-search)', function () {
+            $('#goods_name').val('');
+            $('#source_type').val('');
+            $('#keyword').val('');
+            $('#start_time').val('{$today[0]}');
+            $('#end_time').val('{$today[1]}');
+            $('#today').trigger("click");
+            form.render('select');
+            //刷新列表
+            table.reload('withdrawal-lists', {
+                where: [],
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+          // 导出
+          form.on('submit(data-export)', function (data) {
+              var field = data.field;
+              like.ajax({
+                  url: '{:url("finance.User/commissionExport")}'
+                  , data: field
+                  , type: 'get'
+                  , success: function (res) {
+                      if (res.code == 1) {
+                          window.location.href = res.data.url;
+                      }
+                  }
+              });
+          });
+
+        //日期时间范围
+        laydate.render({
+            elem: '#start_time'
+            , type: 'datetime'
+            ,theme: '#1E9FFF'
+            , value: "{$today[0]}"
+        });
+
+        laydate.render({
+            elem: '#end_time'
+            , type: 'datetime'
+            ,theme: '#1E9FFF'
+            ,value: "{$today[1]}"
+        });
+
+        //获取列表
+        getList('');
+        //切换列表
+        element.on('tab(tab-all)', function (data) {
+            $('#keyword').val('');
+            $('#withdrawal_status').val('');
+            $('#goods_name').val('');
+            $('#pay_way').val('');
+            $('#withdrawal_type').val('');
+            $('#start_time').val('{$today[0]}');
+            $('#end_time').val('{$today[1]}');
+            $('#today').trigger("click");
+            $('#delivery_type').val('');
+            form.render('select');
+            var type = $(this).attr('data-type');
+            getList(type);
+            if (type !== ''){
+                $('.withdrawal_status').hide();
+            }else {
+                $('.withdrawal_status').show();
+            }
+        });
+
+        function getList(type) {
+            table.render({
+                elem: '#withdrawal-lists'
+                , url: '{:url("finance.User/commission")}'
+                , cols: [[
+                      {field: 'nickname', title: '会员昵称', align: 'center',width:210}
+                    , {field: 'user_sn', title: '会员编号', align: 'center',width:210}
+                    , {field: 'mobile', title: '手机号码', align: 'center',width:160}
+                    , {field: 'change_amount', title: '变动金额', align: 'center',width:160}
+                    , {field: 'left_amount', title: '剩余佣金', align: 'center',width:160}
+                    , {field: 'source_type', title: '明细类型', align: 'center',width:210}
+                    , {field: 'withdraw_sn', title: '来源单号', align: 'center',width:240}
+                    , {field: 'create_time', title: '记录时间', align: 'center',width:240}
+                ]]
+                , page: true
+                , text: {none: '暂无数据！'}
+                ,response: {
+                    statusCode: 1 
+                  } 
+                , parseData: function (res) {
+                    return {
+                        "code": res.code,
+                        "msg": res.msg,
+                        "count": res.data.count,
+                        "data": res.data.lists,
+                    };
+                }
+                ,done: function(res, curr, count){
+                    // 解决操作栏因为内容过多换行问题
+                    $(".layui-table-main tr").each(function (index, val) {
+                        $($(".layui-table-fixed-l .layui-table-body tbody tr")[index]).height($(val).height());
+                        $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height());
+                    });
+                }
+            });
+        }
+
+        //监听工具条
+        table.on('tool(withdrawal-lists)', function (obj) {
+            var id = obj.data.id;
+            if(obj.event === 'detail'){
+                layer.open({
+                    type: 2
+                    ,title: '订单详情'
+                    ,content: '{:url("withdrawal.withdrawal/detail")}?id='+id
+                    ,area: ['90%', '90%']
+                    ,yes: function(index, layero){
+                        table.reload('withdrawal-lists');
+                    }
+                })
+            }
+        });
+        $('.day').click(function(){
+            $('.day').removeClass('layui-btn-normal');
+            $('.day').removeClass('layui-btn-primary');
+            $('.day').addClass('layui-btn-primary');
+            $(this).removeClass('layui-btn-primary');
+            $(this).addClass('layui-btn-normal');
+            var day = $(this).attr('day');
+            switch (day) {
+                case '-1':
+                    $('#start_time').val('{$yesterday[0]}');
+                    $('#end_time').val('{$yesterday[1]}');
+                    break;
+                case '1':
+                    $('#start_time').val('{$today[0]}');
+                    $('#end_time').val('{$today[1]}');
+                    break;
+                case '7':
+                    $('#start_time').val('{$days_ago7[0]}');
+                    $('#end_time').val('{$days_ago7[1]}');
+                    break;
+                case '30':
+                    $('#start_time').val('{$days_ago30[0]}');
+                    $('#end_time').val('{$days_ago30[1]}');
+                    break;
+            }
+        });
+    });
+</script>

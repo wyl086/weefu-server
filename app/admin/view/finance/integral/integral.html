@@ -1,0 +1,195 @@
+
+{layout name="layout1" /}
+<style>
+    .layui-table-cell {
+        height:auto;
+    }
+    .goods-content>div:not(:last-of-type) {
+        brecharge-bottom:1px solid #DCDCDC;
+    }
+    .goods-data::after{
+        display: block;
+        content: '';
+        clear: both;
+    }
+    .goods_name_hide{
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow: ellipsis;
+    }
+    .operation-btn {
+        margin: 5px;
+    }
+    .table-operate{
+        text-align: left;
+        font-size:14px;
+        padding:0 5px;
+        height:auto;
+        overflow:visible;
+        text-overflow:inherit;
+        white-space:normal;
+        word-break: break-all;
+    }
+</style>
+
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-tab layui-tab-card" lay-filter="tab-all">
+
+            <div class="layui-card-body layui-form">
+                <div class="layui-form-item">
+                    <div class="layui-row">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户信息:</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="user_info" id="user_info" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">变动时间:</label>
+                            <div class="layui-input-inline">
+                                <div class="layui-input-inline">
+                                    <input type="text" name="start_time" class="layui-input" id="start_time"
+                                           placeholder="" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="layui-input-inline" style="margin-right: 5px;width: 20px;">
+                                <label class="layui-form-mid">至</label>
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" name="end_time" class="layui-input" id="end_time"
+                                       placeholder="" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-sm layuiadmin-btn-ad {$view_theme_color}" lay-submit
+                                    lay-filter="recharge-search">查询
+                            </button>
+                            <button class="layui-btn layui-btn-sm layuiadmin-btn-ad layui-btn-primary " lay-submit
+                                    lay-filter="recharge-clear-search">重置
+                            </button>
+                            <button class="layui-btn layui-btn-sm layuiadmin-btn-ad layui-btn-primary " lay-submit
+                                    lay-filter="data-export">导出
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-tab-item layui-show">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <table id="recharge-lists" lay-filter="recharge-lists"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+      layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form'], function(){
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table
+            , element = layui.element
+            , laydate = layui.laydate;
+
+        //监听搜索
+        form.on('submit(recharge-search)', function (data) {
+            var field = data.field;
+            //执行重载
+            table.reload('recharge-lists', {
+                where: field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+        //清空查询
+        form.on('submit(recharge-clear-search)', function () {
+            $('#user_info').val('');
+            $('#start_time').val('');
+            $('#end_time').val('');
+            //刷新列表
+            table.reload('recharge-lists', {
+                where: [],
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+          // 导出
+          form.on('submit(data-export)', function (data) {
+              var field = data.field;
+              like.ajax({
+                  url: '{:url("finance.integral/export")}'
+                  , data: field
+                  , type: 'get'
+                  , success: function (res) {
+                      if (res.code == 1) {
+                          window.location.href = res.data.url;
+                      }
+                  }
+              });
+          });
+
+
+          //日期时间范围
+        laydate.render({
+            elem: '#start_time'
+            , type: 'datetime'
+            ,theme: '#1E9FFF'
+        });
+
+        laydate.render({
+            elem: '#end_time'
+            , type: 'datetime'
+            ,theme: '#1E9FFF'
+        });
+
+
+        //获取列表
+        getList('');
+
+        function getList() {
+            table.render({
+                elem: '#recharge-lists'
+                , url: '{:url("finance.integral/integral")}'
+                , cols: [[
+                      {field: 'user_sn', title: '用户编号', align: 'center',width:220}
+                    , {field: 'nickname', title: '会员信息', align: 'center',width:220}
+                    , {field: 'source_type', title: '事件', align: 'center',width:180}
+                    , {field: 'change_amount', title: '积分变动', align: 'center',width:180}
+                    , {field: 'left_amount', title: '剩余积分', align: 'center',width:120}
+                    , {field: 'remark', title: '备注', align: 'center',width:120}
+                    , {field: 'create_time', title: '变动时间', align: 'center',width:220}
+                ]]
+                , page: true
+                , text: {none: '暂无数据！'}
+                ,response: {
+                    statusCode: 1 
+                  } 
+                , parseData: function (res) {
+                    return {
+                        "code": res.code,
+                        "msg": res.msg,
+                        "count": res.data.count,
+                        "data": res.data.lists,
+                    };
+                }
+                ,done: function(res, curr, count){
+                    // 解决操作栏因为内容过多换行问题
+                    $(".layui-table-main tr").each(function (index, val) {
+                        $($(".layui-table-fixed-l .layui-table-body tbody tr")[index]).height($(val).height());
+                        $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height());
+                    });
+                }
+            });
+        }
+    });
+</script>

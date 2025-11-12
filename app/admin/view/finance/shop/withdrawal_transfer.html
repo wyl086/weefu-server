@@ -1,0 +1,43 @@
+{layout name="layout2" /}
+
+<div class="layui-card layui-form" style="box-shadow:none;">
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color:red;">*</span>转账状态：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="is_examine" value="1" title="转账成功" checked>
+                <input type="radio" name="is_examine" value="0" title="转账失败">
+                <div class="layui-form-mid layui-word-aux">转账失败后，提现金额会全部退回商家账户</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">转账凭证：</label>
+            <div class="layui-input-block">
+                <div class="like-upload-image" switch-tab="0" lay-verType="tips">
+                    <div class="upload-image-elem"><a class="add-upload-image"> + 添加图片</a></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">转账说明：</label>
+            <div class="layui-input-block">
+                <textarea name="transfer_content" class="layui-textarea">{$detail.withdrawal.transfer_content ?? ''}</textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>
+
+<script>
+    like.delUpload();
+    $(document).on("click", ".add-upload-image", function () {
+        like.imageUpload({
+            limit: 1,
+            field: "image",
+            that: $(this)
+        });
+    });
+</script>

@@ -1,0 +1,391 @@
+{layout name="layout1" /}
+<style> .layui-table-cell { height: auto; } </style>
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*设置参与砍价活动的商品。</p>
+                        <p>*生效的砍价活动商品需要满足两个条件，一是开启活动，二是在活动有效期内。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索模块 -->
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="shop_name" class="layui-form-label">商家名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="shop_name" name="shop_name" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="goods_name" class="layui-form-label">商品名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="goods_name" name="goods_name" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="status" class="layui-form-label">砍价状态：</label>
+                    <div class="layui-input-inline">
+                        <select name="status" id="status" >
+                            <option value="">全部</option>
+                            <option value="1">已开启</option>
+                            <option value="0">已关闭</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layui-btn-sm  layuiadmin-btn-article {$view_theme_color}" lay-submit lay-filter="list-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                    <button class="layui-btn layui-btn-sm layui-btn-primary layuiadmin-btn-article }" lay-submit lay-filter="list-clear-search">重置</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据表格 -->
+        <div class="layui-card-body">
+            <div class="layui-tab" lay-filter="lists-tab">
+                <ul class="layui-tab-title">
+                    <ul class="layui-tab-title">
+                    <li class="layui-this" data-type="">全部({$num.all})</li>
+                    <li data-type="0">待审核商品({$num.unaudit})</li>
+                    <li data-type="1">审核通过商品({$num.audit_pass})</li>
+                    <li data-type="2">审核拒绝商品({$num.audit_refund})</li>
+                </ul>
+            </div>
+            <table id="table-lists" lay-filter="table-lists"></table>
+            <!--商家信息-->
+            <script type="text/html" id="table-shop">
+                <div>
+                    <img src="{{d.shop.logo}}" alt="图片" style="width:60px;height:60px;float:left;" class="image-show">
+                    <div style="margin-left:5px; width:150px;height:60px;white-space:normal;float: left;">{{d.shop.name}}</div>
+                </div>
+            </script>
+            <!--商品信息-->
+            <script type="text/html" id="table-goods">
+                <div>
+                    <img src="{{d.goods.image}}" alt="图片" style="width:60px;height:60px;float:left;" class="image-show">
+                    <div style="margin-left:5px; width:150px;height:60px;white-space:normal;float: left;">{{d.goods.name}}</div>
+                </div>
+            </script>
+            <script type="text/html" id="table-cost_price">
+                ￥{{d.goods.min_price}} ~ ￥{{d.goods.max_price}}
+            </script>
+            <script type="text/html" id="table-floor_price">
+                ￥{{d.bargain_min_price}} ~ ￥{{d.bargain_max_price}}
+            </script>
+            <script type="text/html" id="table-activity_time">
+                {{d.activity_start_time}} ~ {{d.activity_end_time}}
+            </script>
+            <script type="text/html" id="table-status">
+                {{#  if(d.status){ }}
+                进行中
+                {{#  } }}
+                {{#  if(!d.status){ }}
+                已停止
+                {{#  } }}
+            </script>
+            <script type="text/html" id="operation">
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="detail"><i class="layui-icon"></i>详情</a>
+                {{# if(0 == d.audit_status){ }}
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="audit"><i class="layui-icon"></i>审核</a>
+                {{# } }}
+                {{# if(1 == d.audit_status){ }}
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="lists">砍价记录</a>
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="violation"><i class="layui-icon"></i>违规重审</a>
+                {{# } }}
+
+            </script>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.config({
+        base: '/static/plug/layui-admin/dist/layuiadmin/'
+    }).extend({
+        index: 'lib/index'
+    }).use(['index', 'table', 'like'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,table = layui.table
+            ,like = layui.like
+            ,element = layui.element;
+
+        //监听搜索
+        form.on('submit(list-search)', function(data){
+            var field = data.field;
+            //执行重载
+            table.reload('table-lists', {
+                where: field
+            });
+        });
+        //清空查询
+        form.on('submit(list-clear-search)', function () {
+            $('#status').val('');
+            $('#goods_name').val('');
+            $('#shop_name').val('');
+            form.render('select');
+            //刷新列表
+            table.reload('table-lists', {
+                where: [],
+                page: {
+                    curr: 1
+                },
+            });
+        });
+        //获取列表
+        getList('');
+        //切换列表
+        element.on('tab(lists-tab)', function (data) {
+            $('#shop_name').val('');
+            $('#goods_name').val('');
+            $('#status').val('');
+            form.render('select');
+            var type = $(this).attr('data-type');
+            getList(type);
+        });
+
+        // 渲染数据表格
+        function getList(type) {
+            table.render({
+                elem: '#table-lists'
+                ,url: '{:url("bargain.Bargain/activity")}?type=' + type
+                ,cols: [[
+                    {field: 'id', title: 'ID',width:60, align:"center"}
+                    ,{field: 'shop', title: '商家',width:160, templet: '#table-shop'}
+                    ,{field: 'goods', title: '商品',width:160, templet: '#table-goods'}
+                    ,{field: 'cost_price', title: '原价',width:140, align: 'center', templet: '#table-cost_price'}
+                    ,{field: 'floor_price', title: '底价',width:140, align: 'center', templet: '#table-floor_price'}
+                    ,{field: 'launch_people_number_count', title: '发起砍价人数', width:120, align: 'center'}
+                    ,{field: 'success_knife_people_number_count', title: '砍价成功人数', width:120, align: 'center'}
+                    ,{field: 'activity_time', title: '活动有效期', width:320, align: 'center', templet: '#table-activity_time'}
+                    ,{field: 'status', title: '状态', width:100, align: 'center', templet: '#table-status'}
+                    ,{fixed: 'right', title: '操作', width:300, align: 'center', toolbar: '#operation'}
+                ]]
+                ,page:true
+                ,text: {none: '暂无数据！'}
+                ,response: {
+                    statusCode: 1
+                }
+                ,parseData: function(res){
+                    return {
+                        "code":res.code,
+                        "msg":res.msg,
+                        "count": res.data.count,
+                        "data": res.data.lists
+                    };
+                }
+                ,done: function(){
+                    $(".layui-table-main tr").each(function (index, val) {
+                        $($(".layui-table-fixed-l .layui-table-body tbody tr")[index]).height($(val).height());
+                        $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height());
+                    });
+                }
+            });
+        }
+
+        // 事件
+        var active = {
+            lists: function (obj) {
+                layer.open({
+                    type: 2
+                    ,title: '砍价记录'
+                    ,content: '{:url("bargain.Bargain/launch")}?bargain_id='+obj.data.id
+                    ,area: ['90%','90%']
+                });
+            },
+            audit:function (obj) {
+                var id = obj.data.id;
+                console.log(obj.data)
+                layer.open({
+                    type: 2
+                    ,title: '审核'
+                    ,content: '{:url("bargain.bargain/audit")}?id='+id
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'addSubmit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("bargain.bargain/audit")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1) {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        });
+                                        layer.close(index);
+                                        table.reload('table-lists');
+                                    }
+                                }
+                            });
+                        });
+
+                        submit.trigger('click');
+                    }
+                })
+            },
+            violation: function (obj) {
+                var id = obj.data.id;
+                console.log(obj.data)
+                layer.open({
+                    type: 2
+                    ,title: '违规重审'
+                    ,content: '{:url("bargain.bargain/violation")}?id='+id
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'addSubmit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("bargain.bargain/violation")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1) {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        });
+                                        layer.close(index);
+                                        table.reload('table-lists');
+                                    }
+                                }
+                            });
+                        });
+
+                        submit.trigger('click');
+                    }
+                })
+            },
+            detail: function (obj) {
+                var id = obj.data.id;
+                layer.open({
+                    type: 2
+                    ,title: '砍价活动商品详情'
+                    ,content: '{:url("bargain.bargain/bargain_detail")}?id='+id
+                    ,area: ['90%', '90%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'edit-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        submit.trigger('click');
+                    }
+                })
+            },
+            // 切换状态
+            switchStatus: function (obj) {
+                if (obj.status) {
+                    var endTime = Date.parse(new Date(obj.endTime)) / 1000;
+                    var curTime = Date.parse(new Date()) / 1000;
+                    if (endTime <= curTime) {
+                        layui.layer.msg('砍价时间已过，请重新修改活动时间后再开启！', {time: 1000});
+                        table.reload('table-lists', {where: []});
+                        return false;
+                    }
+                    like.ajax({
+                        url:'{:url("bargain.Bargain/switchStatus")}',
+                        data:obj,
+                        type:"post",
+                        success:function(res) {
+                            if(res.code === 1) {
+                                layui.layer.msg(res.msg, { offset:'15px', icon:1, time:1000 });
+                                table.reload('table-lists', { where: [] });
+                            }
+                        }
+                    });
+                } else {
+                    layer.confirm('您确定要关闭该砍价活动吗？', {
+                        btn: ['确定','取消']
+                    }, function(){
+                        like.ajax({
+                            url:'{:url("bargain.Bargain/switchStatus")}',
+                            data:obj,
+                            type:"post",
+                            success:function(res) {
+                                if(res.code === 1) {
+                                    layui.layer.msg(res.msg, { offset:'15px', icon:1, time:1000 });
+                                    table.reload('table-lists', { where: [] });
+                                }
+                            }
+                        });
+                    }, function(){
+                        table.reload('table-lists', {where: []});
+                    });
+                }
+            }
+        };
+
+        // 监听表格右侧工具条
+        table.on('tool(table-lists)', function(obj){
+            var type = obj.event;
+            active[type] ? active[type].call(this, obj) : '';
+        });
+
+        // 切换状态
+        form.on('switch(switch-status)',function (obj) {
+            var id = obj.elem.attributes['data-id'].nodeValue;
+            var fields = obj.elem.attributes['data-field'].nodeValue;
+            var status = this.checked ? 1 : 0;
+            var endTime = obj.elem.attributes['data-end-time'].nodeValue;
+
+            var data = {"id":id, "field":fields, "status":status, endTime:endTime};
+            active['switchStatus'] ? active['switchStatus'].call(this, data) : '';
+        });
+
+        // 绑定点击按钮事件
+        $('.layui-btn.layuiadmin-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        //监听搜索
+        form.on('submit(search)', function(data){
+            var field = data.field;
+            table.reload('table-lists', {
+                where: field,
+                page: { curr: 1 }
+            });
+        });
+
+        // 监听重置搜素
+        form.on('submit(clear-search)', function(){
+            $('#shop_name').val('');
+            $('#goods_name').val('');
+            $('#status').val('');
+            form.render('select');
+            table.reload('table-lists', { where: [] });
+        });
+
+        // 图片放大
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src);
+        });
+    });
+</script>

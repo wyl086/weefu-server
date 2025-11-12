@@ -1,0 +1,328 @@
+{layout name="layout1" /}
+<style>
+    .seckill-time{
+        display: none;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*商家提交需要参与限时秒杀的商品，平台审核通过之后即可参与活动</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--        搜索模块-->
+        <div class="layui-form" style="margin-bottom: 15px;">
+            <div class="layui-form-item seach">
+                <div class="layui-inline">
+                    <label class="layui-form-label">商家名称:</label>
+                    <div class="layui-input-inline" style="width: 200px;">
+                        <input type="text" id="shop_name" name="shop_name" placeholder="请输入商家名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">商品名称:</label>
+                    <div class="layui-input-inline" style="width: 200px;">
+                        <input type="text" id="name" name="name" placeholder="请输入商品名称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">参与日期:</label>
+                    <div class="layui-input-inline" style="width: 200px;">
+                        <input type="text" id="start_end" disabled name="start_end" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">秒杀时段:</label>
+                    <div class="layui-input-inline">
+                        <select name="seckill_id" id="seckill_id">
+                            <option value="">全部</option>
+                            {foreach $seckill_time as $item}
+                            <option value="{$item['id']}">{$item['time']}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <button class="layui-btn layui-btn-sm layuiadmin-btn-seckill {$view_theme_color}" lay-submit lay-filter="seckill-search">查询</button>
+                    <button class="layui-btn layui-btn-sm layuiadmin-btn-seckill layui-btn-primary" lay-submit lay-filter="seckill-clear-search">清空查询</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-tab layui-tab-card" lay-filter="tab-all">
+            <ul class="layui-tab-title">
+                <li data-type="seckill" class="layui-this">审核通过(秒杀中{$statistics.seckillCount})</li>
+                <li data-type="un_seckill" >审核通过(非秒杀中{$statistics.unSeckillCount})</li>
+                <li data-type="wait_review" >待审核商品({$statistics.waitReview})</li>
+                <li data-type="refuse_review" >审核拒绝商品({$statistics.refuseReview})</li>
+            </ul>
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <table id="seckill-lists" lay-filter="seckill-lists"></table>
+                    <script type="text/html" id="shop-info">
+                        <img src="{{d.shop_logo}}" style="height:80px;width: 80px;margin-right: 10px;" class="image-show">
+                        <div class="layui-input-inline" style="text-align:left;width: 240px">
+                            <p>商家编号：{{d.shop_id}}</p>
+                            <p style="width: 180px;text-overflow:ellipsis;overflow: hidden">商家名称：{{d.shop_name}}</p>
+                            <p>商家类型：{{d.shop_type_desc}}</p>
+                        </div>
+                    </script>
+                    <script type="text/html" id="goods-info">
+                        <img src="{{d.image}}" style="height:60px;width: 60px" class="image-show"> {{d.name}}
+                    </script>
+                    <script type="text/html" id="goods-operation">
+                        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit_goods">详情</a>
+                        {{# if( (d.review_status == 1) ){ }}
+                        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="re_audit">违规重审</a>
+                        {{# } }}
+                        {{# if( (d.review_status == 0) ){ }}
+                        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="audit">审核</a>
+                        {{# } }}
+                    </script>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<style>
+    .layui-table-cell {
+        height: auto;
+    }
+</style>
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['table','form','laydate'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,laydate = layui.laydate
+            ,table = layui.table
+            ,element = layui.element;
+
+        laydate.render({
+            elem: '#start_end' //指定元素
+            ,range: '~'
+        });
+
+        //监听搜索
+        form.on('submit(seckill-search)', function(data){
+            var field = data.field;
+            //执行重载
+            table.reload('seckill-lists', {
+                where: field,
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+        });
+
+        $('.layui-btn.layuiadmin-btn-seckill').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        //图片放大
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src,600);
+        });
+
+        //清空查询
+        form.on('submit(seckill-clear-search)', function(){
+            $('#name').val('');  //清空输入框
+            $('#seckill_id').val('');  //清空输入框
+            form.render('select');
+            //刷新列表
+            table.reload('seckill-lists', {
+                where: [],
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+        });
+        //获取列表
+        getList('seckill')
+        //切换列表
+        element.on('tab(tab-all)', function (data) {
+            var type = $(this).attr('data-type');
+            getList(type)
+        });
+
+        //监听工具条
+        table.on('tool(seckill-lists)', function(obj){
+            var id = obj.data.id;
+            if(obj.event === 're_audit'){
+                var goods_id = obj.data.goods_id;
+                var goods_name = obj.data.name;
+                var seckill_id = obj.data.seckill_id;
+                var start_date = obj.data.start_date;
+                var end_date = obj.data.end_date;
+                layer.open({
+                    type: 2
+                    ,title: '违规重审'
+                    ,content: '{:url("seckill.seckill_goods/reAudit")}?goods_id='+ goods_id + '&seckill_id=' + seckill_id + '&start_date=' + start_date + '&end_date=' + end_date
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '返回']
+                    ,scrollbar: false
+                    ,maxmin: true
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'reaudit-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("seckill.seckill_goods/reAudit")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1)
+                                    {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        },function () {
+                                            window.location.href = window.location.href;
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                        layer.close(index);
+                    }
+                    ,cancel: function(index, layero){
+                        layer.close(index);
+                    }
+                });
+
+            }
+            if(obj.event === 'audit') {
+                var goods_id = obj.data.goods_id;
+                var seckill_id = obj.data.seckill_id;
+                var start_date = obj.data.start_date;
+                var end_date = obj.data.end_date;
+                layer.open({
+                    type: 2
+                    ,title: '审核'
+                    ,content: '{:url("seckill.seckill_goods/audit")}?goods_id='+ goods_id + '&seckill_id=' + seckill_id + '&start_date=' + start_date + '&end_date=' + end_date
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '返回']
+                    ,scrollbar: false
+                    ,maxmin: true
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'audit-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("seckill.seckill_goods/audit")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1)
+                                    {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        },function () {
+                                            window.location.href = window.location.href;
+                                            layer.close(index);
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                    ,cancel: function(index, layero){
+                        layer.close(index);
+                    }
+                });
+            }
+            if(obj.event === 'edit_goods'){
+                var id = obj.data.goods_id;
+                var seckill_id = obj.data.seckill_id;
+                var start_date = obj.data.start_date;
+                var end_date = obj.data.end_date;
+                var index = layer.open({
+                    type: 2
+                    , title: '详情'
+                    , content: '{:url("seckill.seckill_goods/editGoods")}?id=' + id+'&seckill_id='+seckill_id+'&start_date=' + start_date + '&end_date=' + end_date
+                    , area: ['90%', '90%']
+                    , btn: ['关闭']
+                    , maxmin: true
+                    , yes: function (index, layero) {
+                        layer.close(index); //关闭弹层
+                    }
+                });
+            }
+
+        });
+
+        function getList(type) {
+            layui.define(['table', 'form'], function(exports){
+                var $ = layui.$
+                    ,table = layui.table
+                    ,form = layui.form
+                    ,url = '{:url("seckill.seckill_goods/goodsLists")}?type=' + type;
+
+                var cols  = [
+                    {title: '商家',width:320,toolbar: '#shop-info'},
+                    {title: '商品',width:320,toolbar: '#goods-info'}
+                    ,{field: 'goods_price',width:160, title: '商品价格'}
+                    ,{field: 'seckill_price',width:160, title:'秒杀价格'}
+                    ,{field: 'date',width:220, title:'参与日期'}
+                    ,{field: 'time',width:180, align: 'center',  title:'秒杀时段'}
+                    ,{field: 'review_status_desc',width:220, title:'审核状态'}
+                    ,{field: 'review_desc',width:220, title:'审核说明'}
+                    ,{fixed: 'right', title: '操作',width:280, align: 'center',  toolbar: '#goods-operation'}
+                ];
+
+                table.render({
+                    id:'seckill-lists'
+                    ,elem: '#seckill-lists'
+                    ,url: url  //模拟接口
+                    ,cols: [cols]
+                    ,page:true
+                    ,text: {none: '暂无数据！'}
+                    ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
+                        return {
+                            "code":res.code,
+                            "msg":res.msg,
+                            "count": res.data.count, //解析数据长度
+                            "data": res.data.lists, //解析数据列表
+                        };
+                    },
+                    response: {
+                        statusCode: 1
+                    }
+                    ,done: function(res, curr, count){
+                        // 解决操作栏因为内容过多换行问题
+                        $(".layui-table-main tr").each(function (index, val) {
+                            $($(".layui-table-fixed-l .layui-table-body tbody tr")[index]).height($(val).height());
+                            $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height());
+                        });
+                    }
+                });
+
+            });
+        }
+
+    });
+</script>

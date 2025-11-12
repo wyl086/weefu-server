@@ -1,0 +1,137 @@
+<div class="layui-form" lay-filter="">
+    <input type="hidden" name="type" value="base">
+    <!--商城名称-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">商城名称：</label>
+        <div class="layui-input-block">
+            <div class="layui-col-md4">
+                <input type="text" name="name" lay-verify="required" lay-verType="tips" autocomplete="off"
+                       value="{$config.name}" class="layui-input">
+                <div class=" layui-form-mid layui-word-aux">管理后台登录页表单标题</div>
+            </div>
+        </div>
+    </div>
+
+    <!--商家后台登录页logo-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">商城浏览器图标：</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if !empty($config.web_favicon)}
+                <div class="upload-image-div">
+                    <img src="{$config.file_url}{$config.web_favicon}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                    <input name="web_favicon" type="hidden" value="{$config.web_favicon}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image web_favicon"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image web_favicon"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">商城在浏览器标签页显示的图标，favicon.ico文件</label>
+        </div>
+    </div>
+
+    <!--商城logo-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">商城logo：</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if !empty($config.client_login_logo)}
+                <div class="upload-image-div">
+                    <img src="{$config.file_url}{$config.client_login_logo}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                    <input name="client_login_logo" type="hidden" value="{$config.client_login_logo}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image client_login_logo"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image client_login_logo"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">移动端登录页logo，建议尺寸：宽172px*高48px。jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+    <!--PC端登录封面-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">PC登录封面：</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if !empty($config.pc_client_login_logo)}
+                <div class="upload-image-div">
+                    <img src="{$config.file_url}{$config.pc_client_login_logo}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                    <input name="pc_client_login_logo" type="hidden" value="{$config.pc_client_login_logo}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image pc_client_login_logo"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image pc_client_login_logo"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">PC端登录封面，建议尺寸：宽750px*高440px。jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+    <!--会员默认头像-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">会员默认头像：</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if !empty($config.user_image)}
+                <div class="upload-image-div">
+                    <img src="{$config.file_url}{$config.user_image}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                    <input name="user_image" type="hidden" value="{$config.user_image}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image user_image"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image user_image"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">商城会员默认头像，建议尺寸：宽200px*高200px。jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+    <!--商品默认封面图-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">商品默认封面图：</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if !empty($config.user_image)}
+                <div class="upload-image-div">
+                    <img src="{$config.file_url}{$config.goods_image}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                    <input name="goods_image" type="hidden" value="{$config.goods_image}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image goods_image"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image goods_image"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">商城商品默认封面图，建议尺寸：宽400px*高400px。jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm {$view_theme_color}" lay-submit lay-filter="setWebsite">确认
+            </button>
+        </div>
+    </div>
+</div>
+

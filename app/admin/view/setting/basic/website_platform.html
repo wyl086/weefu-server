@@ -1,0 +1,116 @@
+<div class="layui-form" lay-filter="">
+    <input type="hidden" name="type" value="platform">
+    <!--平台后台登录页logo-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">平台后台登录页logo：</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if !empty($config.platform_login_logo)}
+                <div class="upload-image-div">
+                    <img src="{$config.file_url}{$config.platform_login_logo}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                    <input name="platform_login_logo" type="hidden" value="{$config.platform_login_logo}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image platform_login_logo"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image platform_login_logo"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">平台管理后台登录页左上角logo，建议尺寸：宽152px*高42px。jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+    <!--平台后台登录页主图-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">平台后台登录页主图：</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if !empty($config.platform_login_image)}
+                <div class="upload-image-div">
+                    <img src="{$config.file_url}{$config.platform_login_image}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                    <input name="platform_login_image" type="hidden" value="{$config.platform_login_image}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image platform_login_image"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image platform_login_image"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">平台管理后台登录页主图，建议尺寸：宽500px*高500px。jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+    <!--平台后台登录页标题-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">平台后台登录页标题：</label>
+        <div class="layui-input-block">
+            <div class="layui-col-md4">
+                <input type="text" name="platform_login_title" lay-verify="required" lay-verType="tips" autocomplete="off"
+                       value="{$config.platform_login_title | default = ''}" class="layui-input">
+                <div class=" layui-form-mid layui-word-aux">平台管理后台登录页表单的标题</div>
+            </div>
+        </div>
+    </div>
+
+    <!--平台后台logo-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">平台后台logo：</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if !empty($config.platform_admin_logo)}
+                <div class="upload-image-div">
+                    <img src="{$config.file_url}{$config.platform_admin_logo}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                    <input name="platform_admin_logo" type="hidden" value="{$config.platform_admin_logo}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image platform_admin_logo"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image platform_admin_logo"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">平台管理后台登录之后的左上角logo。建议尺寸：宽152px*高42px。jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+
+    <!--平台联系人-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">平台联系人：</label>
+        <div class="layui-input-block">
+            <div class="layui-col-md4">
+                <input type="text" name="platform_contact" lay-verify="required" lay-verType="tips" autocomplete="off"
+                       value="{$config.platform_contact | default =''}" class="layui-input">
+                <div class=" layui-form-mid layui-word-aux">平台联系人</div>
+            </div>
+        </div>
+    </div>
+
+    <!--平台联系人手机-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">平台联系人手机：</label>
+        <div class="layui-input-block">
+            <div class="layui-col-md4">
+                <input type="text" name="platform_mobile" lay-verify="required" lay-verType="tips" autocomplete="off"
+                       value="{$config.platform_mobile | default = ''}" class="layui-input">
+                <div class=" layui-form-mid layui-word-aux">平台联系人手机，平台通知会短信发送至联系人手机</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm {$view_theme_color}" lay-submit lay-filter="setPlatform">确认
+            </button>
+        </div>
+    </div>
+</div>
+

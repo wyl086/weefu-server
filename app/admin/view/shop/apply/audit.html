@@ -1,0 +1,25 @@
+{layout name="layout2" /}
+
+<div class="layui-card layui-form" style="box-shadow:none;">
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color:red;">*</span>审核结果</label>
+            <div class="layui-input-block">
+                <input type="radio" name="audit_status" value="2" title="审核通过">
+                <input type="radio" name="audit_status" value="3" title="审核拒绝" checked>
+            </div>
+            <div class="layui-form-mid layui-word-aux">审核通过后会自动创建商家账号</div>
+        </div>
+
+        <div class="layui-form-item layui-form-text">
+            <label for="audit_explain" class="layui-form-label">审核说明</label>
+            <div class="layui-input-block">
+                <textarea name="audit_explain" id="audit_explain" placeholder="请输入内容" class="layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>

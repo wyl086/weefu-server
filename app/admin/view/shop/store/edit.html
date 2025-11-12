@@ -1,0 +1,352 @@
+{layout name="layout2" /}
+<style>
+    .layui-form-item .layui-form-label { width: 95px; }
+    .layui-form-item .layui-input-inline { width: 240px; }
+    .layui-form-item .map-container{ width: 600px; height: 400px; margin-left: 100px; margin-top: 20px; }
+</style>
+
+<div class="layui-card layui-form" style="box-shadow:none;">
+    <div class="layui-tab layui-tab-card" lay-filter="like-tabs">
+        <ul class="layui-tab-title">
+            <li lay-id="1" class="layui-this">基础设置</li>
+            <li lay-id="2">经营设置</li>
+            <li lay-id="3">资质信息</li>
+        </ul>
+        <div class="layui-tab-content">
+            <!-- 1、基础设置 -->
+            <div class="layui-tab-item layui-show">
+                <div class="layui-form-item">
+                    <label for="name" class="layui-form-label"><span style="color:red;">*</span>商家名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" id="name" value="{$detail.name}" lay-verType="tips" lay-verify="name"
+                               switch-tab="0" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red;">*</span>商家类型：</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="type" value="1" title="官方自营" {if $detail.type==1}checked{/if}>
+                        <input type="radio" name="type" value="2" title="入驻商家" {if $detail.type==2}checked{/if}>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red;">*</span>配送方式：</label>
+                    <div class="layui-input-inline">
+                        <input type="checkbox" name="delivery_type[]" value="1" title="快递发货" disabled lay-skin="primary" checked disabled>
+                        <input type="checkbox" name="delivery_type[]" value="2" title="线下自提" disabled lay-skin="primary" {if in_array(2, $detail.delivery_type)}checked{/if}>
+                        <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">实物商品的配送方式【快递发货】默认为必选，虚拟商品默认为虚拟发货，不受配送方式限制</div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="cid" class="layui-form-label"><span style="color:red;">*</span>主营类目：</label>
+                    <div class="layui-input-inline">
+                        <select name="cid" id="cid" lay-verType="tips" lay-verify="cid" switch-tab="0">
+                            <option value=""></option>
+                            {volist name="category" id="vo"}
+                                <option value="{$vo.id}" {if $vo.id == $detail.cid}selected{/if}>{$vo.name}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="nickname" class="layui-form-label"><span style="color:red;">*</span>联系人：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="nickname" id="nickname" value="{$detail.nickname}" lay-verType="tips" lay-verify="nickname"
+                               switch-tab="0" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="mobile" class="layui-form-label"><span style="color:red;">*</span>联系手机：</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="mobile" id="mobile" value="{$detail.mobile}" lay-verType="tips" lay-verify="phone"
+                               switch-tab="0" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red;">*</span>商家logo：</label>
+                    <div class="layui-input-inline">
+                        <div class="like-upload-image" switch-tab="0" lay-verType="tips" lay-verify="logo">
+                            {if $detail.logo}
+                                <div class="upload-image-div">
+                                    <img src="{$detail.logo}" alt="img">
+                                    <input type="hidden" name="logo" value="{$detail.logo}">
+                                    <div class="del-upload-btn">x</div>
+                                </div>
+                                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image add-logo-image"> + 添加图片</a></div>
+                            {else}
+                                <div class="upload-image-elem"><a class="add-upload-image add-logo-image"> + 添加图片</a></div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商家地址：</label>
+                    <div class="layui-input-block">
+                        <div class="layui-input-inline" style="width:120px;">
+                            <select name="province_id" id="province" lay-filter="province"></select>
+                        </div>
+                        <div class="layui-input-inline" style="width:120px;">
+                            <select name="city_id" id="city" lay-filter="city"></select>
+                        </div>
+                        <div class="layui-input-inline" style="width:120px;">
+                            <select name="district_id" id="district"></select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" name="address" id="address" value="{$detail.address}" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-input-inline">
+                            <button class="layui-btn layui-btn-normal" id="searchMap">搜索地图</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">地图定位：</label>
+                    <div class="layui-input-block">
+                        <div class="layui-inline" >
+                            <div class="layui-input-inline" style="width:120px;margin-right:5px;">
+                                <input type="text" name="longitude" value="{$detail.longitude}" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">经度</div>
+                        </div>
+                        <div class="layui-inline" style="margin-right:0;">
+                            <div class="layui-input-inline" style="width:120px;margin-right:5px;">
+                                <input type="text" name="latitude" value="{$detail.latitude}" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">纬度</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item ">
+                    <label class="layui-form-label"></label>
+                    <div class="layui-input-block" style="margin-left:10px;">
+                        <div class="map-container" id="map-container"></div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label for="keywords" class="layui-form-label">商家关键字：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="keywords" id="keywords" value="{$detail.keywords}" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="intro" class="layui-form-label">商家简介：</label>
+                    <div class="layui-input-inline">
+                        <textarea name="intro" id="intro" class="layui-textarea">{$detail.intro}</textarea>
+                    </div>
+                </div>
+            </div>
+            <!-- 2、经营设置 -->
+            <div class="layui-tab-item">
+                <div class="layui-form-item">
+                    <label for="expire_time" class="layui-form-label"><span style="color:red;">*</span>到期时间：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="expire_time" id="expire_time" value="{$detail.expire_time}"
+                               lay-verType="tips" lay-verify="expire_time"
+                               switch-tab="1" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="trade_service_fee" class="layui-form-label"><span style="color:red;">*</span>交易服务费：</label>
+                    <div class="layui-input-inline">
+                        <input type="number" min="0" max="100" name="trade_service_fee" id="trade_service_fee" value="{$detail.trade_service_fee}"
+                               onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                               lay-verType="tips" lay-verify="trade_service_fee"
+                               switch-tab="1" autocomplete="off" class="layui-input">
+                        <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">平台每笔交易收取的服务费用。请填写百分比，填0表示不收取服务费</div>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">%</div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="expire_time" class="layui-form-label"><span style="color:red;">*</span>产品审核：</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="is_product_audit" value="1" title="需要审核" {if $detail.is_product_audit}checked{/if}>
+                        <input type="radio" name="is_product_audit" value="0" title="无需审核" {if !$detail.is_product_audit}checked{/if}>
+                        <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商家发布商品时是否需要审核</div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="expire_time" class="layui-form-label"><span style="color:red;">*</span>营业状态：</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="is_run" value="1" title="营业中" {if $detail.is_run}checked{/if}>
+                        <input type="radio" name="is_run" value="0" title="暂停营业" {if !$detail.is_run}checked{/if}>
+                        <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商家暂停营业后，则不能对外提供服务</div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="expire_time" class="layui-form-label"><span style="color:red;">*</span>商家状态：</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="is_freeze" value="0" title="正常" {if !$detail.is_freeze}checked{/if}>
+                        <input type="radio" name="is_freeze" value="1" title="冻结" {if $detail.is_freeze}checked{/if}>
+                        <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商家冻结后，商家不能对外提供服务</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 3、资质信息 -->
+            <div class="layui-tab-item">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">营业执照：</label>
+                    <div class="layui-input-inline">
+                        <div class="like-upload-image">
+                            {if !empty($detail.business_license)}
+                            <div class="upload-image-div">
+                                <img src="{$detail.business_license}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                                <input name="business_license" type="hidden" value="{$detail.business_license}">
+                                <div class="del-upload-btn">x</div>
+                            </div>
+                            <div class="upload-image-elem" style="display:none;"><a class="add-upload-image add-business-license"> + 添加图片</a></div>
+                            {else}
+                            <div class="upload-image-elem"><a class="add-upload-image add-business-license"> + 添加图片</a></div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item" style="margin-bottom: 0px">
+                    <label class="layui-form-label">其他资质：</label>
+                    <div class="layui-input-block" id="qualifications_images">
+                        {if !empty($detail.other_qualifications)}
+                        {foreach $detail.other_qualifications as $val}
+                        <div class="upload-image-div">
+                            <img src="{$val}" alt="img" />
+                            <input type="hidden" name="other_qualifications[]" value="{$val}">
+                            <div class="del-upload-btn">x</div>
+                        </div>
+                        {/foreach}
+                        {/if}
+                        <div class="like-upload-image">
+                            <div class="upload-image-elem"><a class="add-upload-image add-other-qualifications" id="other_qualifications"> + 添加图片</a></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"></label>
+                    <span style="color: #a3a3a3;font-size: 9px">最多上传5张</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+    </div>
+</div>
+
+<script src="__PUBLIC__/static/common/js/area.js"></script>
+<script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key={$tx_map_key}"></script>
+<script>
+    layui.config({
+        base: "/static/lib/"
+    }).extend({
+        likeArea: "likeArea/likeArea",
+        txMap: "likeMap/txMap"
+    }).use(["form", "laydate", "likeArea", "txMap"], function(){
+        var $ = layui.$;
+        var form = layui.form;
+        var likeArea = layui.likeArea;
+        var laydate = layui.laydate;
+        var txMap = layui.txMap;
+
+        laydate.render({type:"datetime", elem:"#expire_time", trigger:"click",min:0});
+
+
+        like.delUpload();
+        $(document).on("click", ".add-logo-image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "logo",
+                that: $(this)
+            });
+        });
+
+        $(document).on("click", ".add-business-license", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "business_license",
+                that: $(this)
+            });
+        });
+        $(document).on("click", ".add-other-qualifications", function () {
+            like.imageUpload({
+                limit: 5,
+                field: "other_qualifications[]",
+                that: $(this)
+            });
+        })
+
+
+        form.verify({
+            name: function (value, item) {
+                if (!value) {
+                    switchTab($(item).attr("switch-tab"));
+                    return "请填写商家名称";
+                }
+            },
+            cid: function (value, item) {
+                if (!value) {
+                    switchTab($(item).attr("switch-tab"));
+                    return "请选择主营类目";
+                }
+            },
+            nickname: function (value, item) {
+                if (!value) {
+                    switchTab($(item).attr("switch-tab"));
+                    return "请填写联系人";
+                }
+            },
+            mobile: function (value, item) {
+                if (!value) {
+                    switchTab($(item).attr("switch-tab"));
+                    return "请填写联系手机号";
+                }
+            },
+            logo: function (value, item) {
+                if (!value) {
+                    if ($(item).find(".upload-image-div").length <= 0) {
+                        switchTab($(item).attr("switch-tab"))
+                        return "请上传商家logo";
+                    }
+                }
+            },
+            expire_time: function (value, item) {
+                if (!value) {
+                    switchTab($(item).attr("switch-tab"));
+                    return "请选择到期时间";
+                }
+            },
+            trade_service_fee: function (value, item) {
+                if (!value && parseInt(value) !== 0) {
+                    switchTab($(item).attr("switch-tab"));
+                    return "请填写交易服务费";
+                }
+            },
+            account: function (value, item) {
+                if (!value) {
+                    switchTab($(item).attr("switch-tab"));
+                    return "请填写商家账号";
+                }
+            }
+        });
+
+
+        function switchTab(number) {
+            $('.layui-tab-card .layui-tab-title li').removeClass('layui-this');
+            $('.layui-tab-content .layui-tab-item').removeClass('layui-show');
+            $('.layui-tab-card .layui-tab-title li').eq(number).addClass('layui-this');
+            $('.layui-tab-content .layui-tab-item').eq(number).addClass('layui-show');
+        }
+
+
+        likeArea.init(
+            "province", "city", "district", "province_id", "city_id", "district_id",
+            "{$detail.province_id}", "{$detail.city_id}", "{$detail.district_id}"
+        );
+        likeArea.init(
+            "refund_province", "refund_city", "refund_district", "refund_province_id", "refund_city_id", "refund_district_id",
+            "{$detail.refund_address.province_id ?? ''}", "{$detail.refund_address.city_id ?? ''}", "{$detail.refund_address.district_id ?? ''}"
+        );
+
+        txMap.init("{$detail.latitude ?? ''}", "{$detail.longitude ?? ''}");
+
+    })
+</script>

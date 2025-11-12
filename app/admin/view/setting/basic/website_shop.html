@@ -1,0 +1,139 @@
+<div class="layui-form" lay-filter="">
+
+    <input type="hidden" name="type" value="shop">
+
+    <!--商家后台登录页logo-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">商家后台登录页logo：</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if !empty($config.shop_login_logo)}
+                <div class="upload-image-div">
+                    <img src="{$config.file_url}{$config.shop_login_logo}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                    <input name="shop_login_logo" type="hidden" value="{$config.shop_login_logo}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image shop_login_logo"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image shop_login_logo"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">商家管理后台登录页左上角logo，建议尺寸：宽152px*高42px。jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+    <!--商家后台登录页主图-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">商家后台登录页主图：</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if !empty($config.shop_login_image)}
+                <div class="upload-image-div">
+                    <img src="{$config.file_url}{$config.shop_login_image}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                    <input name="shop_login_image" type="hidden" value="{$config.shop_login_image}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image shop_login_image"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image shop_login_image"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">商家管理后台登录页主图，建议尺寸：宽500px*高500px。jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+    <!--商家后台登录页标题-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">商家后台登录页标题：</label>
+        <div class="layui-input-block">
+            <div class="layui-col-md4">
+                <input type="text" name="shop_login_title" lay-verify="required" lay-verType="tips" autocomplete="off"
+                       value="{$config.shop_login_title | default =''}" class="layui-input">
+                <div class=" layui-form-mid layui-word-aux">商家管理后台登录页表单的标题</div>
+            </div>
+        </div>
+    </div>
+
+    <!--商家后台logo-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">商家后台logo：</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if !empty($config.shop_admin_logo)}
+                <div class="upload-image-div">
+                    <img src="{$config.file_url}{$config.shop_admin_logo}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                    <input name="shop_admin_logo" type="hidden" value="{$config.shop_admin_logo}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image shop_admin_logo"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image shop_admin_logo"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">商家管理后台登录之后的左上角logo。建议尺寸：宽152px*高42px。jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+    <!--商家默认logo-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">商家默认logo：</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if !empty($config.shop_default_logo)}
+                <div class="upload-image-div">
+                    <img src="{$config.file_url}{$config.shop_default_logo}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                    <input name="shop_default_logo" type="hidden" value="{$config.shop_default_logo}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image shop_default_logo"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image shop_default_logo"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">商家默认logo，建议尺寸：宽400px*高400px。jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+    <!--商家默认背景图-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">商家默认背景图：</label>
+        <div class="layui-input-inline">
+            <div class="like-upload-image">
+                {if !empty($config.shop_default_bg)}
+                <div class="upload-image-div">
+                    <img src="{$config.file_url}{$config.shop_default_bg}" alt="img" style="background-color:#EEEEEE;height: 80px;width:auto">
+                    <input name="shop_default_bg" type="hidden" value="{$config.shop_default_bg}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image shop_default_bg"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image shop_default_bg"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">商家默认背景图，建议尺寸：宽400px*高400px。jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-sm {$view_theme_color}" lay-submit lay-filter="setShop">确认
+            </button>
+        </div>
+    </div>
+</div>
+

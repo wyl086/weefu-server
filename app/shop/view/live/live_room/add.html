@@ -1,0 +1,163 @@
+{layout name="layout2" /}
+
+<style>
+    .layui-form-label {
+        width: 120px;
+    }
+    .layui-input-block{
+        margin-left:150px;
+    }
+</style>
+
+<div class="layui-card layui-form">
+    <div class="layui-card-body">
+        <!-- 直播间标题 -->
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label" ><font color="red">*</font>直播间标题：</label>
+            <div class="layui-input-inline">
+                <input type="text" id="name" name="name" placeholder="填写本次直播的标题"
+                       class="layui-input" autocomplete="off" lay-verType="tips" lay-verify="required">
+            </div>
+        </div>
+        <!--直播类型-->
+        <div class="layui-form-item">
+            <label class="layui-form-label" ><font color="red">*</font>直播类型：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="type" value="0" title="手机直播" checked>
+            </div>
+            <div class="layui-form-mid layui-word-aux">通过“小程序直播”开播</div>
+        </div>
+        <!-- 开播时间 -->
+        <div class="layui-form-item">
+            <label for="startTime" class="layui-form-label" ><font color="red">*</font>开播时间：</label>
+            <div class="layui-input-inline">
+                <input type="text" id="startTime" name="start_time" placeholder="填写直播开始时间"
+                       class="layui-input" autocomplete="off" lay-verType="tips" lay-verify="required" readonly>
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">填写直播开始时间，开播时间需要在当前时间的10分钟后并且不能在6个月后</div>
+            </div>
+        </div>
+        <!-- 结束时间 -->
+        <div class="layui-form-item">
+            <label for="endTime" class="layui-form-label" ><font color="red">*</font>结束时间：</label>
+            <div class="layui-input-inline">
+                <input type="text" id="endTime" name="end_time" class="layui-input" placeholder="直播结束时间"
+                       autocomplete="off" lay-verType="tips" lay-verify="required" readonly>
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">开播时间和结束时间间隔不得短于30分钟，不得超过24小时</div>
+            </div>
+        </div>
+        <!-- 主播昵称 -->
+        <div class="layui-form-item">
+            <label for="anchor_name" class="layui-form-label" ><font color="red">*</font>主播昵称：</label>
+            <div class="layui-input-inline">
+                <input type="text" id="anchor_name" name="anchor_name" placeholder="填写本次直播的主播昵称"
+                       class="layui-input" autocomplete="off" lay-verType="tips" lay-verify="required">
+            </div>
+        </div>
+        <!-- 主播微信账号 -->
+        <div class="layui-form-item">
+            <label for="anchor_wechat" class="layui-form-label" ><font color="red">*</font>主播微信号：</label>
+            <div class="layui-input-inline">
+                <input type="text" id="anchor_wechat" name="anchor_wechat" placeholder="填写本次直播的主播微信号"
+                       class="layui-input" autocomplete="off" lay-verType="tips" lay-verify="required">
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">每个直播间需要绑定主播微信号，用以核实主播身份，不会展示给观众。</div>
+            </div>
+        </div>
+
+        <!-- 分享卡片封面 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label"><font color="red">*</font>分享卡片封面：</label>
+            <div class="layui-input-block">
+                <div class="like-upload-image " switch-tab="0" lay-verType="tips">
+                    <div class="upload-image-elem"><a class="add-upload-image upload-share-img"> + 添加</a></div>
+                </div>
+                <div class="layui-form-mid layui-word-aux">用户在微信对话框内分享的直播间将以分享卡片的形式呈现。 建议尺寸：800像素 * 640像素，图片大小不得超过1M</div>
+            </div>
+        </div>
+        <!-- 直播卡片封面 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label"><font color="red">*</font>直播卡片封面：</label>
+            <div class="layui-input-block">
+                <div class="like-upload-image " switch-tab="0" lay-verType="tips">
+                    <div class="upload-image-elem"><a class="add-upload-image upload-feeds-img"> + 添加</a></div>
+                </div>
+                <div class="layui-form-mid layui-word-aux">图片建议大小为 800像素 * 800像素。图片大小不超过300KB。 图片内容遵循平台规范后更容易被推荐。</div>
+            </div>
+        </div>
+        <!-- 直播间背景墙 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label"><font color="red">*</font>直播间背景墙：</label>
+            <div class="layui-input-block">
+                <div class="like-upload-image " switch-tab="0" lay-verType="tips">
+                    <div class="upload-image-elem"><a class="add-upload-image upload-cover-img"> + 添加</a></div>
+                </div>
+                <div class="layui-form-mid layui-word-aux">直播间背景墙是每个直播间的默认背景。 建议尺寸：600像素 * 1300像素，图片大小不得超过3M</div>
+            </div>
+        </div>
+
+        <!-- 直播间功能-->
+        <div class="layui-form-item">
+            <label class="layui-form-label" >直播间功能：</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="close_like" lay-skin="primary" title="开启点赞" checked>
+                <input type="checkbox" name="close_goods" lay-skin="primary" title="开启货架" checked>
+                <input type="checkbox" name="close_comment" lay-skin="primary" title="开启评论" checked>
+                <input type="checkbox" name="close_replay" lay-skin="primary" title="开启回放" checked>
+                <input type="checkbox" name="close_share" lay-skin="primary" title="开启分享" checked>
+                <input type="checkbox" name="close_kf" lay-skin="primary" title="开启客服" checked>
+                <input type="checkbox" name="is_feeds_public" lay-skin="primary" title="开启官方收录">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['table', 'form', 'laydate', 'element'], function () {
+        var $ = layui.$
+            ,form = layui.form
+            ,laydate = layui.laydate
+            ,element = layui.element;
+
+        // 时间组件
+        laydate.render({type:'datetime' ,elem:'#startTime', trigger:'click'});
+        laydate.render({type:'datetime' ,elem:'#endTime' ,trigger: 'click'});
+
+
+        like.delUpload();
+        // 分享卡片封面
+        $(document).on("click", ".upload-share-img", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "share_img",
+                that: $(this),
+                content: '/shop/file/lists?type=10',
+            });
+        });
+
+        // 直播封面
+        $(document).on("click", ".upload-feeds-img", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "feeds_img",
+                that: $(this),
+                content: '/shop/file/lists?type=10',
+            });
+        });
+
+        // 直播背景
+        $(document).on("click", ".upload-cover-img", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "cover_img",
+                that: $(this),
+                content: '/shop/file/lists?type=10',
+            });
+        });
+
+
+    });
+</script>

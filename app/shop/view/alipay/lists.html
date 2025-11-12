@@ -1,0 +1,173 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*商家需要设置好提现账号才能申请提现。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div class="layui-tab layui-tab-brief">
+                <ul class="layui-tab-title">
+                    <li <?php if (request()->controller() == 'Bank') { echo 'class="layui-this"'; } ?>><a href="{:url('Bank/lists')}">银行卡</a></li>
+                    <li <?php if (request()->controller() == 'Alipay') { echo 'class="layui-this"'; } ?>><a href="{:url('Alipay/lists')}">支付宝</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layEvent" lay-event="add">新增提现账号</button>
+
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+            <script type="text/html" id="table-image">
+                {{#  if(d.image){ }}
+                <img src="{{d.image}}" alt="图标" style="width:28px;height:28px;">
+                {{#  } }}
+            </script>
+            <script type="text/html" id="table-operation">
+                <a class="layui-btn layui-btn-primary layui-btn-sm" lay-event="detail">详情</a>
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+            </script>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form"], function(){
+        var table   = layui.table;
+        var form    = layui.form;
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {field:"id", width:60, title:"ID"}
+            ,{field:"account", width:160, align:"center", title:"支付宝账号"}
+            ,{field:"username", width:120, align:"center", title:"认证姓名"}
+            ,{title:"操作", width:200, align:"center", fixed:"right", toolbar:"#table-operation"}
+        ]);
+
+        var active = {
+            add: function() {
+                layer.open({
+                    type: 2
+                    ,title: "新增提现账号"
+                    ,content: "{:url('Alipay/add')}"
+                    ,area: ["550px", "500px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            like.ajax({
+                                url: "{:url('Alipay/add')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            edit: function(obj) {
+                layer.open({
+                    type: 2
+                    ,title: "编辑提现账号"
+                    ,content: "{:url('Alipay/edit')}?id=" + obj.data.id
+                    ,area: ["550px", "500px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field['id'] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('Alipay/edit')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            del: function(obj) {
+                layer.confirm("确定删除提现账号："+obj.data.account, function(index) {
+                    like.ajax({
+                        url: "{:url('Alipay/del')}",
+                        data: {id: obj.data.id},
+                        type: "POST",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg);
+                                layer.close(index);
+                                obj.del();
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            },
+            detail: function (obj) {
+                layer.open({
+                    type: 2
+                    ,title: "账号详细"
+                    ,content: "{:url('Alipay/detail')}?id=" + obj.data.id
+                    ,area: ["500px", "400px"]
+                });
+            }
+        };
+        like.eventClick(active);
+
+
+        form.on("submit(search)", function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(clear-search)", function(){
+            $("#name").val("");
+            form.render("select");
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+    })
+</script>

@@ -1,0 +1,50 @@
+{layout name="layout2" /}
+<style>
+    .layui-form-label {
+        color: #6a6f6c;
+        width: 100px;
+    }
+    .layui-input-block {
+        margin-left: 130px;
+    }
+    .tips{
+        color: red;
+        margin-right: 5px;
+    }
+</style>
+<div class="layui-form" lay-filter="layuiadmin-form-user_level" id="layuiadmin-form-user_level" style="padding: 20px 30px 0 0;">
+    <input type="hidden" id="intro_default" value="{$intro_default}" />
+    <div class="layui-form-item">
+        <label class="layui-form-label">等级说明：</label>
+        <div class="layui-input-block">
+            <textarea name="intro" id="intro"  class="layui-textarea" style="height:160px;">{$intro}</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label"></label>
+            <div class=" layui-form-mid layui-word-aux"  style="white-space: nowrap">在会员中心显示的等级说明</div>
+        </div>
+        <div class="layui-inline">
+           <button class="layui-btn layui-btn-primary layui-btn-sm" id="use-default">使用默认说明</button>
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="add-user_intro-submit" id="add-user_intro-submit" value="确认">
+    </div>
+</div>
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form'], function(){
+        var $ = layui.$
+            ,form = layui.form;
+
+        $('#use-default').click(function() {
+            var intro_default = $('#intro_default').val();
+            $('#intro').html(intro_default);
+        });
+
+    })
+</script>

@@ -1,0 +1,90 @@
+{layout name="layout2" /}
+<style>
+    .layui-table-cell {
+        height: auto;
+    }
+</style>
+
+<div class="wrapper">
+    <div class="layui-tab-item layui-show">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                <div class="layui-form-item type">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">商品名称:</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="goods_name" id="goods_name" placeholder="请输入关键词"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layui-btn-sm layuiadmin-btn-like {$view_theme_color}" lay-submit
+                                lay-filter="like-table-search">查询
+                        </button>
+                        <button class="layui-btn layui-btn-sm layuiadmin-btn-ad layui-btn-primary " lay-submit
+                                lay-filter="like-clear-search">重置
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <table id="like-table-lists" lay-filter="like-table-lists"></table>
+                <script type="text/html" id="goods-info">
+                    <img src="{{d.cover_img}}" style="height:60px;width: 60px" class="image-show"> {{d.name}}
+                </script>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="addSubmit" class="addSubmit" id="addSubmit" value="确认">
+    </div>
+</div>
+
+<script>
+    var table;
+    layui.use(["table", "element", "form"], function () {
+        var $ = layui.$
+            , form = layui.form
+            , element = layui.element;
+
+        table = layui.table
+        //监听搜索
+        form.on('submit(like-table-search)', function (data) {
+            var field = data.field;
+            //执行重载
+            table.reload('like-table-lists', {
+                where: field
+            });
+        });
+
+        //清空查询
+        form.on('submit(like-clear-search)', function () {
+            $('#goods_name').val('');
+            form.render('select');
+            //刷新列表
+            table.reload('like-table-lists', {
+                where: [],
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        like.tableLists('#like-table-lists', '{:url("live.LiveRoom/selectGoods")}', [
+            {type: 'checkbox', field: 'id'}
+            , {field: 'name', title: '商品名称', toolbar: '#goods-info'}
+            , {field: 'price_text', title: '价格'}
+            , {field: 'goods_stock', title: '库存'}
+        ]);
+    });
+
+
+    var callbackdata = function () {
+        var data = table.checkStatus('like-table-lists').data
+            , index = parent.layer.getFrameIndex(window.name);
+        // parent.layer.close(index);
+        return data;
+    }
+
+
+</script>

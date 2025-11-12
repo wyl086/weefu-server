@@ -1,0 +1,201 @@
+{layout name="layout1" /}
+<div class="wrapper">
+    <div class="layui-card">
+        <!--操作提示-->
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*发布商品时可以选择供货商，方便货源管理。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <!--搜索条件-->
+            <div class="layui-form">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="white-space: nowrap;">供货商名称：</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="keyword" id="keyword" placeholder="" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layui-btn-sm layuiadmin-btn-unit {$view_theme_color}" lay-submit
+                                lay-filter="supplier-search">查询
+                        </button>
+                        <button class="layui-btn layui-btn-sm layui-btn-primary layuiadmin-btn-unit }" lay-submit
+                                lay-filter="supplier-clear-search">清空查询
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layui-btn-sm layuiadmin-btn-unit {$view_theme_color}" data-type="add">新增供货商
+                </button>
+            </div>
+
+            <table id="supplier_lists" lay-filter="supplier_lists"></table>
+
+            <script type="text/html" id="supplier-operation">
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">修改</a>
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    layui.use(['table', 'form'], function () {
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table;
+
+        // 列表
+        like.tableLists('#supplier_lists', '{:url("goods.supplier/lists")}', [
+            {type: 'numbers', title: '序号'}
+            , {field: 'name', width: 150, title: '供货商名称'}
+            , {field: 'contact', width: 150, title: '联系人'}
+            , {field: 'mobile', width: 150, title: '联系电话'}
+            , {field: 'address', width: 250, title: '联系地址'}
+            , {field: 'remark', width: 250, title: '备注'}
+            , {fixed: 'right', title: '操作', width: 200, align: 'center', toolbar: '#supplier-operation'}
+        ]);
+
+        //监听搜索
+        form.on('submit(supplier-search)', function (data) {
+            var field = data.field;
+            //执行重载
+            table.reload('supplier_lists', {
+                where: field,
+                page: {curr: 1},
+            });
+        });
+
+        //清空查询
+        form.on('submit(supplier-clear-search)', function () {
+            $('#keyword').val('');//清空输入框
+            //刷新列表
+            table.reload('supplier_lists', {
+                where: [],
+                page: {curr: 1},
+            });
+        });
+
+        //事件
+        var active = {
+            add: function () {
+                layer.open({
+                    type: 2
+                    , title: '新增供货商'
+                    , content: '{:url("goods.supplier/add")}'
+                    , area: ['90%', '90%']
+                    , btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'add-submit'
+                            , submit = layero.find('iframe').contents().find("#add-submit");
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function (data) {
+                            var field = data.field;
+                            like.ajax({
+                                url: '{:url("goods.supplier/add")}',
+                                data: field,
+                                type: "post",
+                                success: function (res) {
+                                    if (res.code == 1) {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        });
+                                        layer.close(index);
+                                        table.reload('supplier_lists');
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    },
+                })
+            }
+        };
+        $('.layui-btn.layuiadmin-btn-unit').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+
+
+
+        table.on('tool(supplier_lists)', function (obj) {
+            if (obj.event === 'del') {
+                var id = obj.data.id;
+                var name = obj.data.name;
+                layer.confirm('确定删除供货商:<span style="color: red">' + name + "</span>", function (index) {
+                    like.ajax({
+                        url: '{:url("goods.supplier/del")}',
+                        data: {id: id},
+                        type: "post",
+                        success: function (res) {
+                            if (res.code == 1) {
+                                layui.layer.msg(res.msg, {
+                                    offset: '15px'
+                                    , icon: 1
+                                    , time: 1000
+                                });
+                                layer.close(index);
+                                table.reload('supplier_lists');
+                                obj.del();
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+            if (obj.event === 'edit') {
+                var id = obj.data.id;
+                layer.open({
+                    type: 2
+                    , title: '修改供货商信息'
+                    , content: '{:url("goods.supplier/edit")}?id=' + id
+                    , area: ['90%', '90%']
+                    , btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'edit-submit'
+                            , submit = layero.find('iframe').contents().find('#edit-submit');
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function (data) {
+                            var field = data.field;
+                            like.ajax({
+                                url: '{:url("goods.supplier/edit")}',
+                                data: field,
+                                type: "post",
+                                success: function (res) {
+                                    if (res.code == 1) {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        });
+                                        layer.close(index);
+                                        table.reload('supplier_lists');
+                                    }
+                                }
+
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                })
+            }
+        });
+    });
+</script>

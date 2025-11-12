@@ -1,0 +1,285 @@
+{layout name="layout2" /}
+<link href="__PUBLIC__/static/lib/layui/layeditor/layedit.css" rel="stylesheet"/>
+<script src="__PUBLIC__/static/lib/layui/layeditor/index.js"></script>
+<script src="__PUBLIC__/static/lib/layui/layeditor/ace/ace.js"></script>
+<style>
+    .layui-form-item .layui-form-label {
+        width: 95px;
+    }
+
+    .layui-form-item .layui-input-inline {
+        width: 240px;
+    }
+
+    .hide-div {
+        display: none;
+    }
+</style>
+
+<div class="layui-card layui-form" style="box-shadow:none;">
+    <div class="layui-tab layui-tab-card" lay-filter="like-tabs">
+        <ul class="layui-tab-title">
+            <li lay-id="1" class="layui-this">基本信息</li>
+            <li lay-id="2">商品详情</li>
+        </ul>
+        <div class="layui-tab-content">
+            <input type="hidden" name="id" value="{$detail.id}">
+            <input type="hidden" name="type" value="{$detail.type}">
+            <!-- 1、基础设置 -->
+            <div class="layui-tab-item layui-show">
+                <!-- 兑换类型 -->
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red;">*</span>兑换类型：</label>
+                    <div class="layui-input-inline">
+                        <div class="layui-form-mid ">
+                            {if condition="$detail.type eq 1"}
+                                商品
+                            {else/}
+                                红包
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 商家名称 -->
+                <div class="layui-form-item">
+                    <label for="name" class="layui-form-label"><span style="color:red;">*</span>商品名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" id="name" lay-verType="tips" value="{$detail.name}"
+                               autocomplete="off" class="layui-input" placeholder="请输入名称">
+                    </div>
+                </div>
+
+                <!-- 商品编号 -->
+                <div class="layui-form-item code">
+                    <label for="name" class="layui-form-label">商品编号：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="code" id="code" lay-verType="tips" value="{$detail.code|default=''}"
+                               autocomplete="off" class="layui-input" placeholder="请输入编号">
+                    </div>
+                </div>
+
+                <!-- 商品封面 -->
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red;">*</span>商品封面：</label>
+                    <div class="layui-input-block">
+                        <div class="like-upload-image">
+                            {if $detail.image}
+                            <div class="upload-image-div">
+                                <img src="{$detail.image}" alt="img">
+                                <input type="hidden" name="image" value="{$detail.image}">
+                                <div class="del-upload-btn">x</div>
+                            </div>
+                            <div class="upload-image-elem" style="display:none;"><a class="add-upload-image"> + 添加图片</a>
+                            </div>
+                            {else}
+                            <div class="upload-image-elem"><a class="add-upload-image"> + 添加图片</a></div>
+                            {/if}
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">建议尺寸：800*800像素</div>
+                    </div>
+                </div>
+
+                <!-- 市场价 -->
+                <div class="layui-form-item">
+                    <label for="market_price" class="layui-form-label">市场价：</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="market_price" id="market_price" lay-verType="tips" min="0"
+                               value="{$detail.market_price|default='0'}"
+                               autocomplete="off" class="layui-input" placeholder="请输入价格">
+                    </div>
+                </div>
+
+                <!-- 库存 -->
+                <div class="layui-form-item">
+                    <label for="stock" class="layui-form-label"><span style="color:red;">*</span>发放库存：</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="stock" id="stock" lay-verType="tips" value="{$detail.stock}" min="0"
+                               onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                               autocomplete="off" class="layui-input" placeholder="请输入发放库存">
+                    </div>
+                </div>
+
+                <!-- 兑换方式 -->
+                <div class="layui-form-item exchange_way">
+                    <label class="layui-form-label"><span style="color:red;">*</span>兑换方式：</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="exchange_way" value="1" title="积分" lay-filter="exchange_way" {if
+                               condition="$detail.exchange_way eq 1" }checked{/if}>
+                        <input type="radio" name="exchange_way" value="2" title="积分+余额" lay-filter="exchange_way" {if
+                               condition="$detail.exchange_way eq 2" }checked{/if}>
+                    </div>
+                </div>
+
+                <!-- 兑换积分 -->
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red;">*</span>兑换积分：</label>
+                    <div class="layui-input-inline" style="margin-right: 0px;">
+                        <input type="number" name="need_integral" id="need_integral" autocomplete="off" min="1"
+                               value="{$detail.need_integral}" onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                               placeholder="请输入积分" class="layui-input">
+                    </div>
+                    <span class="layui-form-mid">积分</span>
+                    <span class="layui-form-mid need_money hide-div">+</span>
+                    <div class="layui-input-inline need_money hide-div" style="margin-right: 0px;">
+                        <input type="number" name="need_money" id="need_money" autocomplete="off" placeholder="请输入金额" min="0"
+                               value="{$detail.need_money}" class="layui-input">
+                    </div>
+                    <div class="layui-input-inline">
+                        <span class="layui-form-mid need_money hide-div">元</span>
+                    </div>
+                </div>
+
+                <!-- 物流配送 -->
+                <div class="layui-form-item delivery">
+                    <label class="layui-form-label"><span style="color:red;">*</span>物流配送：</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="delivery_way" value="1" title="快递" lay-filter="delivery_way" {if
+                               condition="$detail.delivery_way eq 1" }checked{/if}>
+                        <input type="radio" name="delivery_way" value="0" title="无需物流" lay-filter="delivery_way" {if
+                               condition="$detail.delivery_way eq 0" }checked{/if}>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux ">修改后的配送状态仅对后面的订单生效，对前面已经付款的订单没影响，会按照订单当时的的设置来进行操作</div>
+                </div>
+
+                <!-- 快递运费 -->
+                <div class="layui-form-item delivery express">
+                    <label class="layui-form-label"><span style="color:red;">*</span>快递运费：</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="express_type" value="1" title="包邮" {if condition="$detail.express_type eq 1" }checked{/if}>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label"></label>
+                        <div class="layui-input-inline" style="margin-right: 0px;width: auto">
+                            <input type="radio" name="express_type" value="2" title="统一运费" {if condition="$detail.express_type eq 2" }checked{/if}>
+                        </div>
+                        <div class="layui-input-inline" style="width: 110px">
+                            <input type="number" name="express_money" class="layui-input" value="{$detail.express_money}" min="0">
+                        </div>
+                        <span class="layui-form-mid">元</span>
+                    </div>
+                </div>
+
+                <!-- 红包面值 -->
+                <div class="layui-form-item balance hide-div">
+                    <label for="stock" class="layui-form-label"><span style="color:red;">*</span>红包面值：</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="balance" id="balance" lay-verType="tips" min="0"
+                               value="{$detail.balance|default=''}"
+                               autocomplete="off" class="layui-input">
+                        <div class="layui-form-mid layui-word-aux">兑换的红包会以余额的形式发放</div>
+                    </div>
+                </div>
+
+                <!-- 排序 -->
+                <div class="layui-form-item">
+                    <label class="layui-form-label">排序：</label>
+                    <div class="layui-input-inline input-inline-width">
+                        <input type="number" name="sort" autocomplete="off" class="layui-input" min="0" value="{$detail.sort}">
+                        <label class="layui-form-mid layui-word-aux">默认值为0,数值越大越排前</label>
+                    </div>
+                </div>
+
+                <!-- 商品状态 -->
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red;">*</span>商品状态：</label>
+                    <div class="layui-input-inline">
+                        <input type="checkbox" name="status" lay-skin="switch" lay-text="上架|下架"
+                               {if condition="$detail.status eq 1" }checked{/if}>
+                    </div>
+                </div>
+            </div>
+            <!-- 2、商品详情 -->
+            <div class="layui-tab-item">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商品详情：</label>
+                    <div class="layui-input-block">
+                        <textarea name="content" id="content" lay-verify="content">{$detail.content}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+    </div>
+</div>
+
+<script>
+    layui.config({
+        version: "{$front_version}",
+        base: '/static/lib/'
+    }).extend({
+        likeedit: 'likeedit/likeedit'
+    }).use(["form", "laydate", "layEditor"], function () {
+        var $ = layui.$;
+        var form = layui.form;
+        var layEditor = layui.layEditor;
+
+        var type = {$detail.type};
+        var delivery_way = {$detail.delivery_way};
+
+        if (type === 1) {
+            typeGoods();
+        } else {
+            typeBalance();
+        }
+
+        deliveryWay(delivery_way);
+
+        // 兑换类型为商品时
+        function typeGoods() {
+            $('.balance').hide();
+            $('.code, .exchange_way, .need_integral, .delivery').show();
+            let exchange_way = $('input[name="exchange_way"]:checked').val();
+            exchange_way === '1' ? $('.need_money').hide() : $('.need_money').show();
+        }
+
+        // 兑换类型为红包时
+        function typeBalance() {
+            $('.balance').show();
+            $('.code, .exchange_way, .need_integral, .need_money, .delivery').hide();
+        }
+
+        // 物流配送类型
+        function deliveryWay(way) {
+            (way === 1 && type === 1) ? $('.express').show() : $('.express').hide();
+        }
+
+
+        // 兑换方式 [积分, 积分+余额]
+        form.on('radio(exchange_way)', function (data) {
+            data.value === '1' ? $('.need_money').hide() : $('.need_money').show();
+        })
+
+        // 物流配送 [快递 无需物流]
+        form.on('radio(delivery_way)', function (data) {
+            data.value === '1' ? $('.express').show() : $('.express').hide();
+        })
+
+        // 富文本
+        layEditor.set({
+            uploadImage: {
+                url: '{:url("file/lists")}?type=10'
+            },
+        })
+        var ieditor = layEditor.build('content')
+        form.verify({
+            content: function(value) {
+                return layEditor.sync(ieditor);
+            }
+        });
+
+
+        like.delUpload();
+        $(document).on("click", ".add-upload-image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "image",
+                that: $(this)
+            });
+        });
+
+    })
+</script>

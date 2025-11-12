@@ -1,0 +1,113 @@
+{layout name="layout1" /}
+<style>
+    .tips {
+        color: red;
+    }
+
+    .layui-form-label {
+        width: 100px;
+    }
+</style>
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!--操作提示-->
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*设置小票打印模板</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--表单-->
+        <div class="layui-card-body">
+            <div class="layui-form" lay-filter="">
+                <input type="hidden" name="type" value="1">
+
+                <!--小票标题-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label">小票标题：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="title" lay-verify="required" lay-verType="tips" placeholder="请输入标题"
+                               autocomplete="off" class="layui-input" value="{$detail.title | default = ''}">
+                    </div>
+                </div>
+
+                <!--二维码链接-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label">二维码链接：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="qr_code_link" lay-verify="required" lay-verType="tips"
+                               placeholder="请输入二维码链接" autocomplete="off" class="layui-input" value="{$detail.qr_code_link | default = ''}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"></label>
+                    <span style="color: #a3a3a3;">生成二维码的链接</span>
+                </div>
+
+                <!--小票说明-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label">小票说明：</label>
+                    <div class="layui-col-md4">
+                        <textarea name="remark" placeholder="请输入小票说明" class="layui-textarea">{$detail.remark | default = ''}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"></label>
+                    <span style="color: #a3a3a3;">小票尾部文字</span>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-normal {$view_theme_color}" lay-submit lay-filter="addSublime">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(['table', 'form'], function () {
+        var form = layui.form;
+
+        like.delUpload();
+        $(document).on("click", ".logo", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "logo",
+                that: $(this)
+            });
+        });
+
+        // 监听提交
+        form.on('submit(addSublime)', function (data) {
+            like.ajax({
+                url: '{:url("printer.template/edit")}'
+                , data: data.field
+                , type: 'post'
+                , success: function (res) {
+                    if (res.code === 1) {
+                        layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        },function () {
+                            location.href = location.href;
+                        });
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+
+

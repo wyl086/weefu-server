@@ -1,0 +1,41 @@
+{layout name="layout2" /}
+<style>
+    .layui-form-item .layui-form-label { width: 95px; }
+    .layui-form-item .layui-input-inline { width: 240px; }
+</style>
+
+<div class="layui-card layui-form" style="box-shadow:none;">
+
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label for="account" class="layui-form-label"><span style="color:red;">*</span>商家账号：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="account" id="account" value="{$detail.account}"
+                       lay-verType="tips" lay-verify="require"
+                       switch-tab="2" autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商家账号和密码用于登录商家后台</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="password" class="layui-form-label">登录密码：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="password" id="password" lay-verType="tips"
+                       switch-tab="2" autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商家账号和密码用于登录商家后台</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="okPassword" class="layui-form-label">确认密码：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="okPassword" id="okPassword" lay-verType="tips"
+                       switch-tab="2" autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商家账号和密码用于登录商家后台</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+    </div>
+</div>

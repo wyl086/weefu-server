@@ -1,0 +1,85 @@
+{layout name="layout2" /}
+<style>
+    .layui-form-label{
+        width: 120px;
+    }
+</style>
+<div class="layui-card layui-form" style="box-shadow:none;">
+    <div class="layui-card-body">
+        <input type="hidden" value="{$engine}" name="engine">
+        <div class="layui-form-item">
+            <label class="layui-form-label">短信渠道：</label>
+            <div class="layui-input-inline" style="padding-top: 8px">
+                {if $engine == 'ali'}
+                    阿里云
+                {else/}
+                    腾讯云
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">短信签名：</label>
+            <div class="layui-input-block">
+                <div class="layui-col-sm4">
+                    <input type="text" name="sign" placeholder="请输入短信签名" autocomplete="off" class="layui-input" value="{$info.sign}" lay-verify="required" lay-vertype="tips">
+                </div>
+            </div>
+        </div>
+
+        <!-- 腾讯短信才需要APPID -->
+        {if $engine == 'tc'}
+        <div class="layui-form-item">
+            <label class="layui-form-label">APP_ID：</label>
+            <div class="layui-input-block">
+                <div class="layui-col-sm4">
+                    <input type="text" name="app_id" placeholder="请输入APP_ID" autocomplete="off" class="layui-input" value="{$info.app_id | default = ''}" lay-verify="required" lay-vertype="tips">
+                </div>
+            </div>
+        </div>
+        {/if}
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                {if $engine == 'ali'}
+                AccessKey_ID：
+                {else/}
+                    SECRET_ID:
+                {/if}
+            </label>
+            <div class="layui-input-block">
+                <div class="layui-col-sm4">
+                    <input type="text" name="app_key"
+                           {if $engine == 'ali'}
+                           placeholder="请输入AccessKey_ID)"
+                    {else/}
+                        placeholder="请输入SECRET_ID"
+                    {/if}
+                           autocomplete="off" class="layui-input" value="{$info.app_key}" lay-verify="required" lay-vertype="tips">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">SECRET_KEY：</label>
+            <div class="layui-input-block">
+                <div class="layui-col-sm4">
+                    <input type="text" name="secret_key" placeholder="请输入SECRET_KEY" autocomplete="off" class="layui-input" value="{$info.secret_key}" lay-verify="required" lay-vertype="tips">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-inline">
+                <input type="checkbox" lay-filter="disable" name="status" lay-skin="switch" lay-text="开启|关闭" {if condition="$info.default_engine eq $engine" }checked{/if}>
+            </div>
+        </div>
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form'], function(){
+        var $ = layui.$
+            ,form = layui.form ;
+    })
+</script>

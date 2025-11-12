@@ -1,0 +1,348 @@
+{layout name="layout1" /}
+<style>
+    .layui-table-cell {
+        height: auto;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*设置移动端商城我的功能导航图标和名称</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-tab layui-tab-card" lay-filter="test">
+            <ul class="layui-tab-title">
+                <li lay-id="1" class="layui-this">导航设置</li>
+                <li lay-id="2">其他设置</li>
+            </ul>
+            <div class="layui-tab-content " style="padding: 0 15px;">
+                <div class="layui-tab-item layui-show">
+                    <div style="margin-top: 10px">
+                        <button class="layui-btn layui-btn-sm layEvent {$view_theme_color}" lay-event="add">新增导航</button>
+                    </div>
+                    <table id="like-table-lists" lay-filter="like-table-lists"></table>
+                    <script type="text/html" id="table-operation">
+                        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</a>
+                        {{# if(0 == d.is_show) { }}
+                        <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="status">显示</a>
+                        {{# }else{ }}
+                        <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="status">隐藏</a>
+                        {{# } }}
+                        <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+                    </script>
+                    <script type="text/html" id="image">
+                        <img src="{{d.image}}" style="height:80px;width: 80px" class="image-show">
+                    </script>
+                </div>
+                <div class="layui-tab-item">
+                    <div class="layui-form" lay-filter="">
+                        {if (1 == $type) }
+                        <div class="layui-tab" style="padding-top: 20px">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">热销榜单：</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="host_show" value="1" title="开启" {if($other_set.host_show)} checked {/if}>
+                                    <input type="radio" name="host_show" value="0" title="关闭" {if(!$other_set.host_show)} checked {/if}>
+                                </div>
+                            </div>
+                            <div class="layui-form-item"><label class="layui-form-label"></label>
+                                <span style="color: #a3a3a3;font-size: 9px">开启或关闭热销榜单在首页的显示，默认开启</span>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">新品推荐：</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="new_show" value="1" title="开启" {if($other_set.new_show)} checked {/if}>
+                                    <input type="radio" name="new_show" value="0" title="关闭"{if(!$other_set.new_show)} checked {/if}>
+                                </div>
+                            </div>
+                            <div class="layui-form-item"><label class="layui-form-label"></label>
+                                <span style="color: #a3a3a3;font-size: 9px">开启或关闭新品推荐在首页的显示，默认开启</span>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">推荐店铺：</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="shop_show" value="1" title="开启" {if($other_set.shop_show)} checked {/if}>
+                                    <input type="radio" name="shop_show" value="0" title="关闭" {if(!$other_set.shop_show)} checked {/if}>
+                                </div>
+                            </div>
+                            <div class="layui-form-item"><label class="layui-form-label"></label>
+                                <span style="color: #a3a3a3;font-size: 9px">开启或关闭店铺推荐在首页的显示，默认开启</span>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">种草推荐：</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="community_show" value="1" title="开启" {if($other_set.community_show)} checked {/if}>
+                                    <input type="radio" name="community_show" value="0" title="关闭" {if(!$other_set.community_show)} checked {/if}>
+                                </div>
+                            </div>
+                            <div class="layui-form-item"><label class="layui-form-label"></label>
+                                <span style="color: #a3a3a3;font-size: 9px">开启或关闭种草推荐在首页的显示，默认开启（种草功能必须为开启才生效）</span>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">直播间：</label>
+                                <div class="layui-input-inline">
+                                    <input type="radio" name="live_room" value="1" title="开启" {if($other_set.live_room)} checked {/if}>
+                                    <input type="radio" name="live_room" value="0" title="关闭" {if(!$other_set.live_room)} checked {/if}>
+                                </div>
+                            </div>
+                            <div class="layui-form-item"><label class="layui-form-label"></label>
+                                <span style="color: #a3a3a3;font-size: 9px">开启或关闭直播间在首页的显示，默认开启</span>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">页面顶部背景图：</label>
+                                <div class="layui-input-block">
+                                    <div class="like-upload-image">
+                                        {if $other_set.background_image}
+                                        <div class="upload-image-div">
+                                            <img src="{$other_set.background_image}" alt="img">
+                                            <input type="hidden" name="background_image" value="{$other_set.background_image}">
+                                            <div class="del-upload-btn">x</div>
+                                        </div>
+                                        <div class="upload-image-elem" style="display:none;"><a class="add-upload-image"> + 添加图片</a></div>
+                                        {else}
+                                        <div class="upload-image-elem"><a class="add-upload-image"> + 添加图片</a></div>
+                                        {/if}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item"><label class="layui-form-label"></label>
+                                <span style="color: #a3a3a3;font-size: 9px">建议尺寸：宽200像素*高200像素的jpg，jpeg，png，gif图片</span>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn {$view_theme_color}" lay-submit lay-filter="submit">确定</button>
+                                </div>
+                            </div>
+                        </div>
+                        {else /}
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">页面顶部背景图：</label>
+                                <div class="layui-input-block">
+                                    {if $other_set.background_image}
+                                    <div class="upload-image-div">
+                                        <img src="{$other_set.background_image}" alt="img">
+                                        <input type="hidden" name="background_image" value="{$other_set.background_image}">
+                                        <div class="del-upload-btn">x</div>
+                                    </div>
+                                    <div class="upload-image-elem" style="display:none;"><a class="add-upload-image"> + 添加图片</a></div>
+                                    {else}
+                                    <div class="upload-image-elem"><a class="add-upload-image"> + 添加图片</a></div>
+                                    {/if}
+                                </div>
+                            </div>
+                            <div class="layui-form-item"><label class="layui-form-label"></label>
+                                <span style="color: #a3a3a3;font-size: 9px">页面顶部背景图，建议尺寸：宽400px*高400px。jpg，jpeg，png格式</span>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn {$view_theme_color}" lay-submit lay-filter="submit">确定</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/if}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "element", "laydate"], function(){
+        var table   = layui.table;
+        var element = layui.element;
+        var form    = layui.form;
+        var type = "{$type}";
+
+        like.tableLists('#like-table-lists','{:url()}',[
+            {field: 'id', width: 60, title: 'ID'}
+            ,{field: 'name', width: 260, align: 'center', title: '导航名称'}
+            ,{field: 'image', width: 120,title: '导航图标', templet: '#image'}
+            // ,{field: 'link_type', width: 120,title: '导航类型'}
+            ,{field: 'link_address', width: 180,title: '链接地址'}
+            ,{field: 'is_show_desc', width: 120,title: '导航状态',templet: function(d){
+                    if(1 == d.is_show){
+                        return '显示';
+                    }
+                    return  '隐藏';
+                }}
+            ,{field: 'sort', width: 120,title: '排序'}
+            ,{title: '操作', width: 240, align: 'center', fixed: 'right', toolbar: '#table-operation'}
+        ],{type:type},true);
+
+        var active = {
+            add:function(){
+                layer.open({
+                    type: 2
+                    ,title: '新增导航'
+                    ,content: '{:url("decoration.MenuDecorate/add")}?type='+type
+                    ,area: ['90%', '90%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'addSubmit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            field.type = type;
+                            like.ajax({
+                                url:'{:url("decoration.MenuDecorate/add")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload('like-table-lists');
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            },
+            edit:function(obj){
+                var id = obj.data.id;
+                layer.open({
+                    type: 2
+                    ,title: '编辑导航'
+                    ,content: '{:url("decoration.MenuDecorate/edit")}?id='+id + '&type=' + type
+                    ,area: ['90%', '90%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'editSubmit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            field.type = type;
+                            like.ajax({
+                                url:'{:url("decoration.MenuDecorate/edit")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload('like-table-lists');
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            },
+            status: function(obj) {
+                var is_show =   1 == obj.data.is_show ? 0 : 1;
+                if(is_show){
+                    var tips = "确定显示菜单:<span style='color: red'>"+ obj.data.name +"</span>";
+                }else{
+                    var tips = "确定隐藏菜单:<span style='color: red'>"+ obj.data.name +"</span>";
+                }
+                layer.confirm(tips, function(index) {
+                    like.ajax({
+                        url: "{:url('decoration.MenuDecorate/swtichStatus')}",
+                        data: {id: obj.data.id,is_show:is_show},
+                        type: "POST",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg);
+                                layer.close(index);
+                                table.reload('like-table-lists');
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            },
+            del: function(obj) {
+                layer.confirm("确定删除菜单:<span style='color: red'>"+ obj.data.name +"</span>", function(index) {
+                    like.ajax({
+                        url: "{:url('decoration.MenuDecorate/del')}",
+                        data: {id: obj.data.id},
+                        type: "POST",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg);
+                                layer.close(index);
+                                obj.del();
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            },
+
+        };
+        like.eventClick(active);
+
+        form.on("submit(search)", function(data){
+            data.field.terminal = terminal;
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(clear-search)", function(){
+            $("#pid").val("");
+            form.render("select");
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        like.delUpload();
+        $(document).on("click", ".add-upload-image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "background_image",
+                that: $(this)
+            });
+        })
+        // 提交表单
+        form.on('submit(submit)', function (data) {
+            var data = data.field;
+            data.type = type;
+            console.log(data);
+            like.ajax({
+                url: '{:url("decoration.MenuDecorate/otherSet")}'
+                , data: data
+                , type: 'post'
+                , success: function (res) {
+                    if (res.code == 1) {
+                        layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        });
+                    }
+
+                }
+            });
+        });
+
+    })
+</script>

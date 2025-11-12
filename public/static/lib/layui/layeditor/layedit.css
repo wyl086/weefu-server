@@ -1,0 +1,7 @@
+.layui-layedit-tool .layui-colorpicker-xs {
+  border: 0;
+}
+
+.layui-layedit-tool .layui-colorpicker-trigger-span i {
+  display: none !important;
+}

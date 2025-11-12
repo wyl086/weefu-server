@@ -1,0 +1,256 @@
+{layout name="layout1" /}
+<style>
+    .layui-table-cell {
+        height:auto;
+    }
+    .goods-content>div:not(:last-of-type) {
+        border-bottom:1px solid #DCDCDC;
+    }
+    .goods-data::after{
+        display: block;
+        content: '';
+        clear: both;
+    }
+    .goods_name_hide{
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow: ellipsis;
+    }
+    .operation-btn {
+        margin: 5px;
+    }
+    .table-operate{
+        text-align: left;
+        font-size:14px;
+        padding:0 5px;
+        height:auto;
+        overflow:visible;
+        text-overflow:inherit;
+        white-space:normal;
+        word-break: break-all;
+    }
+</style>
+
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*管理广告信息，系统默认了部分广告位。</p>
+                        <p>*广告停用之后，商城不展示该广告。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-tab layui-tab-card" lay-filter="tab-all">
+
+            <div class="layui-tab-item layui-show">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="padding-bottom: 10px;">
+                            <button class="layui-btn layui-btn-sm layui-bg-blue add-ad">新增广告</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-tab-item layui-show">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <table id="ad-lists" lay-filter="ad-lists"></table>
+
+                        <script type="text/html" id="operation">
+                            <div style="text-align: left;margin-left: 10px">
+                                <a class="layui-btn layui-btn-sm layui-bg-blue" lay-event="edit">编辑</a>
+                                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="status">停用</a>
+                                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</a>
+                            </div>
+                        </script>
+
+                        <script type="text/html" id="image">
+                            <img src="{{d.image}}" style="height:80px;width: 80px" class="image-show">
+                        </script>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form'], function(){
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table
+            , element = layui.element
+            , laydate = layui.laydate;
+
+        //图片放大
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src,400);
+        });
+
+        //获取列表
+        getList('');
+
+        function getList(type) {
+            table.render({
+                elem: '#ad-lists'
+                , url: '{:url("decoration.ad/lists")}'
+                , cols: [[
+                    {field: 'terminal_name', title: '终端', align: 'center',width:160}
+                    , {field: 'title', title: '标题', align: 'center',width:300}
+                    , {field: 'place_name', title: '位置', align: 'center',width:160}
+                    , {field: 'image', title: '图片', templet:'#image',width:300}
+                    , {field: 'link', title: '链接', align: 'center',templet:'#goods',width:300}
+                    , {field: 'status_name', title: '状态', align: 'center',width:100}
+                    , {field: 'sort', title: '排序', align: 'center',width:100}
+                    , {fixed: 'right', title: '操作', width: 300, align: 'center', toolbar: '#operation'}
+                ]]
+                , page: true
+                , text: {none: '暂无数据！'}
+                ,response: {
+                    statusCode: 1
+                }
+                , parseData: function (res) {
+                    return {
+                        "code": res.code,
+                        "msg": res.msg,
+                        "count": res.data.count,
+                        "data": res.data.lists,
+                    };
+                }
+                ,done: function(res, curr, count){
+                    // 解决操作栏因为内容过多换行问题
+                    $(".layui-table-main tr").each(function (index, val) {
+                        $($(".layui-table-fixed-l .layui-table-body tbody tr")[index]).height($(val).height());
+                        $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height());
+                    });
+                }
+            });
+        }
+        //监听工具条
+        table.on('tool(ad-lists)', function (obj) {
+            var id = obj.data.id;
+            if (obj.event === 'status') {
+                like.ajax({
+                    url: '{:url("decoration.ad/status")}?id=' + obj.data.id + '&status=0',
+                    data: {},
+                    type: "post",
+                    success: function (res) {
+                        if (res.code == 1) {
+                            layui.layer.msg(res.msg, {
+                                offset: '15px'
+                                , icon: 1
+                                , time: 1000
+                            }, function () {
+                                location.reload();
+                            });
+                        }
+                    }
+                });
+            }
+            if (obj.event === 'delete') {
+                layer.confirm('确定删除?', {icon: 3, title:'提示'}, function(index) {
+                    layer.close(index);
+                    like.ajax({
+                        url: '{:url("decoration.ad/delete")}?id=' + obj.data.id,
+                        data: {},
+                        type: "post",
+                        success: function (res) {
+                            if (res.code == 1) {
+                                layui.layer.msg(res.msg, {
+                                    offset: '15px'
+                                    , icon: 1
+                                    , time: 1000
+                                }, function () {
+                                    location.reload();
+                                });
+                            }
+                        }
+                    });
+                });
+            }
+            if (obj.event === 'edit') {
+                var index_add_edit = layer.open({
+                    type: 2
+                    , title: '编辑广告'
+                    , content: '{:url("decoration.ad/edit")}?id=' + obj.data.id
+                    , area: ['90%', '90%']
+                    , btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'edit-submit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field; //获取提交的字段
+                            like.ajax({
+                                url: '{:url("decoration.ad/edit")}?id=' + obj.data.id,
+                                data: field,
+                                type: "post",
+                                success: function (res) {
+                                    if (res.code == 1) {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        }, function () {
+                                            layer.close(index); //关闭弹层
+                                            location.reload();//刷新
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                })
+            }
+        });
+        // 新增
+        $(document).on('click', '.add-ad', function () {
+            var index_add_edit = layer.open({
+                type: 2
+                , title: '新增店铺商品分类'
+                , content: '{:url("decoration.ad/add")}'
+                , area: ['90%', '90%']
+                , btn: ['确认', '返回']
+                , yes: function (index, layero) {
+                    var iframeWindow = window['layui-layer-iframe' + index]
+                        , submitID = 'add-submit'
+                        , submit = layero.find('iframe').contents().find('#' + submitID);
+                    //监听提交
+                    iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                        var field = data.field;
+                        console.log(data.field);
+                        like.ajax({
+                            url: '{:url("decoration.ad/add")}',
+                            data: field,
+                            type: "post",
+                            success: function (res) {
+                                if (res.code == 1) {
+                                    layui.layer.msg(res.msg, {
+                                        offset: '15px'
+                                        , icon: 1
+                                        , time: 1000
+                                    });
+                                    layer.close(index); //关闭弹层
+                                    location.reload();//刷新
+                                }
+                            }
+                        });
+                    });
+                    // 触发子窗口表单提交事件
+                    submit.trigger('click');
+                }
+            })
+        });
+    });
+</script>

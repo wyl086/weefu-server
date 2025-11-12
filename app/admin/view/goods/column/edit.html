@@ -1,0 +1,32 @@
+{layout name="layout2" /}
+<div class="layui-form" lay-filter="layuiadmin-form-goodsColumn" id="layuiadmin-form-goodsColumn" style="padding: 20px 30px 0 0;">
+    <input type="hidden" value="{$detail.id}" name="id">
+    <!--栏目名称-->
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span style="color: red">*</span>栏目名称:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" value="{$detail.name}" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <!--栏目简介-->
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span style="color: red">*</span>栏目简介:</label>
+        <div class="layui-input-inline">
+            <textarea name="remark" lay-verify="required"  class="layui-textarea">{$detail.remark}</textarea>
+        </div>
+    </div>
+
+    <!--状态-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" lay-filter="disable" name="status" lay-skin="switch" lay-text="显示|隐藏" {if condition="$detail.status eq 1" }checked{/if}>
+            <div class=" layui-form-mid layui-word-aux">显示或者隐藏商品栏目</div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="goodsColumn-submit-edit" id="goodsColumn-submit-edit" value="确认">
+    </div>
+</div>

@@ -1,0 +1,643 @@
+{layout name="layout1" /}
+<style>
+    .layui-table-cell {
+        height:auto;
+    }
+    .goods-content>div:not(:last-of-type) {
+        border-bottom:1px solid #DCDCDC;
+    }
+    .goods-data::after{
+        display: block;
+        content: '';
+        clear: both;
+    }
+    .goods_name_hide{
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow: ellipsis;
+    }
+    .operation-btn {
+        margin: 5px;
+    }
+    .table-operate{
+        text-align: left;
+        font-size:14px;
+        padding:0 5px;
+        height:auto;
+        overflow:visible;
+        text-overflow:inherit;
+        white-space:normal;
+        word-break: break-all;
+    }
+</style>
+
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+        <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                <div class="layui-colla-content layui-show">
+                    <p>*会员商城下单列表。</p>
+                    <p>*订单状态有待付款，待发货，待收货，已完成，已关闭。</p>
+                    <p>*待付款订单取消后则为已关闭。待付款订单支付后则为待发货。待发货订单发货后则为待收货。待收货订单收货后则为已完成。</p>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="layui-tab layui-tab-card" lay-filter="tab-all">
+            <ul class="layui-tab-title">
+                <li data-type='' class="layui-this" id="select-type-all">全部({$all})</li>
+                {foreach $order_status as $key => $value}
+                <li data-type="{$value['status']}" id="select-type-{$value['status']}">{$value.title}({$value.count})</li>
+                {/foreach}
+            </ul>
+
+            <div class="layui-card-body layui-form" lay-filter="search-form">
+                <div class="layui-form-item">
+                    <div class="layui-row">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">订单搜索:</label>
+                            <div class="layui-input-block">
+                                <select name="search_key">
+                                    <option value="order_sn">订单编号</option>
+                                    <option value="nickname">会员昵称</option>
+                                    <option value="user_mobile">会员手机号码</option>
+                                    <option value="user_sn">会员编号</option>
+                                    <option value="consignee">收货人姓名</option>
+                                    <option value="consignee_mobile">收货人手机号码</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <input type="text" name="keyword" id="keyword" placeholder="请输入搜索内容"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">商家名称:</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="shop_name" id="shop_name" placeholder="请输入商家名称"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">商品名称:</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="goods_name" id="goods_name" placeholder="请输入商品名称"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-row">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">订单类型:</label>
+                            <div class="layui-input-block">
+                                <select name="order_type" id="order_type">
+                                    <option value="">全部</option>
+                                    {foreach $order_type as $item => $val}
+                                    <option value="{$item}">{$val}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">订单来源:</label>
+                            <div class="layui-input-block">
+                                <select name="order_source" id="order_source">
+                                    <option value="">全部</option>
+                                    {foreach $order_source as $item => $val}
+                                    <option value="{$item}">{$val}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">付款方式:</label>
+                            <div class="layui-input-block">
+                                <select name="pay_way" id="pay_way">
+                                    <option value="">全部</option>
+                                    {foreach $pay_way as $item => $val}
+                                    <option value="{$item}">{$val}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="layui-row">
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">配送方式:</label>
+                            <div class="layui-input-block">
+                                <select name="delivery_type" id="delivery_type">
+                                    <option value="">全部</option>
+                                    {foreach $delivery_type as $item => $val}
+                                    <option value="{$item}">{$val}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">下单时间:</label>
+                            <div class="layui-input-inline">
+                                <div class="layui-input-inline">
+                                    <input type="text" name="start_time" class="layui-input" id="start_time"
+                                           placeholder="" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="layui-input-inline" style="margin-right: 5px;width: 20px;">
+                                <label class="layui-form-mid">至</label>
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" name="end_time" class="layui-input" id="end_time"
+                                       placeholder="" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-sm layuiadmin-btn-ad {$view_theme_color}" lay-submit
+                                    lay-filter="order-search">查询
+                            </button>
+                            <button class="layui-btn layui-btn-sm layuiadmin-btn-ad layui-btn-primary " lay-submit
+                                    lay-filter="order-clear-search">清空查询
+                            </button>
+                            <button class="layui-btn layui-btn-sm layuiadmin-btn-ad layui-btn-primary " lay-submit
+                                    lay-filter="data-export">导出
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="layui-tab-item layui-show">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <table id="order-lists" lay-filter="order-lists"></table>
+
+                        <script type="text/html" id="order-operation" >
+                            <div class="table-operate">
+                                <a class="layui-btn layui-btn-primary layui-btn-sm operation-btn" lay-event="detail">订单详情</a>
+
+                                {{#  if(d.order_status > 1 && d.shipping_status == 1 && d.delivery_type == 1){ }}
+                                <a class="layui-btn layui-btn-primary layui-btn-sm operation-btn" lay-event="detail">查看内容</a>
+                                {{#  } }}
+
+                                {{#  if(d.delivery_type == 0 && (d.order_status == 2 || d.order_status == 3) ){ }}
+                                    <a class="layui-btn layui-btn-primary layui-btn-sm operation-btn" lay-event="express">物流查询</a>
+                                {{#  } }}
+                            </div>
+                        </script>
+
+                        <script type="text/html" id="image">
+                            <img src="{{d.image}}" style="height:80px;width: 80px" class="image-show">
+                        </script>
+
+                        <!--商家信息-->
+                        <script type="text/html" id="shop">
+                            <img src="{{d.shop.logo}}" style="height:80px;width: 80px" class="image-show">
+                            <div class="layui-input-inline"  style="text-align: left;">
+                                <p>商家编号:{{d.shop.id}}</p>
+                                <p>商家名称:{{d.shop.name}}</p>
+                                <p>商家类型:{{d.shop.type_desc}}</p>
+                            </div>
+                        </script>
+
+                        <!--订单信息-->
+                        <script type="text/html" id="order">
+                            <div style="text-align: left">
+                                <p>订单编号:{{d.order_sn}}</p>
+                                <p>订单类型:{{d.order_type_text}}</p>
+                                <p>下单时间:{{d.create_time}}</p>
+                                <p>支付时间:
+                                    {{#  if(d.pay_time == '0'){ }}
+                                        未支付
+                                    {{#  } else { }}
+                                        {{d.pay_time}}
+                                    {{#  } }}
+                                </p>
+                                <p>订单来源:{{d.order_source_text}}</p>
+                            </div>
+                        </script>
+
+                        <!--会员信息-->
+                        <script type="text/html" id="user">
+                            <img src="{{d.user.avatar}}" style="height:80px;width: 80px" class="image-show">
+                            <div class="layui-input-inline"  style="text-align: left;">
+                                <p>会员编号:{{d.user.sn}}</p>
+                                <p style="width: 180px;text-overflow:ellipsis;overflow: hidden">会员昵称:{{d.user.nickname}}</p>
+                                <p>会员等级:{{d.user_level}}</p>
+                            </div>
+                        </script>
+
+                        <!--收货信息-->
+                        <script type="text/html" id="delivery">
+                            <div style="text-align: left">
+                                <p>收货人:{{d.consignee}}</p>
+                                <p>手机号码:{{d.mobile}}</p>
+                                <p>收货地址:{{d.delivery_address}}</p>
+                                <p>配送方式:{{d.delivery_type_text}}</p>
+                            </div>
+                        </script>
+
+                        <!--金额信息-->
+                        <script type="text/html" id="amount">
+                            <div style="text-align: left">
+                                <p>运费金额:{{d.shipping_price}}</p>
+                                <p>商品金额:{{d.goods_price}}</p>
+                                <p>优惠金额:{{d.discount_amount}}</p>
+                                <p>应付金额:{{d.order_amount}}</p>
+                                <p>支付方式:{{d.pay_way_text}}</p>
+                            </div>
+                        </script>
+
+                        <!--商品信息-->
+                        <script type="text/html" id="goods">
+                            <div class="goods-content">
+                                {{#  layui.each(d.order_goods, function(index, item){ }}
+                                <div style="text-align: left;" class="goods-data">
+                                    <img src="{{ item.image }}" style="height:80px;width: 80px" class="image-show layui-col-md4">
+                                    <div class="layui-input-inline layui-col-md8">
+                                        <span class="layui-col-md7 goods_name_hide">{{ item.goods_name }}</span>
+                                        <span class="layui-col-md5">￥{{ item.goods_price }}</span>
+                                        <br>
+                                        <span class="layui-col-md7 goods_name_hide">{{ item.spec_value }}</span>
+                                        <span class="layui-col-md5">{{ item.goods_num }}件</span>
+                                    </div>
+                                </div>
+                                {{#  }); }}
+                            </div>
+                        </script>
+
+                        <!--商品数量-->
+                        <script type="text/html" id="goods_num">
+                            {{ d.total_num }}件
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+      layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form'], function(){
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table
+            , element = layui.element
+            , laydate = layui.laydate;
+
+        var select_type = '';
+
+        //图片放大
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src,400);
+        });
+
+          //监听搜索
+        form.on('submit(order-search)', function (data) {
+            var field = data.field;
+            field.type = select_type
+            //执行重载
+            table.reload('order-lists', {
+                where: field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        // 导出
+        form.on('submit(data-export)', function (data) {
+            var field = data.field;
+            field.type = select_type
+            like.ajax({
+                url: '{:url("order.order/export")}'
+                , data: field
+                , type: 'get'
+                , success: function (res) {
+                    if (res.code == 1) {
+                        window.location.href = res.data.url;
+                    }
+                }
+            });
+        });
+
+        //清空查询
+        form.on('submit(order-clear-search)', function () {
+            $('#keyword').val('');
+            $('#order_status').val('');
+            $('#goods_name').val('');
+            $('#shop_name').val('');
+            $('#pay_way').val('');
+            $('#order_type').val('');
+            $('#order_source').val('');
+            $('#start_time').val('');
+            $('#end_time').val('');
+            $('#delivery_type').val('');
+            form.render('select');
+            //刷新列表
+            table.reload('order-lists', {
+                where: {
+                    type : select_type,
+                },
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        //日期时间范围
+        laydate.render({
+            elem: '#start_time'
+            ,type: 'datetime'
+            ,trigger: 'click'
+            ,done: function (value, date, endDate) {
+                var startDate = new Date(value).getTime();
+                var endTime = new Date($('#end_time').val()).getTime();
+                if (endTime < startDate) {
+                    layer.msg('结束时间不能小于开始时间');
+                    $('#start_time').val($('#end_time').val());
+                }
+            }
+        });
+
+        laydate.render({
+            elem: '#end_time'
+            ,type: 'datetime'
+            ,trigger: 'click'
+            ,done: function (value, date, endDate) {
+                var startDate = new Date($('#start_time').val()).getTime();
+                var endTime = new Date(value).getTime();
+                console.log(startDate);
+                if (endTime < startDate) {
+                    layer.msg('结束时间不能小于开始时间');
+                    $('#end_time').val($('#start_time').val());
+                }
+            }
+        });
+
+        //获取列表
+        getList('');
+        //切换列表
+        element.on('tab(tab-all)', function (data) {
+
+            var searchData =  form.val("search-form");
+
+            var type = $(this).attr('data-type');
+
+            searchData.type = type;
+            select_type = type;
+
+            //执行重载
+            table.reload('order-lists', {
+                where: searchData,
+                page: {
+                    curr: 1
+                }
+            });
+
+            if (type !== '') {
+                $('.order_status').hide();
+            } else {
+                $('.order_status').show();
+            }
+        });
+
+        function getList(type) {
+
+            table.render({
+                elem: '#order-lists'
+                , url: '{:url("order.order/lists")}'
+                , cols: [[
+                    {field:'id',title: 'id',width:60,align: 'center'}
+                    , {field: 'shop', title: '商家信息', align: 'center',templet:'#shop',width:230}
+                    , {field: 'order', title: '订单信息', align: 'center',templet:'#order',width:230}
+                    , {field: 'user', title: '会员信息', templet:'#user',width:300}
+                    , {field: 'order_goods', title: '商品信息', align: 'center',templet:'#goods',width:300}
+                    , {field: 'total_num', title: '商品数量', align: 'center',templet:'#goods_num',width:70}
+                    , {field: 'total_amount', title: '订单金额', align: 'center',templet:'#amount',width:150}
+                    , {field: 'delivery', title: '收货信息', align: 'center',templet:'#delivery',width:200}
+                    , {field: 'pay_status_text', title: '支付状态', align: 'center',templet:'#pay_status',width:100}
+                    , {field: 'order_status_text', title: '订单状态', align: 'center',templet:'#order_status',width:100}
+                    , {fixed: 'right', title: '操作', width: 300, align: 'center', toolbar: '#order-operation'}
+                ]]
+                , page: true
+                , text: {none: '暂无数据！'}
+                ,response: {
+                    statusCode: 1
+                  }
+                , parseData: function (res) {
+                    return {
+                        "code": res.code,
+                        "msg": res.msg,
+                        "count": res.data.count,
+                        "data": res.data.lists,
+                        "statistics" : res.data.statistics
+                    };
+                }
+                ,done: function(res, curr, count){
+                    // 解决操作栏因为内容过多换行问题
+                    $(".layui-table-main tr").each(function (index, val) {
+                        $($(".layui-table-fixed-l .layui-table-body tbody tr")[index]).height($(val).height());
+                        $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height());
+                    });
+                    let statistics = res.statistics;
+                    console.log(statistics);
+                    if (res.code == 1) {
+                        $('#select-type-all').html('全部(' + (statistics.all) +')');
+                        $.each(statistics.order_status, function (index, item) {
+                            $('#select-type-' + item.status).html(item.title + '(' + (item.count) +')');
+                        })
+                    }
+                }
+            });
+        }
+
+        //监听工具条
+        table.on('tool(order-lists)', function (obj) {
+            var id = obj.data.id;
+            if(obj.event === 'detail'){
+                layer.open({
+                    type: 2
+                    ,title: '订单详情'
+                    ,content: '{:url("order.order/detail")}?id='+id
+                    ,area: ['90%', '90%']
+                    ,yes: function(index, layero){
+                        table.reload('order-lists');
+                    }
+                })
+            }
+
+            //删除订单
+            if(obj.event === 'del'){
+                layer.confirm('删除后订单将消失，确认删除订单吗?', {
+                    btn: ['确认','取消'] //按钮
+                }, function(){
+                    like.ajax({
+                        url: '{:url("order.order/del")}'
+                        , data: {'order_id': id}
+                        , type: 'post'
+                        , success: function (res) {
+                            if (res.code == 1) {
+                                layui.layer.msg(res.msg, {
+                                    offset: '15px'
+                                    , icon: 1
+                                    , time: 1000
+                                },function () {
+                                    table.reload('order-lists');
+                                });
+                            }
+                        },
+                    });
+                });
+            }
+
+            //取消订单
+            if(obj.event === 'cancel'){
+                layer.confirm('确认取消订单吗?', {
+                    btn: ['确认','取消'] //按钮
+                }, function(){
+                    like.ajax({
+                        url: '{:url("order.order/cancel")}'
+                        , data: {'order_id': id}
+                        , type: 'post'
+                        , success: function (res) {
+                            if (res.code == 1) {
+                                layui.layer.msg(res.msg, {
+                                    offset: '15px'
+                                    , icon: 1
+                                    , time: 1000
+                                },function () {
+                                    table.reload('order-lists');
+                                });
+                            }
+                        },
+                    });
+                });
+            }
+
+            //发货
+            if(obj.event === 'delivery'){
+                layer.open({
+                    type: 2
+                    ,title: '订单发货'
+                    ,content: '{:url("order.order/delivery")}?id='+id
+                    ,area: ['90%', '90%']
+                    ,yes: function(index, layero){
+
+                    }
+                })
+            }
+
+            //物流信息
+            if(obj.event === 'express'){
+                layer.open({
+                    type: 2
+                    ,title: '订单发货'
+                    ,content: '{:url("order.order/express")}?id='+id
+                    ,area: ['90%', '90%']
+                    ,yes: function(index, layero){
+
+                    }
+                })
+            }
+
+
+            //确认收货
+            if(obj.event === 'confirm'){
+                layer.confirm('确认订单商品已收货吗?', {
+                    btn: ['确认','取消'] //按钮
+                }, function(){
+                    like.ajax({
+                        url: '{:url("order.order/confirm")}'
+                        , data: {'order_id': id}
+                        , type: 'post'
+                        , success: function (res) {
+                            if (res.code == 1) {
+                                layui.layer.msg(res.msg, {
+                                    offset: '15px'
+                                    , icon: 1
+                                    , time: 1000
+                                },function () {
+                                    table.reload('order-lists');
+                                });
+                            }
+                        },
+                    });
+                });
+            }
+
+            //商家备注
+            if(obj.event === 'remarks') {
+
+                like.ajax({
+                    url: '{:url("order.order/remarks")}'
+                    , data: {'id': id}
+                    , type: 'get'
+                    , success: function (res) {
+                        if (res.code === 1) {
+                            layer.prompt({title: '备注信息', formType: 2, value: res.data.order_remarks}, function(value, index){
+                                layer.close(index);
+                                like.ajax({
+                                    url: '{:url("order.order/remarks")}'
+                                    , data: {'id': id, "order_remarks": value }
+                                    , type: 'post'
+                                    , success: function (res) {
+                                        if (res.code === 1) {
+                                            layui.layer.msg(res.msg, {
+                                                offset: '15px'
+                                                , icon: 1
+                                                , time: 1000
+                                            });
+                                        }
+                                    }
+                                });
+
+                            });
+                        }
+                    }
+                });
+
+            }
+
+
+            if(obj.event ==='print'){
+                layer.confirm('确定要打印订单吗？', function(index){
+                    like.ajax({
+                        url:'{:url("order.order/orderPrint")}',
+                        data:{id:id},
+                        type:"post",
+                        success:function(res)
+                        {
+                            if(res.code == 1)
+                            {
+                                layui.layer.msg(res.msg, {
+                                    offset: '15px'
+                                    , icon: 1
+                                    , time: 1000
+                                });
+                                layer.close(index); //关闭弹层
+                                table.reload('printer-lists'); //数据刷新
+                            }
+                        }
+                    });
+                    layer.close(index);
+
+
+                })
+
+            }
+        });
+    });
+</script>

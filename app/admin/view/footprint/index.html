@@ -1,0 +1,141 @@
+{layout name="layout1" /}
+<style>
+    .bubble { display: flex;justify-content: start;flex-wrap: wrap; }
+    .bubble .layui-card { background:#eee; width:19%; min-width:155px; height:100px; margin-right:10px; }
+    .bubble-content { padding-top: 10px; font-size: 14px; display: flex; justify-content: space-between;}
+</style>
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*设置商城首页，商品详情页显示足迹气泡。营造活动氛围，增强气氛。</p>
+                        <p>*注意：需在设置中开启，并且把对应的场景也开启才可以使用。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 选项卡 -->
+        <div class="layui-tab layui-tab-card">
+            <ul class="layui-tab-title">
+                <li data-type="1" class="layui-this">足迹气泡</li>
+                <li data-type="2">设置</li>
+            </ul>
+            <div class="layui-tab-content">
+                <!-- 足迹气泡 -->
+                <div class="layui-tab-item layui-show" style="padding: 0 15px;">
+                    <div class="bubble">
+                        {volist name="footprint" id="vo"}
+                            <div class="layui-card">
+                                <div class="layui-card-header">{$vo.name}</div>
+                                <div class="layui-card-body">
+                                    <div class="bubble-content">
+                                        <button type="button" data-id="{$vo.id}"
+                                                class="layui-btn layui-btn-normal layui-btn-sm edit-bubble">
+                                            编辑
+                                        </button>
+                                        <span>已开启</span>
+                                    </div>
+                                </div>
+                            </div>
+                        {/volist}
+                    </div>
+                </div>
+                <!-- 设置模块 -->
+                <div class="layui-tab-item">
+                    <form class="layui-form">
+                        <div class="layui-form-item">
+                            <label for="duration" class="layui-form-label" style="width:110px;">足迹气泡时长：</label>
+                            <div class="layui-input-inline" style="width:220px;">
+                                <input type="number" id="duration" name="duration" value="{$config.footprint_duration}" autocomplete="off" class="layui-input">
+                                <p style="color:#ccc;font-size: 13px;">查询多长时间范围内的足迹信息</p>
+                            </div>
+                            <div class="layui-input-inline" style="line-height: 38px;">分钟</div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label" style="width:110px;">足迹气泡状态：</label>
+                            <div class="layui-input-inline" style="width:220px;">
+                                <input type="radio" name="status" value="1" title="开启" {if $config.footprint_status==1}checked{/if}>
+                                <input type="radio" name="status" value="0" title="关闭"  {if $config.footprint_status==0}checked{/if}>
+                                <p style="color:#ccc;font-size: 13px;">开启还是关闭足迹气泡</p>
+                            </div>
+                        </div>
+                        <div class="layui-form-item ">
+                            <div class="layui-input-block">
+                                <a class="layui-btn layui-btn-normal"  lay-submit lay-filter="update-set-submit">确定</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(["form"], function () {
+        var form = layui.form;
+
+        /**
+         * 编辑足迹气泡
+         */
+        $(document).on('click', '.edit-bubble', function () {
+            var that = $(this);
+            var id = $(this).attr('data-id');
+            layer.open({
+                type: 2
+                ,title: "编辑足迹气泡"
+                ,content: "{:url('Footprint/edit')}?id="+id
+                ,area: ["400px", "340px"]
+                ,btn: ["确定", "取消"]
+                ,yes: function(index, layero){
+                    var iframeWindow = window["layui-layer-iframe" + index];
+                    var submit = layero.find("iframe").contents().find("#addSubmit");
+                    iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                        data.field["id"] = id;
+                        like.ajax({
+                            url: "{:url('Footprint/edit')}",
+                            data: data.field,
+                            type: "POST",
+                            success:function(res) {
+                                if(res.code === 1) {
+                                    layui.layer.msg(res.msg);
+                                    layer.close(index);
+
+
+                                    var status = data.field['status'] === '0' ? '关闭' : '已开启';
+                                    that.next().html(status)
+                                }
+                            }
+                        });
+                    });
+                    submit.trigger("click");
+                }
+            });
+        });
+
+        /**
+         * 更新设置
+         */
+        form.on('submit(update-set-submit)', function(data){
+            like.ajax({
+                url:'{:url("footprint/set")}',
+                data:data.field,
+                type:"post",
+                success:function(res) {
+                    if(res.code === 1) {
+                        layui.layer.msg(res.msg, {offset:'15px', icon:1, time: 1000});
+                    } else {
+                        layui.layer.msg(res.msg, {offset:'15px', icon:2, time: 1000});
+                    }
+                }
+            });
+            return false;
+        });
+    })
+</script>

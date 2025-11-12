@@ -1,0 +1,85 @@
+{layout name="layout1" /}
+<style>
+    .layui-form-label {
+        width: 120px;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*会员登录和注册设置</p>
+                    </div>
+                </div>
+            </div>
+            <!--            表单区域-->
+            <div class="layui-form" style="margin-top: 15px;">
+
+                <div class="layui-form-item">
+                    <lable class="layui-form-label">短信验证注册手机:</lable>
+                    <div class="layui-input-block">
+                        <input type="radio" name="captcha" value="0" title="关闭" {if $config.captcha ==0 }checked{/if} />
+                        <input type="radio" name="captcha" value="1" title="开启" {if $config.captcha == 1 }checked{/if} />
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <span class="layui-word-aux">会员手机号码注册账号时，是否需要短信验证码验证，默认关闭。</span>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label">成长值赠送:</lable>
+                    <div class="layui-inline">
+                        <input type="number" min="0" name="growth" value="{$config.growth}" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <span class="layui-word-aux">注册赠送多少成长值</span>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="set">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form','element'], function(){
+        var $ = layui.$,form = layui.form,element = layui.element;
+
+        form.on('submit(set)', function(data) {
+            like.ajax({
+                url:'{:url("setting.register/set")}',
+                data: data.field,
+                type:"post",
+                success:function(res)
+                {
+                    if(res.code == 1)
+                    {
+                        layui.layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        });
+                    }
+                }
+            });
+        });
+
+    });
+</script>

@@ -1,0 +1,88 @@
+{layout name="layout2" /}
+<style>
+    .layui-table-cell {
+        height: auto;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <!--操作提示-->
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*易联云的打印机请购买k6、k4、w1系列的打印机。</p>
+                        <p>*配置易联云打印机请前往 <a href="https://dev.10ss.net/admin/listapp" target="_blank" style="color: rgb(64,115,250)">易联云开发者平台</a>获取</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div class="layui-tab layui-tab-card" lay-filter="tab-all">
+                <div class="layui-card-body">
+                    <table id="like-table-lists" lay-filter="like-table-lists"></table>
+                    <script type="text/html" id="table-operation">
+                        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="setConfig">配置</a>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['table', 'form', 'element'], function () {
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table
+            , element = layui.element;
+
+        // 列表
+        like.tableLists("#like-table-lists", "{:url('printer.config/lists')}", [
+            {field: 'name', title: '打印机类型'}
+            , {fixed: 'right', title: '操作', align: 'center', toolbar: '#table-operation'}
+        ], [], false);
+
+
+        //事件
+        var active = {
+            setConfig: function (obj) {
+                layer.open({
+                    type: 2,
+                    title: '打印机设置',
+                    content: '{:url("printer.config/edit")}?id=' + obj.data.id,
+                    area: ['60%', '60%'],
+                    btn: ['确定', '取消'],
+                    yes: function (index, layero) {
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on('submit(addSubmit)', function (data) {
+                            var field = data.field;
+                            like.ajax({
+                                url: '{:url("printer.config/edit")}',
+                                data: field,
+                                type: "POST",
+                                success: function (res) {
+                                    if (res.code === 1) {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px',
+                                            icon: 1,
+                                            time: 1000
+                                        });
+                                        layer.close(index);
+                                        table.reload('like-table-lists');
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                })
+            },
+        }
+
+        like.eventClick(active);
+    });
+</script>

@@ -1,0 +1,130 @@
+{layout name="layout1" /}
+<style>
+    .layui-form-label {
+        width: 220px;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*汇付开发设置内容请在汇付商户后台- 开发设置模块中获取</p>
+                    </div>
+                </div>
+            </div>
+            <!-- 表单区域-->
+            <div class="layui-form" style="margin-top: 15px;">
+
+                <!--sys_id-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red;">*</span>sys_id：</label>
+                    <div class="layui-input-block">
+                        <div class="layui-col-md6">
+                            <input type="text" name="sys_id" value="{$config.sys_id | default = ''}" lay-verType="tips" autocomplete="off" class="layui-input">
+                            <div class="layui-form-mid layui-word-aux">
+<!--                                （1）当主体为渠道商时，此字段填写渠道商huifu_id；-->
+<!--                                <p></p>-->
+<!--                                （2）当主体为直连商户时，此字段填写商户huifu_id；-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--product_id-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red;">*</span>product_id：</label>
+                    <div class="layui-input-block">
+                        <div class="layui-col-md6">
+                            <input type="text" name="product_id" value="{$config.product_id | default = ''}" lay-verType="tips" autocomplete="off" class="layui-input">
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--huifu_id-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red;">*</span>商户号：</label>
+                    <div class="layui-input-block">
+                        <div class="layui-col-md6">
+                            <input type="text" name="huifu_id" value="{$config.huifu_id | default = ''}"  lay-verType="tips" autocomplete="off" class="layui-input">
+                            <div class="layui-form-mid layui-word-aux">
+<!--                                渠道与一级代理商的直属商户ID-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--商户私钥-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red;">*</span>商户私钥：</label>
+                    <div class="layui-input-block">
+                        <div class="layui-col-md6">
+                            <input type="text" name="rsa_merch_private_key" value="{$config.rsa_merch_private_key | default = ''}" lay-verType="tips" autocomplete="off" class="layui-input">
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--商户公钥-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red;">*</span>商户公钥：</label>
+                    <div class="layui-input-block">
+                        <div class="layui-col-md6">
+                            <input type="text" name="rsa_merch_public_key" value="{$config.rsa_merch_public_key | default = ''}" lay-verType="tips" autocomplete="off" class="layui-input">
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--汇付公钥-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red;">*</span>汇付公钥：</label>
+                    <div class="layui-input-block">
+                        <div class="layui-col-md6">
+                            <input type="text" name="rsa_huifu_public_key" value="{$config.rsa_huifu_public_key | default = ''}" lay-verType="tips" autocomplete="off" class="layui-input">
+                            <div class="layui-form-mid layui-word-aux"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="set">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form','element'], function(){
+        var $ = layui.$,form = layui.form,element = layui.element;
+        form.on('submit(set)', function(data) {
+            like.ajax({
+                url:'{:url("setting.hfdg/dev_set")}',
+                data: data.field,
+                type:"post",
+                success:function(res)
+                {
+                    if(res.code == 1)
+                    {
+                        layui.layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        });
+                    }
+                }
+            });
+        });
+
+    });
+</script>

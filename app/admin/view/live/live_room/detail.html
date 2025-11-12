@@ -1,0 +1,109 @@
+{layout name="layout2" /}
+<style>
+    .div-flex {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+    }
+
+    .div-width {
+        width: 260px;
+    }
+
+    .layui-form-label {
+        width: 180px;
+    }
+
+    .image {
+        height: 80px;
+        width: 80px;
+    }
+</style>
+
+<div class="layui-card-body">
+    <!--基本信息-->
+    <div class="layui-form" lay-filter="layuiadmin-form-order" id="layuiadmin-form-order">
+        <input type="hidden" class="id" name="id" value="{$detail.id}">
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">直播间标题</label>
+            <div class="div-width">{$detail.name}</div>
+            <label class="layui-form-label ">直播类型:</label>
+            <div class="div-width"><input type="radio" name="type" value="0" title="手机直播" checked></div>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">开播时间:</label>
+            <div class="div-width">{$detail.start_time}</div>
+            <label class="layui-form-label ">结束时间:</label>
+            <div class="div-width">{$detail.end_time}</div>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">主播昵称:</label>
+            <div class="div-width">{$detail.anchor_name}</div>
+            <label class="layui-form-label ">主播微信号:</label>
+            <div class="div-width">{$detail.anchor_wechat}</div>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">分享卡片封面:</label>
+            <div class="div-width"><img src="{$detail.share_img}" class="image-show image"></div>
+            <label class="layui-form-label ">直播卡片封面:</label>
+            <div class="div-width"><img src="{$detail.feeds_img}" class="image-show image"></div>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">直播间背景墙:</label>
+            <div class="div-width"><img src="{$detail.cover_img}" class="image-show image"></div>
+            <label class="layui-form-label ">直播间功能:</label>
+            <div class="layui-input-inline" style="width: 320px">
+                <input type="checkbox" disabled name="close_like" lay-skin="primary" title="开启点赞" {eq name="detail.close_like" value="0" }checked{/eq}>
+                <input type="checkbox" disabled name="close_goods" lay-skin="primary" title="开启货架" {eq name="detail.close_goods" value="0" }checked{/eq}>
+                <input type="checkbox" disabled name="close_comment" lay-skin="primary" title="开启评论" {eq name="detail.close_comment" value="0" }checked{/eq}>
+                <input type="checkbox" disabled name="close_replay" lay-skin="primary" title="开启回放" {eq name="detail.close_replay" value="0" }checked{/eq}>
+                <input type="checkbox" disabled name="close_share" lay-skin="primary" title="开启分享" {eq name="detail.close_share" value="0" }checked{/eq}>
+                <input type="checkbox" disabled name="close_kf" lay-skin="primary" title="开启客服" {eq name="detail.close_kf" value="0" }checked{/eq}>
+                <input type="checkbox" disabled name="is_feeds_public" lay-skin="primary" title="开启官方收录" {eq name="detail.is_feeds_public" value="1" }checked{/eq}>
+            </div>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label">审核结果:</label>
+            <div class="div-width">{$detail.audit_status_text}</div>
+            <label class="layui-form-label">审核原因:</label>
+            <div class="div-width">{$detail.audit_remark}</div>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label">排序:</label>
+            <div class="div-width">{$detail.sort}</div>
+        </div>
+
+        <div class="layui-form-item" style="text-align: center">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary width_160 " id="back">返回</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    layui.use(['form'], function () {
+        var $ = layui.$;
+        //主图放大
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src, 400);
+        });
+
+        $('#back').click(function () {
+            var index=parent.layer.getFrameIndex(window.name); //获取当前窗口的name
+            parent.layer.close(index);
+            parent.layui.table.reload('like-table-lists');
+            return true;
+        });
+
+    });
+</script>

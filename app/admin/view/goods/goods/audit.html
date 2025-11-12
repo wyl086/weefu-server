@@ -1,0 +1,31 @@
+{layout name="layout1" /}
+<style>
+    .redReq::before {
+        content: '*';
+        color: red;
+        margin-right: 5px;
+    }
+</style>
+<div class="layui-form">
+    <input type="hidden" name="goods_id" value="{$goods_id}" />
+    <div class="layui-form-item" style="margin-top: 15px;">
+        <label class="layui-form-label redReq">审核状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="audit_status" value="1" title="审核通过">
+            <input type="radio" name="audit_status" value="2" title="审核不通过" checked>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label redReq">审核说明</label>
+        <div class="layui-input-block" style="width: 500px;">
+            <textarea name="audit_remark" class="layui-textarea" style="height: 150px;"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">商家可以查看审核说明</span>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="audit-submit" id="audit-submit" value="确认">
+    </div>
+</div>

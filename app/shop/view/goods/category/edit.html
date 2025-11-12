@@ -1,0 +1,88 @@
+{layout name="layout2" /}
+<style>
+  .layui-form-label {
+    color: #6a6f6c;
+    width: 140px;
+  }
+  .layui-input-block{
+    margin-left:170px;
+  }
+  .reqRed::before {
+    content: '*';
+    color: red;
+  }
+</style>
+<div class="layui-form" lay-filter="layuiadmin-form-category" id="layuiadmin-form-category" style="padding: 20px 30px 0 0;">
+  <input type="hidden" name="id" value="{$detail.id}" />
+  <div class="layui-form-item">
+    <label class="layui-form-label reqRed">分类名称：</label>
+    <div class="layui-input-inline">
+      <input type="text" name="name" value="{$detail.name}" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">分类图标：</label>
+    <div class="layui-input-inline">
+      {if $detail.image}
+      <div class="upload-image-div">
+          <img src="{$detail.image}" alt="img">
+          <input type="hidden" name="image" value="{$detail.image}">
+          <div class="del-upload-btn">x</div>
+      </div>
+      <div class="upload-image-elem" style="display:none;"><a class="add-upload-image"> + 添加图片</a></div>
+      {else}
+          <div class="upload-image-elem"><a class="add-upload-image"> + 添加图片</a></div>
+      {/if}
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <span style="color: #a3a3a3;font-size: 9px">建议尺寸：宽200像素*高200像素的jpg，jpeg，png图片</span>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">排序：</label>
+    <div class="layui-input-inline">
+      <input type="number" name="sort" value="{$detail.sort}" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+	<label class="layui-form-label"></label>
+    <span style="color: #a3a3a3;font-size: 9px">排序值必须为整数；数值越小，越靠前</span>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">显示状态：</label>
+    <div class="layui-input-inline">
+      <input type="radio" name="is_show" value="1" {if $detail.is_show == 1}checked{/if} title="显示">
+      <input type="radio" name="is_show" value="0" {if $detail.is_show == 0}checked{/if} title="不显示">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">分类描述：</label>
+    <div class="layui-input-inline">
+      <textarea name="remark" autocomplete="off" class="layui-textarea">{$detail.remark}</textarea>
+    </div>
+  </div>
+  <div class="layui-form-item layui-hide">
+      <input type="button" lay-submit lay-filter="edit-goods_category-submit" id="edit-goods_category-submit" value="确认">
+  </div>
+</div>
+<script>
+  layui.config({
+    version:"{$front_version}",
+    base: '/static/lib' //静态资源所在路径
+  }).use(['form'], function(){
+    var $ = layui.$
+    ,form = layui.form;
+
+    // 图片上传
+    like.delUpload();
+      $(document).on("click", ".add-upload-image", function () {
+      like.imageUpload({
+          limit: 1,
+          field: "image",
+          that: $(this),
+          content: '/shop/file/lists?type=10'
+      });
+    })
+  })
+</script>

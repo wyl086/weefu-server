@@ -1,0 +1,22 @@
+{layout name="layout2" /}
+<div class="layui-form" lay-filter="layuiadmin-form-unit" id="layuiadmin-form-unit" style="padding: 20px 30px 0 0;">
+    <input type="hidden" value="{$detail.id}" name="id">
+    <!--单位名称-->
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span style="color: red">*</span>单位名称:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" value="{$detail.name}" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <!--排序-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序:</label>
+        <div class="layui-input-inline">
+            <input type="number" name="sort" value="{$detail.sort}" autocomplete="off" class="layui-input"  lay-vertype="tips">
+            <div class=" layui-form-mid layui-word-aux" style="white-space: nowrap">排序值必须为整数；数值越小，越靠前</div>
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="unit-submit-edit" id="unit-submit-edit" value="确认">
+    </div>
+</div>

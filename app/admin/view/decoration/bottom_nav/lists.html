@@ -1,0 +1,117 @@
+{layout name="layout1" /}
+<style>
+    .layui-table-cell {
+        height: auto;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*设置移动端商城底部导航图标和名称</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <div class="layui-tab-content">
+                <table id="like-table-lists" lay-filter="like-table-lists"></table>
+                <script type="text/html" id="table-operation">
+                    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>
+                </script>
+                <script type="text/html" id="icon">
+                    <img src="{{d.icon}}" style="height:80px;width: 80px" class="image-show">
+                </script>
+                <script type="text/html" id="select_icon">
+                    <img src="{{d.select_icon}}" style="height:80px;width: 80px" class="image-show">
+                </script>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "element", "laydate"], function(){
+        var table   = layui.table;
+        var element = layui.element;
+        var laydate = layui.laydate;
+        var form    = layui.form;
+
+        like.tableLists('#like-table-lists','{:url()}',[
+            {field: 'id', width: 60, title: 'ID'}
+            ,{field: 'name', width: 260, align: 'center', title: '导航名称'}
+            ,{field: 'image', width: 120,title: '导航图标', templet: '#icon'}
+            ,{field: 'image', width: 120,title: '选中图标', templet: '#select_icon'}
+            ,{title: '操作', width: 180, align: 'center', fixed: 'right', toolbar: '#table-operation'}
+        ],[],false);
+
+        var active = {
+            edit:function(obj){
+                var id = obj.data.id;
+                layer.open({
+                    type: 2
+                    ,title: '编辑导航'
+                    ,content: '{:url("decoration.BottomNav/edit")}?id='+id
+                    ,area: ['90%', '90%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'editSubmit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("decoration.BottomNav/edit")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload('like-table-lists');
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            },
+
+        };
+        like.eventClick(active);
+
+        form.on("submit(search)", function(data){
+            data.field.terminal = terminal;
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(clear-search)", function(){
+            $("#pid").val("");
+            form.render("select");
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+    })
+</script>

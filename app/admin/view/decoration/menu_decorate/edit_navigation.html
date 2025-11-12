@@ -1,0 +1,104 @@
+{layout name="layout1" /}
+<style>
+    .layui-form {
+        margin-top: 15px;
+    }
+    .reqRed::before {
+        content: '*';
+        color: red;
+    }
+    .layui-form-label {
+        color: #6a6f6c;
+    }
+</style>
+<div class="layui-form">
+    <input type="hidden" name="id" value="{$navigation.id}" />
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">导航名称</label>
+        <div class="layui-input-block" style="width: 200px;">
+            <input type="text" name="name" value="{$navigation.name}" required lay-verify="required" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">选中图标</label>
+        <div class="layui-input-block" style="width: 200px;">
+            {if $navigation.selected_icon}
+            <div class="upload-image-div">
+                <img src="{$navigation.selected_icon}" alt="img">
+                <input type="hidden" name="image" value="{$navigation.selected_icon}">
+                <div class="del-upload-btn">x</div>
+            </div>
+            <div class="upload-image-elem" style="display:none;"><a class="add-upload-image upload_selected_icon"> + 添加图片</a></div>
+            {else}
+            <div class="upload-image-elem"><a class="add-upload-image upload_selected_icon" > + 添加图片</a></div>
+            {/if}
+        </div>
+    </div>
+    <div class="layui-form-item"><label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">建议尺寸：宽100像素*高100像素的jpg，jpeg，png，gif图片。不传则使用默认图标</span>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">未选中图标</label>
+        <div class="layui-input-block" style="width: 200px;">
+            {if $navigation.un_selected_icon}
+            <div class="upload-image-div">
+                <img src="{$navigation.un_selected_icon}" alt="img">
+                <input type="hidden" name="image" value="{$navigation.un_selected_icon}">
+                <div class="del-upload-btn">x</div>
+            </div>
+            <div class="upload-image-elem" style="display:none;"><a class="add-upload-image upload_un_selected_icon"> + 添加图片</a></div>
+            {else}
+            <div class="upload-image-elem"><a class="add-upload-image upload_un_selected_icon"> + 添加图片</a></div>
+            {/if}
+        </div>
+    </div>
+    <div class="layui-form-item"><label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">建议尺寸：宽100像素*高100像素的jpg，jpeg，png，gif图片。不传则使用默认图标</span>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-inline">
+            <input type="radio" name="status" value="1" title="显示"  {if $navigation.status == 1} checked {/if}/>
+            <input type="radio" name="status" value="0" title="隐藏"  {if $navigation.status == 0} checked {/if}/>
+            <div class="layui-form-mid layui-word-aux">显示或隐藏底部导航</div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-block" style="width: 200px;">
+            <button class="layui-btn layui-hide" lay-submit id="edit-navigation_decorate-submit" lay-filter="edit-navigation_decorate-submit">确定</button>
+        </div>
+    </div>
+</div>
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['table','form'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,table = layui.table;
+
+        // 图片上传
+        like.delUpload();
+
+        $(document).on("click", ".upload_selected_icon", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "selected_icon",
+                that: $(this)
+            });
+        })
+
+        $(document).on("click", ".upload_un_selected_icon", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "un_selected_icon",
+                that: $(this)
+            });
+        })
+    });
+</script>

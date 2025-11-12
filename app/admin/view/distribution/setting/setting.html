@@ -1,0 +1,115 @@
+{layout name="layout1" /}
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*分销推广相关的设置</p>
+                        <p>*分销会员开通方式：申请分销是指，成为分销员需要申请并审核通过；全员分销是指，会员注册账号即成为分销会员；</p>
+                    </div>
+                </div>
+            </div>
+            <!-- 分销设置 -->
+            <div class="layui-form" lay-filter="" style="margin-top:30px;">
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="white-space: nowrap;width:120px ">自定义分销海报:</label>
+                    <div class="layui-input-block">
+                        <div class="like-upload-image">
+                            {if $config.image}
+                            <div class="upload-image-div">
+                                <img src="{$config.image}" alt="img">
+                                <input type="hidden" name="image" value="{$config.image}">
+                                <div class="del-upload-btn">x</div>
+                            </div>
+                            <div class="upload-image-elem" style="display:none;"><a class="add-upload-image" id="image"> + 添加图片</a></div>
+                            {else}
+                            <div class="upload-image-elem"><a class="add-upload-image" id="image"> + 添加图片</a></div>
+                            {/if}
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="white-space: nowrap;width:120px "></label>
+                    <div class="layui-input-block layui-word-aux">
+                        自定义分销推广海报图片，建议尺寸：800*800像素
+                    </div>
+                </div>
+                <div class="layui-form-item ">
+                    <label class="layui-form-label" style="white-space: nowrap;width:120px ">分销会员开通方式：</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="member_apply" value="1" title="申请分销" {if
+                               condition="$config.member_apply eq 1" }checked{/if}>
+                        <input type="radio" name="member_apply" value="2" title="全员分销" {if
+                               condition="$config.member_apply eq 2" }checked{/if}>
+                    </div>
+                    <div class="layui-form-mid layui-word-aux" style="white-space: nowrap">
+                        不同的分销方式，会员获得分销资格的途径不同
+                    </div>
+                </div>
+                <div class="layui-form-item ">
+                    <label class="layui-form-label" style="white-space: nowrap;width:120px; ">分销功能：</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="is_open" value="1" title="开启" {if
+                               condition="$config.is_open eq 1" }checked{/if}>
+                        <input type="radio" name="is_open" value="0" title="关闭" {if
+                               condition="$config.is_open eq 0" }checked{/if}>
+                        <div class=" layui-form-mid layui-word-aux" style="white-space: nowrap">
+                            开启或关闭分销功能，关闭后不发放分销佣金，隐藏分销相关功能及界面。
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-sm {$view_theme_color}" lay-submit
+                                lay-filter="confirm">确认
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    layui.config({
+        version: "{$front_version}",
+        base: '/static/lib/'
+    }).use(['element', 'form'], function () {
+        var $ = layui.$
+            , form = layui.form
+            , element = layui.element;
+
+        // 图片上传
+        like.delUpload();
+        // 自定义分销海报
+        $(document).on("click", "#image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "image",
+                that: $(this)
+            });
+        })
+
+        form.on('submit(confirm)', function (data) {
+            like.ajax({
+                url: '{:url("distribution.setting/setting")}'
+                , data: data.field
+                , type: 'post'
+                , success: function (res) {
+                    layer.msg(res.msg, {
+                        offset: '15px'
+                        , icon: 1
+                        , time: 1500
+                    }, function () {
+                        location.href = location.href;
+                    });
+                },
+            });
+        });
+
+    });
+</script>

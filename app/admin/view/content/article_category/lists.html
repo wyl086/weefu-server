@@ -1,0 +1,153 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*平台维护文章分类，方便文章分类整理。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layEvent" lay-event="add">新增文章分类</button>
+
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+            <script type="text/html" id="table-operation">
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</a>
+                {{#  if(d.is_show == '启用'){ }}<a class="layui-btn layui-btn-normal layui-btn-sm layui-btn-warm" lay-event="hide">停用</a>{{#  } }}
+                {{#  if(d.is_show == '停用'){ }}<a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="hide">启用</a>{{#  } }}
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+            </script>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(["table"], function(){
+        var table   = layui.table;
+
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {field:"id", width:60, title:"ID"}
+            ,{field:"name", width:160, align:"center", title:"分类名称"}
+            ,{field:"is_show", width:100, align:"center", title:"分类状态"}
+            ,{field:"create_time", width:180, align:"center", title:"创建时间"}
+            ,{title:"操作", width:220, align:"center", fixed:"right", toolbar:"#table-operation"}
+        ]);
+
+
+        var active = {
+            add: function() {
+                layer.open({
+                    type: 2
+                    ,title: "新增文章分类"
+                    ,content: "{:url('content.ArticleCategory/add')}"
+                    ,area: ["550px", "400px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            like.ajax({
+                                url: "{:url('content.ArticleCategory/add')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            edit: function(obj) {
+                layer.open({
+                    type: 2
+                    ,title: "编辑文章分类"
+                    ,content: "{:url('content.ArticleCategory/edit')}?id=" + obj.data.id
+                    ,area: ["550px", "400px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field['id'] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('content.ArticleCategory/edit')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            del: function(obj) {
+                layer.confirm("确定删除分类："+obj.data.name, function(index) {
+                    like.ajax({
+                        url: "{:url('content.ArticleCategory/del')}",
+                        data: {id: obj.data.id},
+                        type: "POST",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg);
+                                layer.close(index);
+                                obj.del();
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            },
+            hide: function(obj) {
+                var text = obj.data.is_show === '启用' ? '确定停用：' : '确定启用：';
+                layer.confirm(text+obj.data.name, function(index) {
+                    like.ajax({
+                        url: "{:url('content.ArticleCategory/hide')}",
+                        data: {id: obj.data.id},
+                        type: "POST",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg);
+                                layer.close(index);
+                                table.reload("like-table-lists", {
+                                    where: {},
+                                    page: { cur: 1 }
+                                });
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            }
+        };
+        like.eventClick(active);
+
+    })
+</script>

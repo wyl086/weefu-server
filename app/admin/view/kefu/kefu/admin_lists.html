@@ -1,0 +1,90 @@
+{layout name="layout1" /}
+<div class="wrapper">
+    <div class="layui-card">
+        <!--表格-->
+        <div class="layui-card-body">
+            <!--搜索区域-->
+            <div class="layui-form">
+                <div class="layui-inline">
+                    <label class="layui-form-label">名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" id="name" placeholder="请输入" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">角色</label>
+                    <div class="layui-input-inline">
+                        <select name="role_id" id="role_id">
+                            <option value="">所有</option>
+                            {volist name="role_lists" id="vo"}
+                            <option value="{$vo.id}">{$vo.name}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layui-btn-primary layui-bg-blue" lay-submit lay-filter="search">搜索</button>
+                    <button class="layui-btn layui-btn-primary" lay-submit lay-filter="reset">重置</button>
+                </div>
+            </div>
+            <!--数据表格-->
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+            <!--自定义模板-->
+            <script type="text/html" id="buttonTpl">
+                {{#  if(d.disable == 1){ }}
+                <button class="layui-btn layui-btn-danger layui-btn-xs layui-bg-red">禁用</button>
+                {{#  } else { }}
+                <button class="layui-btn layui-btn-xs layui-btn-primary">启用</button>
+                {{#  } }}
+            </script>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    layui.use(['table', 'form'], function () {
+        let form = layui.form
+            , table = layui.table;
+
+        //监听搜索
+        form.on('submit(search)', function (data) {
+            var field = data.field;
+            //执行重载
+            table.reload('like-table-lists', {
+                where: field,
+                page: {curr: 1}
+            });
+        });
+
+        // 获取选中的用户信息
+        window.admin_selected  = function admin_selected () {
+            var checkStatus = table.checkStatus('like-table-lists');
+            return checkStatus.data[0]; //获取选中行的数据
+        }
+
+        //清空查询
+        form.on('submit(reset)', function () {
+            $('#name').val('');
+            $('#role_id').val('all');
+            form.render('select');
+            //刷新列表
+            table.reload('like-table-lists', {
+                where: [], page: {curr: 1}
+            });
+        });
+
+        // 数据表格渲染
+        like.tableLists("#like-table-lists", '{:url("kefu.kefu/adminLists")}', [
+            {type: 'radio'}
+            , {field: 'account',  title: '账号'}
+            , {field: 'name', title: '名称'}
+            , {field: 'role', title: '角色'}
+            , {field: 'disable', title: '状态', templet: '#buttonTpl', minWidth: 40, align: 'center'}
+        ]);
+    });
+
+
+</script>

@@ -1,0 +1,180 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*添加在线客服。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layEvent" lay-event="add">新增客服</button>
+
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+            <script type="text/html" id="table-image">
+                {{#  if(d.avatar){ }}
+                <img src="{{d.avatar}}" class="image-show" alt="图" style="width:30px;height:30px;">
+                {{#  } }}
+            </script>
+            <script type="text/html" id="table-operation">
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</a>
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="workbench">工作台</a>
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+            </script>
+            <script type="text/html" id="statusTpl">
+                <input type="checkbox" lay-filter="switch-disable" data-id={{d.id}} lay-skin="switch"
+                       lay-text="开启|关闭" {{# if(d.disable==0){ }} checked {{# } }}/>
+            </script>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form"], function () {
+        var table = layui.table;
+        var form = layui.form;
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {field: "id", width: 60, title: "ID"}
+            , {field: "avatar", align: "center", title: "客服头像", templet: "#table-image"}
+            , {field: "account", align: "center", title: "客服账号"}
+            , {field: "nickname", align: "center", title: "客服昵称"}
+            , {field: "sort", width: 60, align: "center", title: "排序"}
+            , {field: "disable", align: "center", title: "状态", templet: "#statusTpl"}
+            , {field: "create_time", align: "center", title: "创建时间"}
+            , {title: "操作", width: 250, align: "center", fixed: "right", toolbar: "#table-operation"}
+        ]);
+
+        var active = {
+            add: function () {
+                layer.open({
+                    type: 2
+                    , title: "新增客服"
+                    , content: "{:url('kefu.Kefu/add')}"
+                    , area: ["90%", "90%"]
+                    , btn: ["确定", "取消"]
+                    , yes: function (index, layero) {
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function (data) {
+                            like.ajax({
+                                url: "{:url('kefu.Kefu/add')}",
+                                data: data.field,
+                                type: "POST",
+                                success: function (res) {
+                                    if (res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: {cur: 1}
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            edit: function (obj) {
+                layer.open({
+                    type: 2
+                    , title: "编辑客服"
+                    , content: "{:url('kefu.Kefu/edit')}?id=" + obj.data.id
+                    , area: ["90%", "90%"]
+                    , btn: ["确定", "取消"]
+                    , yes: function (index, layero) {
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function (data) {
+                            data.field['id'] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('kefu.Kefu/edit')}",
+                                data: data.field,
+                                type: "POST",
+                                success: function (res) {
+                                    if (res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: {cur: 1}
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            del: function (obj) {
+                layer.confirm("确定删除客服：" + obj.data.nickname, function (index) {
+                    like.ajax({
+                        url: "{:url('kefu.Kefu/del')}",
+                        data: {id: obj.data.id},
+                        type: "POST",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg);
+                                layer.close(index);
+                                obj.del();
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            },
+            workbench: function (obj) {
+                like.ajax({
+                    url: '{:url("kefu.Kefu/login")}',
+                    type: 'post',
+                    data: {'id': obj.data.id},
+                    success: function(res) {
+                        if(res.code == 1) {
+                            window.parent.open(res.data.url);
+                        }
+                    }
+                });
+            },
+        };
+        like.eventClick(active);
+
+        // 图片放大
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src, 400);
+        });
+
+        // 状态切换
+        form.on('switch(switch-disable)', function (obj) {
+            var kefu_id = obj.elem.attributes['data-id'].nodeValue;
+            var disable = 1;
+            if (obj.elem.checked) {
+                disable = 0;
+            }
+            var data = {disable: disable, id: kefu_id};
+            like.ajax({
+                url: '{:url("kefu.kefu/status")}',
+                data: data,
+                type: "post",
+                success: function (res) {
+                    if (res.code == 1) {
+                        layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                    }
+                }
+            });
+        });
+
+    })
+</script>

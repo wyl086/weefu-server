@@ -1,0 +1,142 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" style="border:1px dashed #c4c4c4; margin-bottom: 30px;">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>* 设置打印时发件人的模版，选择模版后方可进行打印；</p>
+                    </div>
+                </div>
+            </div>
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layui-btn-sm layuiadmin-btn {$view_theme_color}" data-type="add">新增发件人模板</button>
+            </div>
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+            <script type="text/html" id="operation">
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    layui.use(["table", "form"], function() {
+        var $ = layui.$
+            ,form = layui.form
+            ,table = layui.table;
+
+        // 渲染数据表格
+        like.tableLists("#like-table-lists", '{:url("express_assistant.FaceSheetSender/lists")}', [
+            {field: 'name', title: '发件人', templet: '#table-goods'}
+            ,{field: 'mobile', title: '发件人手机', align: 'center'}
+            ,{field: 'region', title: '发件人地区',  align: 'center'}
+            ,{field: 'address', title: '发件人地址',  align: 'center'}
+            ,{field: 'create_time', title: '创建时间',  align: 'center'}
+            ,{fixed: 'right', title: '操作', align: 'center', toolbar: '#operation'}
+        ]);
+
+        //事件
+        var active = {
+            add: function(){
+                layer.open({
+                    type: 2
+                    ,title: '新增发件人模板'
+                    ,content: '{:url("express_assistant.FaceSheetSender/add")}'
+                    ,area: ['90%','90%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'addSubmit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("express_assistant.FaceSheetSender/add")}',
+                                data:field,
+                                type:"post",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg, { offset:'15px', icon:1, time:1000 });
+                                        layer.close(index);
+                                        table.reload('like-table-lists');
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            },
+            // 编辑
+            edit: function (obj) {
+                layer.open({
+                    type: 2
+                    ,title: '编辑发件人模板'
+                    ,content: '{:url("express_assistant.FaceSheetSender/edit")}?id='+obj.data.id
+                    ,area: ['90%','90%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'addSubmit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            field['id'] = obj.data.id;
+                            like.ajax({
+                                url:'{:url("express_assistant.FaceSheetSender/edit")}',
+                                data:field,
+                                type:"post",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg, { offset:'15px', icon:1, time:1000 });
+                                        layer.close(index);
+                                        table.reload('like-table-lists');
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            },
+            // 删除
+            del: function (obj) {
+                layer.confirm('确定删除发件人模板:'+'<span style="color: red">'+obj.data.name+'</span>', function(index) {
+                    like.ajax({
+                        url: '{:url("express_assistant.FaceSheetSender/del")}',
+                        data: {id:obj.data.id},
+                        type: "post",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                                layer.close(index);
+                                obj.del();
+                                table.reload('like-table-lists');
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            }
+        };
+
+        // 监听表格右侧工具条
+        table.on('tool(like-table-lists)', function(obj){
+            var type = obj.event;
+            active[type] ? active[type].call(this, obj) : '';
+        });
+
+        // 绑定点击按钮事件
+        $('.layui-btn.layuiadmin-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
+</script>

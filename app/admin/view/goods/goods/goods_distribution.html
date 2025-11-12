@@ -1,0 +1,45 @@
+<div class="layui-tab-item">
+    <!-- 分销设置 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label">分销推广</label>
+        <div class="layui-input-block">
+            <input type="radio" name="is_distribution" value="1" title="开启"  class="layui-input" />
+            <input type="radio" name="is_distribution" value="0" title="不开启" class="layui-input" checked />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">开启后商品可以参与分销推广</span>
+    </div>
+    <!--分销比例-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">一级分销比例：</label>
+        <div class="layui-input-inline">
+            <input type="number" name="first_ratio" autocomplete="off" class="layui-input"  value="">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">一级分销佣金=商品实付金额*一级分销比例</span>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">二级分销比例：</label>
+        <div class="layui-input-inline">
+            <input type="number" name="second_ratio" autocomplete="off" class="layui-input"  value="">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">二级分销佣金=商品实付金额*二级分销比例</span>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">三级分销比例：</label>
+        <div class="layui-input-inline">
+            <input type="number" name="third_ratio" autocomplete="off" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">三级分销佣金=商品实付金额*三级分销比例</span>
+    </div>
+</div>

@@ -1,0 +1,130 @@
+{layout name="layout1" /}
+<style>
+    .layui-form-label {
+        width: 120px;
+    }
+    .layui-input-block {
+        margin-left: 150px;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*平台客服规则设置。商家客服要商家自行设置</p>
+                    </div>
+                </div>
+            </div>
+            <!--            表单区域-->
+            <div class="layui-form" style="margin-top: 15px;">
+                <fieldset class="layui-elem-field">
+                    <legend>基础设置</legend>
+                    <div class="layui-field-box">
+                        <div class="layui-form-item">
+                            <lable class="layui-form-label">客服方式：</lable>
+                            <div class="layui-input-block" style="width:300px;">
+                                <input type="radio" name="type" value="1" title="人工客服" {if $config.type == 1} checked {/if}>
+                                <input type="radio" name="type" value="2" title="在线客服" {if $config.type == 2} checked {/if}>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <lable class="layui-form-label">服务时间:</lable>
+                            <div class="layui-input-block" style="width:300px;">
+                                <input type="text" name="business_time" value="{$config.business_time}" class="layui-input" />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset class="layui-elem-field">
+                    <legend>人工客服</legend>
+                    <div class="layui-form-item">
+                        <lable class="layui-form-label">客服电话:</lable>
+                        <div class="layui-input-block" style="width:300px;">
+                            <input type="text" name="phone" value="{$config.phone}" class="layui-input" />
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <lable class="layui-form-label">客服微信号:</lable>
+                        <div class="layui-input-block" style="width:300px;">
+                            <input type="text" name="wechat" value="{$config.wechat}" class="layui-input" />
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <lable class="layui-form-label">客服图片:</lable>
+                        <div class="layui-input-block">
+                            <div class="like-upload-image">
+                                {if $config.image}
+                                <div class="upload-image-div">
+                                    <img src="{$config.image}" alt="img">
+                                    <input type="hidden" name="image" value="{$config.image}">
+                                    <div class="del-upload-btn">x</div>
+                                </div>
+                                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image" id="image"> + 添加图片</a></div>
+                                {else}
+                                <div class="upload-image-elem"><a class="add-upload-image" id="image"> + 添加图片</a></div>
+                                {/if}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <lable class="layui-form-label"></lable>
+                        <div class="layui-input-block">
+                            <span class="layui-word-aux">支持gif</span>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="set">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form','element'], function(){
+        var $ = layui.$,form = layui.form,element = layui.element;
+
+        // 图片上传
+        like.delUpload();
+        $(document).on("click", "#image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "image",
+                that: $(this),
+                content: '/shop/file/lists?type=10',
+            });
+        })
+
+        form.on('submit(set)', function(data) {
+            like.ajax({
+                url:'{:url("setting.customer_service/set")}',
+                data: data.field,
+                type:"post",
+                success:function(res)
+                {
+                    if(res.code == 1)
+                    {
+                        layui.layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        });
+                    }
+                }
+            });
+        });
+
+    });
+</script>

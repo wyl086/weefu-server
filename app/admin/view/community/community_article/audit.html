@@ -1,0 +1,131 @@
+{layout name="layout2" /}
+<style>
+    .image {
+        height:60px;width: 60px;margin-right: 5px;
+    }
+</style>
+
+<div class="layui-card layui-form" style="padding-bottom: 10%">
+    <div class="layui-card-body">
+
+        <input type="hidden" name="id" value="{$detail.id}">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">图片：</label>
+            <div class="layui-input-block" style="width: 50%">
+                {volist name="detail.images" id="vo"}
+                <img src="{$vo.image}" class="image-show image">
+                {/volist}
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">文章内容：</label>
+            <div class="layui-card-body">
+                <p>{$detail.content}</p>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">分类：</label>
+            <div class="layui-card-body">
+                <p>{$detail.topic.cate.name}</p>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">话题：</label>
+            <div class="layui-card-body">
+                <p>{$detail.topic.name | default =""}</p>
+            </div>
+        </div>
+
+        {if !empty($detail.goods_data)}
+            <div class="layui-form-item">
+            <label class="layui-form-label">关联商品：</label>
+            <div class="layui-input-block" style="width: 50%">
+                <table class="layui-table">
+                    <tbody>
+                    {foreach $detail.goods_data as $k => $goods}
+                    <tr>
+                        <td>
+                            <div style="text-align: left">
+                                <div class="layui-col-md3">
+                                    <img src="{$goods.image}" class="image-show image" >
+                                </div>
+                                <div class="layui-col-md9">
+                                    <p style="margin-top: 10px">{$goods.name}</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {/if}
+
+
+        {if !empty($detail.shop_data)}
+            <div class="layui-form-item">
+            <label class="layui-form-label">关联商品：</label>
+            <div class="layui-input-block" style="width: 50%">
+                <table class="layui-table">
+                    <tbody>
+                    {foreach $detail.shop_data as $k => $shop}
+                    <tr>
+                        <td>
+                            <div style="text-align: left">
+                                <div class="layui-col-md3">
+                                    <img src="{$shop.logo}" class="image-show image" >
+                                </div>
+                                <div class="layui-col-md9">
+                                    <p style="margin-top: 10px">{$shop.name}</p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {/if}
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color:red;">*</span>审核状态：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="status" value="1" title="通过" {if $detail.status}checked{/if}>
+                <input type="radio" name="status" value="2" title="拒绝" {if !$detail.status}checked{/if}>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color:red;">*</span>审核说明：</label>
+            <div class="layui-input-block" style="width: 50%">
+                <textarea class="layui-textarea"  name="audit_remark"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>
+
+
+<script>
+    layui.config({
+        version: "{$front_version}",
+        base: '/static/lib/'
+    }).use(['form'], function () {
+        var form = layui.form;
+
+        //图片放大
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src,400);
+        });
+    });
+</script>

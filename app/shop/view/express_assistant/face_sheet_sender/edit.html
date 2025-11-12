@@ -1,0 +1,58 @@
+{layout name="layout2" /}
+<style>
+    .layui-form-item .layui-form-label { width: 90px; }
+    .layui-form-item .layui-input-inline { width: 380px; }
+</style>
+
+<div class="layui-card layui-form">
+    <div class="layui-card-body">
+    <div class="layui-form-item">
+        <label class="layui-form-label"><font color="red">*</font>发件人：</label>
+        <div class="layui-input-inline" >
+            <input type="text" name="name" value="{$detail.name}" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><font color="red">*</font>发件人手机：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="mobile" value="{$detail.mobile}" lay-verify="required|phone" lay-vertype="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><font color="red">*</font>发件地区：</label>
+        <div class="layui-input-inline" style="width: 120px;">
+            <select name="province_id" lay-filter="province" lay-verify="required"></select>
+        </div>
+        <div class="layui-input-inline" style="width: 120px;">
+            <select name="city_id" lay-filter="city" lay-verify="required"></select>
+        </div>
+        <div class="layui-input-inline" style="width: 120px;">
+            <select name="district_id" lay-verify="required"></select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><font color="red">*</font>详细地址：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="address" value="{$detail.address}" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+    </div>
+</div>
+
+<script src="__PUBLIC__/static/common/js/area.js"></script>
+<script>
+    layui.config({
+        base: "/static/lib/"
+    }).extend({
+        likeArea: "likeArea/likeArea",
+    }).use(["form", "likeArea"], function(){
+        var likeArea = layui.likeArea;
+
+        likeArea.init(
+            "province", "city", "district", "province_id", "city_id", "district_id",
+            "{$detail.province_id}", "{$detail.city_id}", "{$detail.district_id}"
+        );
+    })
+</script>

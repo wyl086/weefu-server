@@ -1,0 +1,215 @@
+<?php
+
+
+namespace app\shop\logic\team;
+
+
+use app\common\basics\Logic;
+use app\common\enum\OrderEnum;
+use app\common\enum\OrderLogEnum;
+use app\common\enum\TeamEnum;
+use app\common\logic\OrderRefundLogic;
+use app\common\model\order\Order;
+use app\common\model\team\TeamFound;
+use app\common\model\team\TeamJoin;
+use app\common\server\UrlServer;
+use Exception;
+use think\facade\Db;
+
+class FoundLogic extends Logic
+{
+    /**
+     * @Notes: 开团列表
+     * @Author: 张无忌
+     * @param $get
+     * @param $shop_id
+     * @return array|bool
+     */
+    public static function lists($get, $shop_id)
+    {
+        try {
+            $where[] = ['shop_id', '=', $shop_id];
+            if (isset($get['type']) and is_numeric($get['type']) and $get['type'] != 100) {
+                $where[] = ['status', '=', (int)$get['type']];
+            }
+
+            if (!empty($get['team_sn']) and $get['team_sn']) {
+                $where[] = ['team_sn', 'like', '%'.$get['team_sn'].'%'];
+            }
+
+            if (!empty($get['goods']) and $get['goods']) {
+                $where[] = ['goods_snap->name', 'like', '%'.$get['goods'].'%'];
+            }
+
+            if (!empty($get['kaituan_time']) and $get['kaituan_time']) {
+                list($start, $end) = explode(' - ', $get['kaituan_time']);
+                $where[] = ['kaituan_time', '>=', strtotime($start.' 00:00:00')];
+                $where[] = ['kaituan_time', '<=', strtotime($end.' 23:59:59')];
+            }
+
+
+            if (!empty($get['team_activity_id']) and $get['team_activity_id']) {
+                $where[] = ['TF.team_activity_id', '=', $get['team_activity_id']];
+            }
+
+            if (!empty($get['nickname']) and $get['nickname']) {
+                $where[] = ['U.nickname', 'like', '%'.$get['nickname'].'%'];
+            }
+
+            $model = new TeamFound();
+            $lists = $model->alias('TF')->field(['TF.*,U.nickname'])
+                ->join('user U', 'U.id = TF.user_id')
+                ->order('id desc')
+                ->where($where)
+                ->paginate([
+                    'page'      => $get['page'] ?? 1,
+                    'list_rows' => $get['limit'] ?? 20,
+                    'var_page'  => 'page'
+                ])->toArray();
+
+            foreach ($lists['data'] as &$item) {
+                $item['peopleJoin'] = $item['join'] .' / '. $item['people'];
+                $item['kaituan_time'] = date('Y-m-d H:i:s', $item['kaituan_time']);
+                $item['invalid_time'] = date('Y-m-d H:i:s', $item['invalid_time']);
+                $item['goods_snap']   = json_decode($item['goods_snap'], true);
+                $item['status_text'] = TeamEnum::getStatusDesc($item['status']);
+            }
+
+            return ['count'=>$lists['total'], 'lists'=>$lists['data']];
+        } catch (Exception $e) {
+            static::$error = $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
+     * @Notes: 数据统计
+     * @Author: 张无忌
+     * @param $shop_id
+     * @param null $team_activity_id
+     * @return mixed
+     */
+    public static function statistics($shop_id, $team_activity_id=null)
+    {
+        $where[] = ['shop_id', '=', $shop_id];
+        if($team_activity_id) {
+            $where[] = ['team_activity_id', '=', $team_activity_id];
+        }
+
+        $model = new TeamFound();
+        $detail['total']       = $model->where($where)->count();
+        $detail['stayStatus']   = $model->where($where)->where(['status'=>0])->count();
+        $detail['successStatus']  = $model->where($where)->where(['status'=>1])->count();
+        $detail['failStatus'] = $model->where($where)->where(['status'=>2])->count();
+        return $detail;
+    }
+
+    /**
+     * @Notes: 拼团详细
+     * @Author: 张无忌
+     * @param $id
+     * @return array
+     */
+    public static function detail($id)
+    {
+        $teamFound = (new TeamFound())->alias('TF')
+            ->field(['TF.*,U.sn,U.nickname,U.mobile'])
+            ->join('user U', 'U.id = TF.user_id')
+            ->findOrEmpty(intval($id))->toArray();
+        $teamFound['kaituan_time'] = date('Y-m-d H:i:s', $teamFound['kaituan_time']);
+        $teamFound['invalid_time'] = date('Y-m-d H:i:s', $teamFound['invalid_time']);
+        $teamFound['team_end_time'] = date('Y-m-d H:i:s', $teamFound['team_end_time']);
+        $teamFound['status_text'] = TeamEnum::getStatusDesc($teamFound['status']);
+
+        return ['teamFound'=>$teamFound];
+    }
+
+    /**
+     * @Notes: 参团列表
+     * @Author: 张无忌
+     * @param $get
+     * @return array|bool
+     */
+    public static function join($get)
+    {
+        try {
+            $model = new TeamJoin();
+            $lists = $model->alias('TJ')->field(['TJ.*,U.sn,U.nickname,U.avatar'])
+                ->join('user U', 'U.id = TJ.user_id')
+                ->where('TJ.team_id', '=', $get['found_id'])
+                ->paginate([
+                    'page'      => $get['page'] ?? 1,
+                    'list_rows' => $get['limit'] ?? 20,
+                    'var_page'  => 'page'
+                ])->toArray();
+
+            $orderModel = new Order();
+            foreach ($lists['data'] as &$item) {
+                $item['identity'] = $item['identity'] == 1 ? '团长' : '团员';
+
+                $item['order'] = $orderModel->field([
+                        'id,order_sn,order_type,order_status,
+                        refund_status,pay_status,order_amount,create_time'
+                    ])
+                    ->with(['orderGoods'])
+                    ->findOrEmpty($item['order_id'])->toArray();
+
+                $item['order']['order_status'] = OrderEnum::getOrderStatus($item['order']['order_status']);
+                $item['order']['pay_status'] = OrderEnum::getPayStatus($item['order']['pay_status']);
+                $item['order']['refund_status'] = OrderEnum::getRefundStatus($item['order']['refund_status']);
+                $item['avatar'] = UrlServer::getFileUrl($item['avatar']);
+            }
+
+            return ['count'=>$lists['total'], 'lists'=>$lists['data']];
+        } catch (Exception $e) {
+            static::$error = $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
+     * @Notes: 结束拼团
+     * @Author: 张无忌
+     * @param $team_id
+     * @return bool
+     */
+    public static function end($team_id)
+    {
+        Db::startTrans();
+        try {
+            $time = time();
+            TeamFound::update([
+                'status'=>TeamEnum::TEAM_STATUS_FAIL,
+                'team_end_time'=>$time
+            ], ['id'=>$team_id]);
+
+            $teamJoin = (new TeamJoin())->alias('TJ')
+                ->field(['TJ.*,O.order_sn,O.order_status,O.pay_status,O.refund_status,O.order_amount'])
+                ->where(['team_id' => $team_id])
+                ->join('order O', 'O.id=TJ.order_id')
+                ->select()->toArray();
+
+            foreach ($teamJoin as $item) {
+                TeamJoin::update(['status' => TeamEnum::TEAM_STATUS_FAIL, 'update_time' => $time], ['id' => $item['id']]);
+                if ($item['order_status'] == OrderEnum::ORDER_STATUS_DOWN) continue;
+                if ($item['refund_status'] != OrderEnum::REFUND_STATUS_NO_REFUND) continue;
+                $order = (new Order())->findOrEmpty($item['order_id'])->toArray();
+                // 取消订单
+                OrderRefundLogic::cancelOrder($order['id'], OrderLogEnum::TYPE_SYSTEM);
+                if ($order['pay_status'] == OrderEnum::PAY_STATUS_PAID) {
+                    // 更新订单状态
+                    OrderRefundLogic::cancelOrderRefundUpdate($order);
+                    // 订单退款
+                    OrderRefundLogic::refund($order, $order['order_amount'], $order['order_amount']);
+                }
+            }
+
+            Db::commit();
+            return true;
+        } catch (Exception $e) {
+            Db::rollback();
+            static::$error = $e->getMessage();
+            return false;
+        }
+    }
+}

@@ -1,0 +1,23 @@
+{layout name="layout2" /}
+<div class="layui-card layui-form" style="box-shadow:none;">
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label for="account" class="layui-form-label"><span style="color:red;">*</span>支付宝账号：</label>
+            <div class="layui-input-block">
+                <input type="text" name="account" id="account" value="{$detail.account}" lay-verType="tips" lay-verify="required" autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux">填写支付宝账号，例如13000013000</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="username" class="layui-form-label"><span style="color:red;">*</span>认证姓名：</label>
+            <div class="layui-input-block">
+                <input type="text" name="username" id="username" value="{$detail.username}" lay-verType="tips" lay-verify="required" autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux">填写支付宝实名认证的姓名，例如李富贵</div>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>

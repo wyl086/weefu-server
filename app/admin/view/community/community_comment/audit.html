@@ -1,0 +1,46 @@
+{layout name="layout2" /}
+<div class="layui-card layui-form" style="padding-bottom: 10%">
+    <div class="layui-card-body">
+        <input type="hidden" name="id" value="{$detail.id}">
+        <div class="layui-form-item">
+            <label  class="layui-form-label">种草内容：</label>
+            <div class="layui-input-block" style="width: 50%">
+                <div class="layui-card-body">
+                    {$detail.article.content}
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label  class="layui-form-label">评价内容：</label>
+            <div class="layui-input-block" style="width: 50%">
+                <div class="layui-card-body">
+                    {$detail.comment}
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">审核：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="status" value="1" title="审核通过" {if $detail.status}checked{/if}>
+                <input type="radio" name="status" value="2" title="审核拒绝" {if !$detail.status}checked{/if}>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>
+
+
+<script>
+    layui.config({
+        version: "{$front_version}",
+        base: '/static/lib/'
+    }).use(['form'], function () {
+        var form = layui.form;
+    });
+</script>

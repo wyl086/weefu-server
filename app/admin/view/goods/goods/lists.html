@@ -1,0 +1,529 @@
+{layout name="layout1" /}
+<style>
+    .layui-table-cell {
+        height: auto;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <!--操作提示-->
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*平台审核商家发布的商品，当商品审核通过并且处于销售中状态时，商家可以销售该商品</p>
+                        <p>*平台可通过“违规重审”，下架违规商品并标记为审核未通过。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--搜索条件-->
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">商家名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="shop_name" id="shop_name" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">商品名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="goods_name" id="goods_name" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">商品类型:</label>
+                    <div class="layui-input-block">
+                        <select name="goods_type" id="goods_type" >
+                            <option value="">全部</option>
+                            {foreach $goods_type as $key => $val }
+                            <option value="{$key}">{$val}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">平台分类:</label>
+                    <div class="layui-input-block">
+                        <select name="platform_cate_id" id="platform_cate_id"  placeholder="请选择平台商品分类" >
+                            <option value="0">全部</option>
+                            {foreach $cate_list as $val }
+                            <option value="{$val.id}">{$val.html}{$val.name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">商品栏目:</label>
+                    <div class="layui-input-block">
+                        <select name="goods_column_id" id="goods_column_id"  placeholder="请选择商品栏目" >
+                            <option value="">全部</option>
+                            {foreach $column_list as $val }
+                            <option value="{$val.id}">{$val.name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">查询</button>
+                    <button class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</button>
+                </div>
+            </div>
+        </div>
+
+        <!-选项卡-->
+        <div class="layui-tab layui-tab-card" lay-filter="like-tabs">
+            <ul class="layui-tab-title">
+                <li data-type='1' class="layui-this">销售中商品({$statistics.sell})</li>
+                <li data-type='2' >仓库中商品({$statistics.warehouse})</li>
+                <li data-type='3' >回收站商品({$statistics.recycle})</li>
+                <li data-type='4' >待审核商品({$statistics.audit_stay})</li>
+                <li data-type='5' >审核未通过商品({$statistics.audit_refuse})</li>
+            </ul>
+
+            <div class="layui-tab-content" style="padding: 0 15px;">
+                <div class="layui-btn-container" style="margin-top: 10px">
+                    <button class="layui-btn layui-btn-sm layEvent layui-btn-primary" lay-event="more_audit" id="more_audit" style="display: none">批量审核</button>
+                    <button class="layui-btn layui-btn-sm layEvent layui-btn-primary" lay-event="more_lower" id="more_lower">批量下架</button>
+                </div>
+
+                <table id="goods-lists" lay-filter="goods-lists"></table>
+
+                <script type="text/html" id="shop-info">
+                    <img src="{{d.shop_logo}}" style="height:60px;width: 60px" class="image-show">
+                    <div class="layui-input-inline"  style="text-align: left;">
+                        <p>商家编号:{{d.shop_id}}</p>
+                        <p style="width: 180px;text-overflow:ellipsis;overflow: hidden">商家名称:{{d.shop_name}}</p>
+                        <p>商家类型:{{d.shop_type_desc}}</p>
+                    </div>
+                </script>
+
+                <script type="text/html" id="goods-info">
+                    <img src="{{d.image}}" style="height:60px;width: 60px;margin-right: 5px;" class="image-show"> {{d.name}}
+                </script>
+
+                <script type="text/html" id="price-info">
+                   {{d.min_price}} ~ {{d.max_price}}
+                </script>
+
+                <script type="text/html" id="ratio">
+                    一级分销比例:{{d.first_ratio}}% <br />
+                    二级分销比例:{{d.second_ratio}}% <br />
+                    三级分销比例:{{d.third_ratio}}% <br />
+                </script>
+
+                <script type="text/html" id="goods-operation">
+                    <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="view">查看</a>
+                    <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="set">设置</a>
+                    {{# if( (d.audit_status == 1) ){ }}
+                    <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="re_audit">违规重审</a>
+                    {{# } }}
+                    {{# if( (d.audit_status == 0) ){ }}
+                    <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="audit">审核</a>
+                    {{# } }}
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['table', 'form', 'element'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,table = layui.table
+            ,element = layui.element;
+
+        //监听搜索
+        form.on('submit(search)', function(data){
+            var field = data.field;
+            //执行重载
+            table.reload('goods-lists', {
+                where: field,
+                page: {curr: 1}
+            });
+            updateTabNumber();
+        });
+
+        //清空查询
+        form.on('submit(clear-search)', function(){
+            $('#shop_name').val('');
+            $('#goods_name').val('');
+            $('#goods_type').val('');
+            $('#platform_cate_id').val('');
+            $('#shop_cate_id').val('');
+            $('#goods_column_id').val('');
+            form.render('select');
+            //刷新列表
+            table.reload('goods-lists', {
+                where: [], page: {curr: 1}
+            });
+            updateTabNumber();
+        });
+
+
+        $('.layui-btn.layuiadmin-btn-goods').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        //获取列表
+        getList(1); // 初始加载获取销售中的商品
+        //切换列表
+        element.on('tab(like-tabs)', function (data) {
+            var type = $(this).attr('data-type');
+            // 重置搜索模块
+            $('#shop_name').val('');
+            $('#goods_name').val('');
+            $('#platform_cate_id').val('');
+            $('#shop_cate_id').val('');
+            $('#goods_column_id').val('');
+            form.render('select');
+
+            if (type == 4) {
+                $("#more_audit").show();
+            }else {
+                $("#more_audit").hide();
+            }
+            if (type == 1 || type == 2 || type == 3) {
+                $("#more_lower").show();
+            }else {
+                $("#more_lower").hide();
+            }
+            // 重新获取商品列表
+            getList(type);
+        });
+
+        //监听工具条
+        table.on('tool(goods-lists)', function(obj){
+            var id = obj.data.id;
+            var name = obj.data.name;
+
+            if(obj.event === 'view') {
+                var id = obj.data.id;
+                layer.open({
+                    type: 2
+                    ,title: '查看'
+                    ,content: '{:url("goods.goods/view")}?goods_id='+id
+                    ,area: ['90%', '90%']
+                    ,btn: ['确定', '返回']
+                    ,maxmin: true
+                    ,yes: function(index, layero){
+                        layer.close(index);
+                    }
+                    ,cancel: function(index, layero){
+                        layer.close(index);
+                    }
+                });
+            }
+            if(obj.event === 're_audit') {
+                var id = obj.data.id;
+                layer.open({
+                    type: 2
+                    ,title: '违规重审'
+                    ,content: '{:url("goods.goods/reAudit")}?goods_id='+id
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '返回']
+                    ,scrollbar: false
+                    ,maxmin: true
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'reaudit-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("goods.goods/reAudit")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1)
+                                    {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        },function () {
+                                            // window.location.href = window.location.href;
+                                            updateTabNumber();
+                                            table.reload('goods-lists');
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                        layer.close(index);
+                    }
+                    ,cancel: function(index, layero){
+                        layer.close(index);
+                    }
+                });
+            }
+            if(obj.event === 'set') {
+                var id = obj.data.id;
+                layer.open({
+                    type: 2
+                    ,title: '设置'
+                    ,content: '{:url("goods.goods/setInfo")}?goods_id='+id
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '返回']
+                    ,scrollbar: false
+                    ,maxmin: true
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'setinfo-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("goods.goods/setInfo")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1)
+                                    {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        },function () {
+                                            // window.location.href = window.location.href;
+                                            layer.close(index);
+                                            updateTabNumber();
+                                            table.reload('goods-lists');
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                    ,cancel: function(index, layero){
+                        layer.close(index);
+                    }
+                });
+            }
+            if(obj.event === 'audit') {
+                var id = obj.data.id;
+                layer.open({
+                    type: 2
+                    ,title: '审核'
+                    ,content: '{:url("goods.goods/audit")}?goods_id='+id
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '返回']
+                    ,scrollbar: false
+                    ,maxmin: true
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'audit-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("goods.goods/audit")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1)
+                                    {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        },function () {
+                                            // window.location.href = window.location.href;
+                                            layer.close(index);
+                                            updateTabNumber();
+                                            table.reload('goods-lists');
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                    ,cancel: function(index, layero){
+                        layer.close(index);
+                    }
+                });
+            }
+        });
+
+        //图片放大
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src,600);
+        });
+
+        function getList(type) {
+            like.tableLists('#goods-lists', '{:url("goods.goods/lists")}?type='+type, [
+                {type: 'checkbox', fixed: 'left'}
+                ,{title: '商家信息',width:280, templet: '#shop-info'}
+                ,{title: '商品信息',width:280, templet: '#goods-info'}
+                ,{field: 'columnStr', title: '商品栏目',width:220}
+                ,{field: 'price',title: '价格区间(元)', width: 180, align: 'center'}
+                ,{field: 'sales_actual',width: 80,title: '总销售', align: 'center'}
+                ,{field: 'stock',width: 80,title: '总库存', align: 'center'}
+                // ,{field: 'is_distribution_desc',width: 120,title: '分销商品', align: 'center'}
+                // ,{width: 220,title: '分销比例', templet: '#ratio', align: 'center'}
+                ,{field: 'sort_weight',width: 120, title:'排序权重', align: 'center'}
+                ,{field: 'audit_remark', width: 220, title: '审核说明', align: 'center'}
+                ,{field: 'create_time', width: 220,  title:'发布日期', align: 'center'}
+                ,{fixed: 'right', title: '操作', width: 280, align: 'center', toolbar: '#goods-operation'}
+            ]);
+            // if(type == 5) { // 审核未通过,显示审核说明列(注意计时器时间控制，先让动态表格渲染完成，再去移除layui-hide)
+            //     setTimeout(function() {
+            //         $('.layui-table .layui-hide').removeClass('layui-hide');
+            //     }, 1500);
+            // }
+        }
+
+        /**
+         * 更新选项卡 统计数据
+         */
+        function updateTabNumber() {
+            var goods_column = $('#goods_column_id[name=goods_column_id]').val();
+            like.ajax({
+                url: '{:url("goods.goods/totalCount")}',
+                data: {"goods_column_id" : goods_column},
+                type: "GET",
+                success: function (res) {
+                    if (res.code === 1) {
+                        $(".layui-tab-title li[data-type=1]").html("销售中商品(" + res.data.sell + ")");
+                        $(".layui-tab-title li[data-type=2]").html("仓库中商品(" + res.data.warehouse + ")");
+                        $(".layui-tab-title li[data-type=3]").html("回收站商品(" + res.data.recycle + ")");
+                        $(".layui-tab-title li[data-type=4]").html("待审核商品(" + res.data.audit_stay + ")");
+                        $(".layui-tab-title li[data-type=5]").html("审核未通过商品(" + res.data.audit_refuse + ")");
+                    }
+                }
+            });
+        }
+
+
+        //事件
+        var active = {
+            more_audit: function(){
+                var checkStatus = table.checkStatus('goods-lists');
+                var checkData = checkStatus.data;
+                var ids = [];
+                // 取出选中的行ID
+                checkData.forEach(function (item) {
+                    ids.push(parseInt(item['id']));
+                });
+                if (ids.length <= 0) {
+                    layui.layer.msg('请选择商品', {time: 1000});
+                    return false;
+                }
+                layer.open({
+                    type: 2
+                    ,title: '批量审核'
+                    ,content: '{:url("goods.goods/moreAudit")}?ids='+ids
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '返回']
+                    ,scrollbar: false
+                    ,maxmin: true
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'audit-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("goods.goods/moreAudit")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1)
+                                    {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        },function () {
+                                            layer.close(index);
+                                            updateTabNumber();
+                                            table.reload('goods-lists');
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                    ,cancel: function(index, layero){
+                        layer.close(index);
+                    }
+                });
+            },
+            more_lower: function() {
+                var checkStatus = table.checkStatus('goods-lists');
+                var checkData = checkStatus.data;
+                var ids = [];
+                // 取出选中的行ID
+                checkData.forEach(function (item) {
+                    ids.push(parseInt(item['id']));
+                });
+                if (ids.length <= 0) {
+                    layui.layer.msg('请选择商品', {time: 1000});
+                    return false;
+                }
+                layer.open({
+                    type: 2
+                    ,title: '批量下架'
+                    ,content: '{:url("goods.goods/moreLower")}?ids='+ids
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '返回']
+                    ,scrollbar: false
+                    ,maxmin: true
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'reaudit-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("goods.goods/moreLower")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1)
+                                    {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        },function () {
+                                            updateTabNumber();
+                                            table.reload('goods-lists');
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                        layer.close(index);
+                    }
+                    ,cancel: function(index, layero){
+                        layer.close(index);
+                    }
+                });
+            },
+        };
+        like.eventClick(active);
+
+    });
+</script>

@@ -1,0 +1,61 @@
+{layout name="layout1" /}
+<div class="layui-form">
+    <input type="hidden" name="goods_id" value="{$goods_id}" />
+    <div class="layui-form-item" style="margin-top: 15px;">
+        <label class="layui-form-label">商品栏目</label>
+        <div class="layui-input-block" style="width: 380px;">
+            <div id="clomunList"></div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">勾选商品栏目后，商品会在首页对应栏目展示，可多选</span>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">虚拟销量</label>
+        <div class="layui-input-block" style="width: 380px;">
+            <input type="number" name="sales_virtual" value="{$goods_detail.sales_virtual}" min="0" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">虚拟浏览量</label>
+        <div class="layui-input-block" style="width: 380px;">
+            <input type="number" name="clicks_virtual" value="{$goods_detail.clicks_virtual}" min="0" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序权重</label>
+        <div class="layui-input-block" style="width: 380px;">
+            <input type="number" name="sort_weight" value="{$goods_detail.sort_weight}" min="0" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">商品排序权重，数字越小排序越前，权重越大</span>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="setinfo-submit" id="setinfo-submit" value="确认">
+    </div>
+</div>
+<script>
+    layui.config({
+        base: '/static/lib/'
+    }).extend({
+        xmSelect: 'xmSelect/xm-select'
+    }).use(['xmSelect', 'jquery'], function (){
+        var xmSelect = layui.xmSelect;
+        var $ = layui.jquery;
+        var column_list = '{$column_list|raw}';
+        var initValue = '{$goods_detail.column_ids | raw}';
+
+        var xmIns = xmSelect.render({
+            el: '#clomunList',
+            language: 'zn',
+            data: JSON.parse(column_list),
+            prop: {
+                value: 'id'
+            },
+            initValue: JSON.parse(initValue)
+        })
+    });
+</script>

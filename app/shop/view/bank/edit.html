@@ -1,0 +1,37 @@
+{layout name="layout2" /}
+<div class="layui-card layui-form" style="box-shadow:none;">
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label"><span style="color:red;">*</span>提现银行：</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" id="name" value="{$detail.name}" lay-verType="tips" lay-verify="required" autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux">填写银行名称，例如中国工商银行</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="branch" class="layui-form-label"><span style="color:red;">*</span>银行支行：</label>
+            <div class="layui-input-block">
+                <input type="text" name="branch" id="branch" value="{$detail.branch}" lay-verType="tips" lay-verify="required" autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux">填写银行支行，例如北京路支行</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="nickname" class="layui-form-label"><span style="color:red;">*</span>开户名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="nickname" id="nickname" value="{$detail.nickname}" lay-verType="tips" lay-verify="required" autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux">填写开户名称，例如张三</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="account" class="layui-form-label"><span style="color:red;">*</span>银行账号：</label>
+            <div class="layui-input-block">
+                <input type="text" name="account" id="account" value="{$detail.account}" lay-verType="tips" lay-verify="required|number" autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux">填写银行账号</div>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>

@@ -1,0 +1,264 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*商家提交需要参与拼团活动的商品，平台审核通过之后即可参与拼团活动。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="shop" class="layui-form-label">商家信息：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="shop" name="shop" placeholder="商家编号/商家名称" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="name" class="layui-form-label">商品名称：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="name" name="name" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="status" class="layui-form-label">活动状态：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <select id="status" name="status">
+                                <option value="">全选</option>
+                                <option value="1">活动中</option>
+                                <option value="2">已停止</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="datetime" class="layui-form-label">活动时间：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="datetime" name="datetime" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <div class="layui-tab layui-tab-card" lay-filter="like-tab">
+                <ul class="layui-tab-title">
+                    <li lay-id="0" class="layui-this">全部商品({$statistics.total})</li>
+                    <li lay-id="1">待审核商品({$statistics.stayAudit})</li>
+                    <li lay-id="2">审核通过商品({$statistics.adoptAudit})</li>
+                    <li lay-id="3">审核拒绝商品({$statistics.refuseAudit})</li>
+                </ul>
+                <div class="layui-tab-content" style="padding:20px;">
+                    <table id="like-table-lists" lay-filter="like-table-lists"></table>
+                    <script type="text/html" id="table-shop">
+                        <img src="{{d.logo}}" alt="图" style="width:50px;height:50px;">
+                        <div class="layui-inline">
+                            <p>商家编号：{{d.shop_id}}</p>
+                            <p>商家名称：{{d.shop_name}}</p>
+                            <p>商家类型：{{d.shop_type}}</p>
+                        </div>
+                    </script>
+                    <script type="text/html" id="table-goods">
+                        <img src="{{d.goods.image}}" alt="图" style="width:50px;height:50px;">
+                        <div class="layui-inline">{{d.goods.name}}</div>
+                    </script>
+                    <script type="text/html" id="table-teamAmount">
+                        {{d.team_min_price}} ~ {{d.team_max_price}}
+                    </script>
+                    <script type="text/html" id="table-teamData">
+                        <p>拼团数量：{{d.team_count}}个</p>
+                        <p>成团数量：{{d.success_found}}个</p>
+                        <p>参团人数：{{d.join_found}}人</p>
+                    </script>
+                    <script type="text/html" id="table-teamTime">
+                        {{d.activity_start_time}} ~ {{d.activity_end_time}}
+                    </script>
+                    <script type="text/html" id="table-operation">
+                        <a class="layui-btn layui-btn-sm layui-btn-primary" lay-event="detail">详情</a>
+                        <a class="layui-btn layui-btn-sm layui-btn-primary" lay-event="record">拼团记录</a>
+                        {{#  if(d.audit == 0){ }}
+                            <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="audit">审核</a>
+                        {{#  } }}
+                        {{#  if(d.audit == 1){ }}
+                        <a class="layui-btn layui-btn-sm layui-btn-danger" lay-event="violation">违规重审</a>
+                        {{#  } }}
+                    </script>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form", "element", "laydate"], function(){
+        var table   = layui.table;
+        var form    = layui.form;
+        var element = layui.element;
+        var laydate = layui.laydate;
+
+        laydate.render({elem:"#datetime", range: true, trigger:"click"});
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {field:"shop", width:250, title:"商家信息", templet:"#table-shop"}
+            ,{field:"goodsInfo", width:250, title:"商品", templet:"#table-goods"}
+            ,{field:"teamAmount", width:180, align:"center",title:"拼团价", templet:"#table-teamAmount"}
+            ,{field:"teamData", width:180, title:"拼团数据", templet:"#table-teamData"}
+            ,{field:"activityTime", width:280, align:"center", title:"活动时间", templet:"#table-teamTime"}
+            ,{field:"status_text", width:90, align:"center", title:"活动状态"}
+            ,{field:"audit_text", width:90, align:"center", title:"审核状态"}
+            ,{field:"explain", width:200, align:"center", title:"审核说明"}
+            ,{title:"操作", width:250, align:"center", fixed:"right", toolbar:"#table-operation"}
+        ]);
+
+
+        var active = {
+            audit: function(obj) {
+                layer.open({
+                    type: 2
+                    ,title: "审核"
+                    ,content: "{:url('team.Activity/audit')}?id="+obj.data.id
+                    ,area: ["500px", "400px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field['id'] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('team.Activity/audit')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        var type = $(".layui-tab-title li.layui-this").attr("lay-id");
+                                        active.statistics();
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {type: type},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            violation: function (obj) {
+                layer.confirm("违规重审会将拼团中的团设置为拼团失败，请谨慎处理。", function(index) {
+                    like.ajax({
+                        url: "{:url('team.Activity/violation')}",
+                        data: {id: obj.data.id},
+                        type: "POST",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg);
+                                layer.close(index);
+                                var type = $(".layui-tab-title li.layui-this").attr("lay-id");
+                                active.statistics();
+                                table.reload('like-table-lists', {
+                                    where: {type: type},
+                                    page: {cur: 1}
+                                })
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            },
+            detail: function (obj) {
+                layer.open({
+                    type: 2
+                    ,title: "拼团商品详情"
+                    ,content: "{:url('team.Activity/details')}?id="+obj.data.id
+                    ,area: ["60%", "80%"]
+                });
+            },
+            record: function (obj) {
+                layer.open({
+                    type: 2
+                    ,title: "拼团记录（"+obj.data.shop_name+"）"
+                    ,content: "{:url('team.Activity/record')}?id="+obj.data.id+"&shop_id="+obj.data.shop_id
+                    ,area: ["90%", "90%"]
+                });
+            },
+            statistics: function () {
+                like.ajax({
+                    url: "{:url('team.Activity/statistics')}",
+                    data: {},
+                    type: "GET",
+                    success:function(res) {
+                        if(res.code === 1) {
+                            $(".layui-tab-title li[lay-id=0]").html("全部商品("+res.data.total+")");
+                            $(".layui-tab-title li[lay-id=1]").html("待审核商品("+res.data.stayAudit+")");
+                            $(".layui-tab-title li[lay-id=2]").html("审核通过商品("+res.data.adoptAudit+")");
+                            $(".layui-tab-title li[lay-id=3]").html("审核拒绝商品("+res.data.refuseAudit+")");
+                        }
+                    }
+                });
+            }
+        };
+        like.eventClick(active);
+
+
+        element.on("tab(like-tab)", function(){
+            var type = this.getAttribute("lay-id");
+            table.reload("like-table-lists", {
+                where: {type: type},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(search)", function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(clear-search)", function(){
+            $("#shop").val("");
+            $("#name").val("");
+            $("#datetime").val("");
+            $("#status").val("");
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+    })
+</script>

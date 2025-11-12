@@ -1,0 +1,52 @@
+{layout name="layout2" /}
+<style>
+    .layui-form-label{
+        width: 90px;
+        text-align: left;
+    }
+    .reqRed::before {
+        content: '*';
+        color: red;
+        margin-right: 5px;
+    }
+</style>
+<div class="layui-form" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">当前等级：</label>
+        <div class="layui-input-block">
+            <label class="layui-form-label">{$user_level_name}</label>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">调整等级：</label>
+        <div class="layui-input-inline">
+            <select name="level">
+                {foreach $levels as $item}
+                <option value="{$item.id}">{$item.name}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注：</label>
+        <div class="layui-input-block">
+            <textarea type="text" name="remark" autocomplete="off" class="layui-textarea" style="width: 30%;"></textarea>
+            <label class="layui-form-mid layui-word-aux" style="margin-left: 10px;">不超过100字</label>
+        </div>
+    </div>
+
+    <input type="hidden" value="{$user_id}" name="id">
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="formSubmit" id="formSubmit" value="确认">
+    </div>
+</div>
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form', 'element'], function(){
+        var $ = layui.$,form = layui.form ;
+        var element = layui.element;
+
+    })
+</script>

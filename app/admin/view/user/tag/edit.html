@@ -1,0 +1,64 @@
+{layout name="layout1" /}
+<style>
+    .reqRed::before {
+        content: '*';
+        color: red;
+        margin-right: 5px;
+    }
+</style>
+<div class="layui-form" style="margin-top: 15px;">
+    <input type="hidden" name="id" value="{$detail.id}" />
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">标签名称</label>
+        <div class="layui-input-block" style="width: 380px;">
+            <input type="text" name="name" lay-verify="required" value="{$detail.name}"  class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block" style="width: 380px;">
+            <textarea name="remark" class="layui-textarea">{$detail.remark}</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="edit">确定</button>
+            <button class="layui-btn layui-btn-primary" id="back">返回</button>
+        </div>
+    </div>
+</div>
+<script>
+    layui.config({
+        version: "{$front_version}",
+        base: '/static/lib/'
+    }).use(['layer', 'table', 'form'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+
+        // 确定
+        form.on('submit(edit)', function(data) {
+            like.ajax({
+                url:'{:url("user.tag/edit")}',
+                type:'post',
+                data: data.field,
+                success:function (res) {
+                    if(res.code == 1) {
+                        layer.msg(res.msg,{time:1000}, function() {
+                            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                            parent.layer.close(index); //再执行关闭
+                            parent.location.reload(); // 重置父页面
+                        });
+                    }
+                }
+            })
+        });
+
+        // 返回
+        $('#back').click(function() {
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            parent.layer.close(index); //再执行关闭
+        });
+    });
+</script>

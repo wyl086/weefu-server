@@ -1,0 +1,646 @@
+{layout name="layout1" /}
+<link rel="stylesheet" href="/static/plug/layui-admin/dist/layuiadmin/layui/css/layui.css?v={$front_version}" media="all">
+<link rel="stylesheet" href="/static/plug/layui-admin/dist/layuiadmin/style/admin.css?v={$front_version}" media="all">
+<link rel="stylesheet" href="/static/plug/layui-admin/dist/layuiadmin/style/like.css?v={$front_version}" media="all">
+<script src="__PUBLIC__/static/lib/layui/layui.js"></script>
+<script src="__PUBLIC__/static/admin/js/app.js"></script>
+<style>
+    
+    .header-font{
+        font-size: 20px
+    }
+    .layui-card .data-all {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    .layui-card  .text-style {
+        font-size: 16px;
+    }
+    .header-time{
+        margin-left: 20px
+    }
+    .layadmin-shortcut .shortcut-list  {
+        padding: 30px 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .layadmin-shortcut .shortcut-list li {
+        min-width: 100px;
+        margin-bottom: 20px;
+        width: 12.5%;
+    }
+ 
+    .layadmin-shortcut .shortcut-list .icon{
+        width: 62px;
+        height: 62px;
+        margin-bottom: 5px;
+    }
+
+    .tips {
+        float: right;
+        padding: 0 10px;
+        margin-top: 10px;
+        height: 20px;
+        line-height: 20px;
+        font-size: 12px;
+        color: #3A91FB;
+        border-radius: 30px;
+        border: 1px #3A91FB solid;
+        background: #eaf3ff;
+    }
+    .header-font{
+        font-size: 20px
+    }
+    .layui-card .data-all {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    .layui-card  .text-style {
+        font-size: 16px;
+    }
+    .header-time{
+        margin-left: 20px
+    }
+    .layadmin-shortcut .shortcut-list  {
+        padding: 30px 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .layadmin-shortcut .shortcut-list li {
+        min-width: 100px;
+        margin-bottom: 20px;
+        width: 12.5%;
+    }
+
+    .layadmin-shortcut .shortcut-list .icon{
+        width: 62px;
+        height: 62px;
+        margin-bottom: 5px;
+    }
+
+    .tips {
+        float: right;
+        padding: 0 10px;
+        margin-top: 10px;
+        height: 20px;
+        line-height: 20px;
+        font-size: 12px;
+        color: #3A91FB;
+        border-radius: 30px;
+        border: 1px #3A91FB solid;
+        background: #eaf3ff;
+    }
+    .red{
+        color:red;
+    }
+    .green{
+        color:green;
+    }
+    .laytable-cell-1-0-1,.laytable-cell-2-0-1 {
+        width: 280px;
+        height: auto;
+    }
+
+
+</style>
+<div class="wrapper" style="margin-bottom: 100px">
+    <div class="layui-card" >
+        <div class="layui-card-header">
+            <span class="header-font">运营数据</span>
+            <span class="header-time">更新时间：{$res.time}</span>
+        </div>
+    </div>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm3">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    成交订单（笔）
+                    <span class="tips">今日</span>
+                </div>
+                <div class="layui-card-body layuiadmin-card-list">
+                    <p class="layuiadmin-big-font">{$res.data.order_num.today}</p>
+                    <p>昨日：<span class="text-style">{$res.data.order_num.yesterday}</span>
+                        &nbsp;&nbsp;
+                        {if ($res.data.order_num.change_red > 0) }
+                        <span class="green">降：<span class="text-style">{$res.data.order_num.change_red}</span>
+                        {else/}
+                        <span class="red">涨：<span class="text-style">{$res.data.order_num.change_add}</span>
+                        {/if}
+                    
+                    </span> </p>
+                    <div class="data-all">累计成交订单<div class="text-style">{$res.data.order_num.all_num}</div></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm3 ">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    营业额（元）
+                    <span class="tips">今日</span>
+                </div>
+                <div class="layui-card-body layuiadmin-card-list">
+                    <p class="layuiadmin-big-font">{$res.data.order_price.today}</p>
+                    <p>昨日：<span class="text-style">{$res.data.order_price.yesterday}</span>
+                        &nbsp;&nbsp;
+                        {if ($res.data.order_price.change_red > 0) }
+                        <span class="green">降：<span class="text-style">{$res.data.order_price.change_red}</span>
+                        {else/}
+                        <span class="red">涨：<span class="text-style">{$res.data.order_price.change_add}</span>
+                        {/if}
+                    
+                    </span> </p>
+                    <div class="data-all">累计营业额<div class="text-style">{$res.data.order_price.all_price}</div></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm3 ">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    进店人数（人）
+                    <span class="tips">今日</span>
+                </div>
+                <div class="layui-card-body layuiadmin-card-list">
+                    <p class="layuiadmin-big-font">{$res.data.add_user_num.today}</p>
+                    <p >昨日：<span class="text-style">{$res.data.add_user_num.yesterday}</span>
+                        &nbsp;&nbsp;
+                        {if ($res.data.add_user_num.change_red > 0) }
+                        <span class="green">降：<span class="text-style">{$res.data.add_user_num.change_red}</span>
+                        {else/}
+                        <span class="red">涨：<span class="text-style">{$res.data.add_user_num.change_add}</span>
+                        {/if}
+                    
+                    </span> </p>
+                    <div class="data-all">累计进店人数<div class="text-style">{$res.data.add_user_num.all_num}</div></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm3 ">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    商品浏览人数（人）
+                    <span class="tips">今日</span>
+                </div>
+                <div class="layui-card-body layuiadmin-card-list">
+                    <p class="layuiadmin-big-font">{$res.data.visit_user_num.today}</p>
+                    <p>昨日：<span class="text-style">{$res.data.visit_user_num.yesterday}</span>
+                        &nbsp;&nbsp;
+                        {if ($res.data.visit_user_num.change_red > 0) }
+                        <span class="green">降：<span class="text-style">{$res.data.visit_user_num.change_red}</span>
+                        {else/}
+                        <span class="red">涨：<span class="text-style">{$res.data.visit_user_num.change_add}</span>
+                        {/if}
+                    
+                    </span> </p>
+                    <div class="data-all">累计商品浏览人数<div class="text-style">{$res.data.visit_user_num.all_num}</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!--快捷功能-->
+        <div class="layui-col-sm12" style="display:none;">
+            <div class="layui-card">
+                <div class="layui-card-header">快捷功能</div>
+                <div class="layui-card-body">
+                    <div class="layadmin-shortcut">
+                        <ul class="shortcut-list">
+                            <li class="shop-item">
+                                <a lay-href="{:url('goods.goods/lists')}" data-id="29">
+                                    <img class="icon" src="__PUBLIC__/static/common/image/workbench/goods.png" alt="">
+                                    <cite>商品</cite>
+                                </a>
+                            </li>
+                            <li class="shop-item">
+                                <a lay-href="{:url('order.order/lists')}" data-id="37">
+                                    <img class="icon" src="__PUBLIC__/static/common/image/workbench/order.png" alt="">
+                                    <cite>订单</cite>
+                                </a>
+                            </li>
+                            <li class="shop-item">
+                                <a lay-href="{:url('user.user/lists')}" data-id="33">
+                                    <img class="icon" src="__PUBLIC__/static/common/image/workbench/user.png" alt="">
+                                    <cite>会员</cite>
+                                </a>
+                            </li>
+                            <li class="shop-item">
+                                <a lay-href="{:url('coupon.shop_coupon/lists')}" data-id="39">
+                                    <img class="icon" src="__PUBLIC__/static/common/image/workbench/coupon.png" alt="">
+                                    <cite>优惠券</cite>
+                                </a>
+                            </li>
+                            <li class="shop-item">
+                                <a lay-href="{:url('seckill.seckill_goods/lists')}" data-id="39">
+                                    <img class="icon" src="__PUBLIC__/static/common/image/workbench/seckill.png" alt="">
+                                    <cite>限时秒杀</cite>
+                                </a>
+                            </li>
+                            <li class="shop-item">
+                                <a lay-href="{:url('distribution.member/index')}" data-id="85">
+                                    <img class="icon" src="__PUBLIC__/static/common/image/workbench/distribution.png" alt="">
+                                    <cite>分销</cite>
+                                </a>
+                            </li>
+                            <li class="shop-item">
+                                <a lay-href="{:url('content.help/lists')}" data-id="65">
+                                    <img class="icon" src="__PUBLIC__/static/common/image/workbench/content.png" alt="">
+                                    <cite>内容</cite>
+                                </a>
+                            </li>
+                            <li class="shop-item">
+                                <a lay-href="{:url('finance.finance/center')}" data-id="81">
+                                    <img class="icon" src="__PUBLIC__/static/common/image/workbench/finance.png" alt="">
+                                    <cite>财务</cite>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 销冠商品 -->
+        <div class="layui-col-sm6 ">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    销冠商品（前5名）
+                </div>
+                <div class="layui-card-body layuiadmin-card-list">
+                    <div class="layui-tab-content" style="padding: 0 15px;">
+
+                        <table id="goods-lists" lay-filter="goods-lists"></table>
+        
+        
+                        <script type="text/html" id="goods-info">
+                            <div style="text-align: left;">
+                                <img src="{{ d.image }}" style="height:50px;width: 50px" class="image-show layui-col-md4">
+                                <p>商品名称:{{d.name}}</p>
+                            </div>
+                        </script>
+        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人气商品 -->
+        <div class="layui-col-sm6 ">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    人气商品（前5名）
+                </div>
+                <div class="layui-card-body layuiadmin-card-list">
+                    <div class="layui-tab-content" style="padding: 0 15px;">
+
+                        <table id="goods-lists2" lay-filter="goods-lists2"></table>
+        
+        
+                        <script type="text/html" id="goods-info">
+                            <div style="text-align: left;">
+                                <img src="{{ d.image }}" style="height:50px;width: 50px" class="image-show layui-col-md4">
+                                <p>商品名称:{{d.name}}</p>
+                            </div>
+                        </script>
+        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--表格-->
+        <div class="layui-col-sm12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-row">
+                        近15天营业额（元）
+                        <div class="layadmin-dataview">
+                            <div id="sale-charts" style="width: 100%;height: 100%">
+                                <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="layui-col-sm12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-row">
+                        近15天进店人数（人）
+                        <div class="layadmin-dataview">
+                            <div id="user-charts" style="width: 100%;height: 100%;">
+                                <div><i class="layui-icon layui-icon-loading1 layadmin-loading"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<footer class="info_footer">
+    {$company_name}&nbsp;&nbsp;|&nbsp;&nbsp;版本号：{$version}
+    <br><br>
+</footer>
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/'
+    }).extend({
+        echarts: 'echarts/echarts',
+        echartsTheme: 'echarts/echartsTheme',
+    }).use(['echarts','form','element', 'echartsTheme'], function () {
+        var $ = layui.$
+            ,echarts = layui.echarts;
+
+        let bgColor = "#fff";
+        let color = [
+            "#0090FF",
+            "#36CE9E",
+            "#FFC005",
+            "#FF515A",
+            "#8B5CFF",
+            "#00CA69"
+        ];
+        const hexToRgba = (hex, opacity) => {
+            let rgbaColor = "";
+            let reg = /^#[\da-f]{6}$/i;
+            if (reg.test(hex)) {
+                rgbaColor = `rgba(${parseInt("0x" + hex.slice(1, 3))},${parseInt(
+                    "0x" + hex.slice(3, 5)
+                )},${parseInt("0x" + hex.slice(5, 7))},${opacity})`;
+            }
+            return rgbaColor;
+        }
+
+
+
+        like.ajax({
+            url: '{:url("index/stat")}',
+            type: "get",
+            success: function (res) {
+                var dates = res.data.dates,
+                    echarts_order_amount  = res.data.echarts_order_amount,
+                    echarts_user_visit = res.data.echarts_user_visit;
+
+                var sale_option = {
+                    backgroundColor: bgColor,
+                    color: color,
+                    legend: {
+                        right: 10,
+                        top: 10
+                    },
+                    tooltip: {
+                        trigger: "axis",
+                        formatter: function(params) {
+                            let html = '';
+                            params.forEach(v => {
+                                html += `<div style="color: #666;font-size: 14px;line-height: 24px">
+                <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${color[v.componentIndex]};"></span>
+                ${v.name}
+                <span style="color:${color[v.componentIndex]};font-weight:700;font-size: 18px">${v.value}</span>
+                元`;
+                            })
+                            return html
+                        },
+                        extraCssText: 'background: #fff; border-radius: 0;box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);color: #333;',
+                        axisPointer: {
+                            type: 'shadow',
+                            shadowStyle: {
+                                color: '#ffffff',
+                                shadowColor: 'rgba(225,225,225,1)',
+                                shadowBlur: 5
+                            }
+                        }
+                    },
+                    grid: {
+                        top: 100,
+                        containLabel: true
+                    },
+                    xAxis: [{
+                        type: "category",
+                        boundaryGap: false,
+                        axisLabel: {
+                            formatter: '{value}',
+                            textStyle: {
+                                color: "#333"
+                            }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: "#D9D9D9"
+                            }
+                        },
+                        data: dates
+                    }],
+                    yAxis: [{
+                        type: "value",
+                        name: '营业额',
+                        axisLabel: {
+                            textStyle: {
+                                color: "#666"
+                            }
+                        },
+                        nameTextStyle: {
+                            color: "#666",
+                            fontSize: 12,
+                            lineHeight: 40
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                type: "dashed",
+                                color: "#E9E9E9"
+                            }
+                        },
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        }
+                    }],
+                    series: [{
+                        type: "line",
+                        smooth: true,
+                        symbolSize: 8,
+                        zlevel: 3,
+                        lineStyle: {
+                            normal: {
+                                color: color[0],
+                                shadowBlur: 3,
+                                shadowColor: hexToRgba(color[0], 0.5),
+                                shadowOffsetY: 8
+                            }
+                        },
+                        areaStyle: {
+                            normal: {
+                                color: new echarts.graphic.LinearGradient(
+                                    0,
+                                    0,
+                                    0,
+                                    1,
+                                    [{
+                                        offset: 0,
+                                        color: hexToRgba(color[0], 0.3)
+                                    },
+                                        {
+                                            offset: 1,
+                                            color: hexToRgba(color[0], 0.1)
+                                        }
+                                    ],
+                                    false
+                                ),
+                                shadowColor: hexToRgba(color[0], 0.1),
+                                shadowBlur: 10
+                            }
+                        },
+                        data: echarts_order_amount
+                    }]
+                };
+
+                var user_option = {
+                    backgroundColor: bgColor,
+                    color: color,
+                    legend: {
+                        right: 10,
+                        top: 10
+                    },
+                    tooltip: {
+                        trigger: "axis",
+                        formatter: function(params) {
+                            let html = '';
+                            params.forEach(v => {
+                                html += `<div style="color: #666;font-size: 14px;line-height: 24px">
+                <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${color[v.componentIndex]};"></span>
+                ${v.name}
+                <span style="color:${color[v.componentIndex]};font-weight:700;font-size: 18px">${v.value}</span>
+                人`;
+                            })
+                            return html
+                        },
+                        extraCssText: 'background: #fff; border-radius: 0;box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);color: #333;',
+                        axisPointer: {
+                            type: 'shadow',
+                            shadowStyle: {
+                                color: '#ffffff',
+                                shadowColor: 'rgba(225,225,225,1)',
+                                shadowBlur: 5
+                            }
+                        }
+                    },
+                    grid: {
+                        top: 100,
+                        containLabel: true
+                    },
+                    xAxis: [{
+                        type: "category",
+                        boundaryGap: false,
+                        axisLabel: {
+                            formatter: '{value}',
+                            textStyle: {
+                                color: "#333"
+                            }
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: "#D9D9D9"
+                            }
+                        },
+                        data: dates
+                    }],
+                    yAxis: [{
+                        type: "value",
+                        name: '进店人数',
+                        axisLabel: {
+                            textStyle: {
+                                color: "#666"
+                            }
+                        },
+                        nameTextStyle: {
+                            color: "#666",
+                            fontSize: 12,
+                            lineHeight: 40
+                        },
+                        splitLine: {
+                            lineStyle: {
+                                type: "dashed",
+                                color: "#E9E9E9"
+                            }
+                        },
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        }
+                    }],
+                    series: [{
+                        type: "line",
+                        smooth: true,
+                        symbolSize: 8,
+                        zlevel: 3,
+                        lineStyle: {
+                            normal: {
+                                color: color[0],
+                                shadowBlur: 3,
+                                shadowColor: hexToRgba(color[0], 0.5),
+                                shadowOffsetY: 8
+                            }
+                        },
+                        areaStyle: {
+                            normal: {
+                                color: new echarts.graphic.LinearGradient(
+                                    0,
+                                    0,
+                                    0,
+                                    1,
+                                    [{
+                                        offset: 0,
+                                        color: hexToRgba(color[0], 0.3)
+                                    },
+                                        {
+                                            offset: 1,
+                                            color: hexToRgba(color[0], 0.1)
+                                        }
+                                    ],
+                                    false
+                                ),
+                                shadowColor: hexToRgba(color[0], 0.1),
+                                shadowBlur: 10
+                            }
+                        },
+                        data: echarts_user_visit
+                    }]
+                };
+
+
+                var sale_charts= echarts.init(document.getElementById('sale-charts'));
+                sale_charts.setOption(sale_option, true);
+
+                var user_charts = echarts.init(document.getElementById('user-charts'));
+                user_charts.setOption(user_option, true);
+
+            }
+        });
+
+        getList(); // 初始加载
+
+        function getList() {
+            var type = 1;
+            like.tableLists('#goods-lists', '{:url("index/shop")}?type='+type, [
+                {field: 'number',title: '排名',width:'15%'}
+                ,{title: '商品',width:'55%', align: 'center',templet: '#goods-info'}
+                ,{field: 'order_amount', title: '销售金额',width:'30%'}
+            ]);
+            var type = 2;
+            like.tableLists('#goods-lists2', '{:url("index/shop")}?type='+type, [
+                {field: 'number',title: '排名',width:'15%'}
+                ,{title: '商品',width:'55%', align: 'center',templet: '#goods-info'}
+                ,{field: 'visited_num', title: '商品浏览人数',width:'30%'}
+            ]);
+        }
+    });
+</script>

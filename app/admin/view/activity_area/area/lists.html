@@ -1,0 +1,170 @@
+{layout name="layout1" /}
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                <div class="layui-colla-content layui-show">
+                    <p>*活动专区能很方便的聚合需要促销的商品，形成各类专题页。</p>
+                    <p>*平台需要先设置好活动专区，商家可以选择需要参与的活动专区。</p>
+                    <p>*删除专区会移除所有参与该专区的商品，请谨慎操作。</p>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+            <!--添加按钮-->
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layui-btn-sm layuiadmin-btn-handle {$view_theme_color}" data-type="add">新增专区</button>
+            </div>
+
+            <!--表格-->
+            <table id="lists" lay-filter="lists"></table>
+
+            <script type="text/html" id="lists-operation">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon"></i>编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon"></i>删除</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['table'], function(){
+        var form = layui.form
+            ,table = layui.table;
+
+        //监听搜索
+        form.on('submit(lists-search)', function(data){
+            var field = data.field;
+            //执行重载
+            table.reload('lists', {
+                where: field
+            });
+        });
+
+
+        //事件
+        var active = {
+            add: function(){
+                layer.open({
+                    type: 2
+                    ,title: '新增活动专区'
+                    ,content: '{:url("activity_area.area/add")}'
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'add-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("activity_area.area/add")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1) {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        });
+                                        layer.close(index);
+                                        table.reload('lists');
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            }
+        };
+        $('.layui-btn.layuiadmin-btn-handle').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+
+        like.tableLists('#lists', '{:url("activity_area.area/lists")}', [
+            {type:'numbers', title: '序号', align: 'center'}
+            ,{field: 'name', title: '专区名称', align:"center"}
+            ,{field: 'synopsis', title: '专区简介', align:"center"}
+            , {field: 'image', title: '专区封面图', align: 'center',sort:false,
+                templet:function (d) {
+                    return '<div οnclick="photograph(this)"><img src='+d.image+'></div>'
+                }}
+            ,{field: 'status', title: '专区状态', align:"center"}
+            ,{title: '操作', align: 'center', fixed: 'right', toolbar: '#lists-operation'}
+        ]);
+
+
+        //监听工具条
+        table.on('tool(lists)', function(obj){
+            if(obj.event === 'del'){
+                var id = obj.data.id;
+                var name = "<span style='color: red;'>"+obj.data.name+"</span>";
+                layer.confirm('删除活动专区时，专区内的商品将被移除，确定要删除：'+ name +'吗？', function(index){
+                    like.ajax({
+                        url:'{:url("activity_area.area/del")}',
+                        data:{'id':id},
+                        type:"post",
+                        success:function(res)
+                        {
+                            if(res.code == 1) {
+                                obj.del();
+                                layui.layer.msg(res.msg, {
+                                    offset: '15px'
+                                    , icon: 1
+                                    , time: 1000
+                                });
+                                layer.close(index);
+                            }
+                        }
+                    });
+                });
+
+            }else if(obj.event === 'edit'){
+                var id = obj.data.id;
+                layer.open({
+                    type: 2
+                    ,title: '编辑活动专区'
+                    ,content: '{:url("activity_area.area/edit")}?id='+id
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'edit-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("activity_area.area/edit")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1) {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        });
+                                        layer.close(index);
+                                        table.reload('lists');
+                                    }
+                                }
+                            });
+                        });
+
+                        submit.trigger('click');
+                    }
+                })
+            }
+        });
+    });
+</script>

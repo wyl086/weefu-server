@@ -1,0 +1,325 @@
+{layout name="layout1" /}
+<style>
+    .layui-table-cell{
+        height:auto;
+        overflow:hidden;
+        text-overflow:inherit;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*同步直播间每天最多可同步100000次，请合理分配获取频次。</p>
+                        <p>*扫此二维码开播：<img class="image-show" src="/static/admin/images/zhibo.png" alt="zb"
+                                         style="width:50px;height:50px;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="live_info" class="layui-form-label">直播信息：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="live_info" name="live_info"  placeholder="请输入直播间名称/主播名称"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">直播状态:</label>
+                    <div class="layui-input-block">
+                        <select name="live_status" id="live_status">
+                            <option value="">全部</option>
+                            {foreach $live_status as $item => $val}
+                            <option value="{$item}">{$val}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-row">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开播时间:</label>
+                        <div class="layui-input-inline">
+                            <div class="layui-input-inline">
+                                <input type="text" name="start_time" class="layui-input" id="start_time"
+                                       placeholder="" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="layui-input-inline" style="margin-right: 5px;width: 20px;">
+                            <label class="layui-form-mid">至</label>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" name="end_time" class="layui-input" id="end_time"
+                                   placeholder="" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                        <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-tab layui-tab-card" lay-filter="tab-all">
+            <ul class="layui-tab-title">
+                <li data-type="" class="layui-this">全部</li>
+                <li data-type="0">待审核</li>
+                <li data-type="1">审核通过</li>
+                <li data-type="2">审核未通过</li>
+            </ul>
+            <div class="layui-tab-item layui-show">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="padding-bottom: 10px;">
+                            <button class="layui-btn layui-btn-sm layuiadmin-btn {$view_theme_color}" data-type="add">
+                                创建直播间
+                            </button>
+<!--                            <button class="layui-btn layui-btn-sm layuiadmin-btn layui-btn-primary" data-type="sync">-->
+<!--                                同步直播间-->
+<!--                            </button>-->
+                        </div>
+                        <table id="like-table-lists" lay-filter="like-table-lists"></table>
+                        <script type="text/html" id="operation">
+                            {{#  if(d.audit_status == 1 && d.live_status <= 102){ }}
+                                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="import">导入商品</a>
+                            {{#  } }}
+                            {{#  if(d.audit_status > 0 ){ }}
+                            <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</a>
+                            {{#  } }}
+                            <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+                        </script>
+
+                        <!-- 直播间信息 -->
+                        <script type="text/html" id="anchor-content">
+                            <img src="{{ d.feeds_img }}" style="height:80px;width: 80px" class="image-show">
+                            <div class="layui-input-inline" style="text-align: left;">
+                                <p >{{ d.name }}</p>
+                                <p >主播：{{ d.anchor_name }}</p>
+                            </div>
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(['table', 'form', 'laydate', 'element'], function () {
+        var $ = layui.$
+            , table = layui.table
+            , laydate = layui.laydate
+            , element = layui.element
+            , form = layui.form
+            , status = -1;
+
+        //日期时间范围
+        laydate.render({
+            elem: '#start_time'
+            , type: 'datetime'
+            , theme: '#1E9FFF'
+        });
+
+        laydate.render({
+            elem: '#end_time'
+            , type: 'datetime'
+            , theme: '#1E9FFF'
+        });
+
+        form.on("submit(search)", function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(clear-search)", function(){
+            $("#live_info").val("");
+            $("#live_status").val("");
+            $("#start_time").val("");
+            $("#end_time").val("");
+            form.render();
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        getList();
+        element.on('tab(tab-all)', function (data) {
+            status = $(this).attr('data-type');
+            getList();
+        });
+
+        function getList() {
+            like.tableLists("#like-table-lists", '{:url("live.LiveRoom/lists")}?status=' + status, [
+                {field: 'id', title: 'ID', sort: true, hide: true}
+                , {field: 'live_time_text', title: '开播时间', align: 'center', width:250}
+                , {field: 'anchor', title: '直播间信息', align: 'left', templet:'#anchor-content', width:300}
+                , {field: 'audit_status_text', title: '审核状态', align: 'center', width:120}
+                , {field: 'live_status_text', title: '直播状态', align: 'center', width:120}
+                , {field: 'goods_num', title: '商品数量', align: 'center', width:120}
+                , {fixed: 'right', title: '操作', align: 'center', toolbar: '#operation', width:200}
+            ]);
+        }
+
+        //事件
+        var active = {
+            add: function () {
+                layer.open({
+                    type: 2
+                    , title: '创建直播间'
+                    , content: '{:url("live.LiveRoom/add")}'
+                    , area: ['90%', '90%']
+                    , btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'addSubmit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field;
+                            like.ajax({
+                                url: '{:url("live.LiveRoom/add")}',
+                                data: field,
+                                type: "post",
+                                success: function (res) {
+                                    if (res.code === 1) {
+                                        layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                                        layer.close(index);
+                                        table.reload('like-table-lists');
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            },
+            edit: function (obj) {
+                layer.open({
+                    type: 2
+                    , title: '编辑直播间'
+                    , content: '{:url("live.LiveRoom/edit")}?id=' + obj.data.id
+                    , area: ['90%', '90%']
+                    , btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        console.log(obj.id)
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'addSubmit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field;
+                            like.ajax({
+                                url: '{:url("live.LiveRoom/edit")}',
+                                data: field,
+                                type: "post",
+                                success: function (res) {
+                                    if (res.code === 1) {
+                                        layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                                        layer.close(index);
+                                        table.reload('like-table-lists');
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            },
+            // 同步直播间
+            sync: function () {
+                table.reload('like-table-lists');
+            },
+            // 删除
+            del: function (obj) {
+                layer.confirm('确定要删除直播间:' + obj.data.name, function (index) {
+                    like.ajax({
+                        url: '{:url("live.LiveRoom/del")}',
+                        data: {id: obj.data.id},
+                        type: "post",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                                layer.close(index);
+                                obj.del();
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            },
+            // 导入直播商品
+            import: function (obj) {
+                layer.open({
+                    type: 2
+                    , title: '导入商品'
+                    , content: '{:url("live.LiveRoom/selectGoods")}'
+                    , area: ['90%', '90%']
+                    , btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'addSubmit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+                        var selectData = iframeWindow.callbackdata();
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var goods_ids = [];
+                            selectData.forEach(function(item, index, arr) {
+                                if(goods_ids.indexOf(item.id) == -1) {
+                                    goods_ids.push(item.id);
+                                }
+                            });
+                            like.ajax({
+                                url: '{:url("live.LiveRoom/importGoods")}',
+                                data: {'goods_ids' : goods_ids, 'id': obj.data.id},
+                                type: "post",
+                                success: function (res) {
+                                    if (res.code === 1) {
+                                        layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                                        layer.close(index);
+                                        table.reload('like-table-lists');
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            },
+        };
+
+        // 监听表格右侧工具条
+        table.on('tool(like-table-lists)', function (obj) {
+            var type = obj.event;
+            active[type] ? active[type].call(this, obj) : '';
+        });
+
+        // 绑定点击按钮事件
+        $('.layui-btn.layuiadmin-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        // 图片
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src, 400);
+        });
+
+    });
+</script>

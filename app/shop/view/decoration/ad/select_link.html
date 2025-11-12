@@ -1,0 +1,241 @@
+{layout name="layout2" /}
+<style>
+    html,body {
+        height: 100%;
+    }
+    .layui-form-label {
+        color: #6a6f6c;
+        width: 140px;
+    }
+    .layui-input-block{
+        margin-left:170px;
+    }
+    .reqRed::before {
+        content: '*';
+        color: red;
+    }
+    .layui-nav {
+        width: 100%;
+        background-color: white;
+    }
+    .layui-nav .layui-nav-mored, .layui-nav-itemed > a .layui-nav-more {
+        border-color: transparent transparent rgb(0, 0, 0);
+    }
+    .layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this, .layui-nav-tree .layui-this > a, .layui-nav-tree .layui-this > a:hover {
+        background-color: rgb(195 224 245);
+        color: #3a91fb!important;
+    }
+    .layui-nav-tree .layui-nav-item a:hover {
+        background-color: rgb(195 224 245);
+    }
+    .layui-nav .layui-nav-item a:hover, .layui-nav .layui-this a {
+        color: #3a91fb!important;
+    }
+    .layui-nav-itemed > a, .layui-nav-tree .layui-nav-title a, .layui-nav-tree .layui-nav-title a:hover {
+        color: black!important;
+    }
+    .layui-nav-tree .layui-nav-bar {
+        width: unset;
+        background-color: unset;
+    }
+    .layui-nav .layui-nav-item a {
+        color: black!important;
+    }
+    .layui-nav .layui-nav-more {
+        border-color: rgb(0, 0, 0) transparent transparent;
+    }
+    .layui-nav-itemed > .layui-nav-child {
+        background-color: white!important;
+    }
+    .layui-btn {
+        background-color: #1e9fff;
+    }
+    .layui-btn-primary {
+        background-color: white!important;
+    }
+</style>
+<div class="layui-fluid">
+
+    <div class="layui-row layui-col-space5" style="border: solid 1px #eee;height: 90vh;">
+        <!-- 左侧 -->
+        <div class="layui-col-md2 layui-col-sm2 layui-col-xs3" style="border-right: solid 1px #eee;height: 90vh;">
+            <ul class="layui-nav layui-nav-tree" lay-filter="test111">
+                <?php $iii = 0;foreach($links as $key => $value): ?>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;">{$value.name}</a>
+                    <dl class="layui-nav-child">
+                        <?php foreach($value['list'] as $ko => $vo): ?>
+                        <dd class="<?php if($iii == 0) echo 'layui-this'; ?>">
+                            <a href="javascript:;" id="type-{$vo.type}"  style="margin-left: 10px;">{$vo.name}</a>
+                        </dd>
+                        <?php $iii++;endforeach; ?>
+                    </dl>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <!-- 右侧 -->
+        <div class="layui-col-md10 layui-col-sm9 layui-col-xs8">
+
+            <div class="layui-card">
+
+                <!-- 商品列表 -->
+                <div class="layui-card-body  type-goods-list-body">
+                    <form class="layui-form layui-form-pane" action="" lay-filter="select-goods-list">
+                        <div class="layui-inline">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">商品名称</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="goods_name"  placeholder="请输入商品名称" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">参与分销</label>
+                                <div class="layui-input-inline">
+                                    <select name="is_distribution">
+                                        <option value="">全部</option>
+                                        <option value="1">参与</option>
+                                        <option value="0">不参与</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">会员价</label>
+                                <div class="layui-input-inline">
+                                    <select name="is_member">
+                                        <option value="">全部</option>
+                                        <option value="1">参与</option>
+                                        <option value="0">不参与</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <div class="layui-form-item">
+                                <div class="layui-input-inline">
+                                    <button class="layui-btn" lay-submit lay-filter="goods-list-search-submit">搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <table id="table-goods-list" lay-filter="table-goods-list"></table>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <hr>
+
+    <div class="layui-row">
+        <!-- 按钮 -->
+        <div class="layui-col-md12 layui-col-md12 layui-col-ms12 layui-col-xs12">
+            <div class="layui-btn-container" style="text-align: right">
+                <button type="button" class="layui-btn layui-btn-sm layui-bg-blue select-confirm">确定</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary select-cancel">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib' //静态资源所在路径
+    }).use(['form'], function() {
+        let $ = layui.$;
+        let form = layui.form;
+        let layer  = layui.layer;
+        let element = layui.element;
+        let table = layui.table;
+
+        const index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+
+        let select_link = '{$select_link}';
+        console.log(select_link);
+
+        getList();
+
+        // 搜索商品
+        form.on('submit(goods-list-search-submit)', function(data) {
+            getList();
+            return false;
+        });
+
+        // 获取商品
+        function getList()
+        {
+            table.render({
+                elem: '#table-goods-list'
+                , url: "{:url('goods.goods/lists')}?type=1"
+                , cols: [
+                    [
+                        { type:'radio', field:'id'}
+                        ,{ field: 'name', title: '商品名称', width:400}
+                        ,{ field: 'price', title: '价格', width:200}
+                        ,{ field: 'is_distribution_desc', title: '参与分销', width:100}
+                        ,{ field: 'is_member_desc', title: '会员折扣', width:100}
+                    ]
+                ]
+                , where: form.val("select-goods-list")
+                , text: {none: '暂无相关数据'}
+                , response: {
+                    statusCode: 1
+                }
+                , page: true
+                , parseData: function (res) {
+                    for (let i=0; i<res.data.lists.length; i++){
+                        if (('{$getShopGoodsListPath}?id=' + res.data.lists[i].id) === select_link) {
+                            // 设置初始选中
+                            res.data.lists[i].LAY_CHECKED = 'checked';
+                        }
+                    }
+                    return {
+                        "code": res.code,
+                        "msg": res.msg,
+                        "count": res.data.count,
+                        "data": res.data.lists
+                    };
+                }
+                , done: function () {
+                    setTimeout(function () {
+                        $(".layui-table-main tr").each(function (index, val) {
+                            $($(".layui-table-fixed-l .layui-table-body tbody tr")[index]).height($(val).height());
+                            $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height());
+                        });
+                    }, 200);
+                }
+            });
+        }
+
+        // 确定 取消
+        $(document).on('click', '.select-cancel', function () {
+            parent.layer.close(index);
+        });
+        $(document).on('click', '.select-confirm', function () {
+            if (select_link === '') {
+                layer.msg('请至少选择一项')
+            } else {
+                var child_iframe_body = parent.layer.getChildFrame('body', parent.index_add_edit);
+                child_iframe_body.find('#link').eq(0).val(select_link);
+                parent.layer.close(index);
+            }
+        });
+
+        // 选择商品列表
+        table.on('radio(table-goods-list)', function(obj) {
+            $('.btn-shop-path').addClass('layui-btn-primary');
+
+            $('.type-goods-category-body select').val('');
+
+            select_link = '{$getShopGoodsListPath}?id=' + obj.data.id;
+            console.log(select_link);
+
+            form.render();
+        });
+
+    })
+</script>

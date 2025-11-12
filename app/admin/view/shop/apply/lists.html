@@ -1,0 +1,225 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*审核商家入驻申请，审核通过后会自动创建商家。</p>
+                        <p>*审核通过的商家初始营业状态为：暂停营业。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="name" class="layui-form-label">商家名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="name" name="name" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="nickname" class="layui-form-label" style="width:85px;">联系人名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="nickname" name="nickname" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">申请时间：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="apply_start_time" name="apply_start_time" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline"> - </div>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" style="margin-right:0;">
+                            <input type="text" id="apply_end_time" name="apply_end_time" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-tab layui-tab-card" lay-filter="like-tabs">
+            <ul class="layui-tab-title">
+                <li lay-id="1" class="layui-this">待审核({$totalCount.stay})</li>
+                <li lay-id="2">审核通过({$totalCount.ok})</li>
+                <li lay-id="3">审核拒绝({$totalCount.refuse})</li>
+            </ul>
+            <div class="layui-tab-content" style="padding: 0 15px;">
+                <table id="like-table-lists" lay-filter="like-table-lists"></table>
+                <script type="text/html" id="table-license">
+                    {{#  layui.each(d.license, function(index, item){ }}
+                        <img src="{{item}}" alt="资质" style="width:50px;height:50px;margin:0 3px;">
+                    {{#  }); }}
+                </script>
+                <script type="text/html" id="table-operation">
+                    <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="detail">详细</a>
+                    {{#  if(d.audit_status === 1){ }}
+                        <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="audit">审核</a>
+                    {{#  } }}
+                    <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+                </script>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form", "element", "laydate"], function(){
+        var table   = layui.table;
+        var form    = layui.form;
+        var element = layui.element;
+        var laydate = layui.laydate;
+
+
+        laydate.render({type:"datetime", elem:"#apply_start_time", trigger:"click"});
+        laydate.render({type:"datetime", elem:"#apply_end_time", trigger:"click"});
+
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {field:"id", width:60, title:"ID"}
+            ,{field:"name", width:200, title:"商家名称"}
+            ,{field:"category", width:120, align:"center", title:"主营类目"}
+            ,{field:"nickname", width:120, align:"center",title:"联系人名称"}
+            ,{field:"mobile", width:120, align:"center", title:"联系电话"}
+            ,{field:"account", width:100, align:"center", title:"商家账号"}
+            ,{field:"licenseList", width:170, title:"资质证明", templet:"#table-license"}
+            ,{field:"audit_status_desc", width:100, align:"center", title:"审核状态"}
+            ,{field:"audit_explain", width:170, title:"审核说明"}
+            ,{field:"apply_time", width:170, align:"center", title:"申请日期"}
+            ,{title:"操作", width:230, align:"center", fixed:"right", toolbar:"#table-operation"}
+        ]);
+
+
+        var active = {
+            detail: function(obj) {
+                layer.open({
+                    type: 2
+                    ,title: "入驻申请详情"
+                    ,content: "{:url('shop.Apply/detail')}?id=" + obj.data.id
+                    ,area: ["600px", "500px"]
+
+                });
+            },
+            audit: function(obj) {
+                layer.open({
+                    type: 2
+                    ,title: "入驻申请审核"
+                    ,content: "{:url('shop.Apply/audit')}?id=" + obj.data.id
+                    ,area: ["400px", "340px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field["id"] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('shop.Apply/audit')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        active.totalCount();
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            del: function(obj) {
+                layer.confirm("确定删除入驻申请："+obj.data.name, function(index) {
+                    like.ajax({
+                        url: "{:url('shop.Apply/del')}",
+                        data: {id: obj.data.id},
+                        type: "POST",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                active.totalCount();
+                                layui.layer.msg(res.msg);
+                                layer.close(index);
+                                obj.del();
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            },
+            totalCount: function() {
+                like.ajax({
+                    url: '{:url("shop.Apply/totalCount")}',
+                    data: {},
+                    type: "GET",
+                    success: function (res) {
+                        if (res.code === 1) {
+                            $(".layui-tab-title li[lay-id=1]").html("待审核(" + res.data.stay + ")");
+                            $(".layui-tab-title li[lay-id=2]").html("审核通过(" + res.data.ok + ")");
+                            $(".layui-tab-title li[lay-id=3]").html("审核拒绝(" + res.data.refuse + ")");
+                        }
+                    }
+                });
+            }
+        };
+        like.eventClick(active);
+
+
+        element.on("tab(like-tabs)", function(){
+            var type = this.getAttribute("lay-id");
+            table.reload("like-table-lists", {
+                where: {type: type},
+                page: { cur: 1 }
+            });
+        });
+
+
+        form.on("submit(search)", function(data){
+            data.field["type"] = $(".layui-tab-title li.layui-this").attr("lay-id");
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(clear-search)", function(){
+            $("#name").val("");
+            $("#nickname").val("");
+            $("#apply_start_time").val("");
+            $("#apply_end_time").val("");
+
+            var type = $(".layui-tab-title li.layui-this").attr("lay-id");
+
+            form.render("select");
+            table.reload("like-table-lists", {
+                where: {type: type},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+    })
+</script>

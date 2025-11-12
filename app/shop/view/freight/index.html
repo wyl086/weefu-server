@@ -1,0 +1,226 @@
+{layout name="layout1" /}
+
+
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+        <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                <div class="layui-colla-content layui-show">
+                    <p>*设置快递配送的运费模板。</p>
+                    <p>*需要开启快递发货的配送方式，运费模板才能生效。</p>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="layui-tab layui-tab-card" lay-filter="tab-all">
+            <ul class="layui-tab-title">
+                <li data-type='freight' class="layui-this">运费模板</li>
+            </ul>
+            <div class="layui-tab-content">
+
+                <!--运费模板列表-->
+                <div class="layui-tab-item layui-show ">
+                    {include file="freight/lists"/}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/'
+    }).extend({
+        likeedit: 'likeedit/likeedit'
+    }).use(['table', 'form', 'element', 'likeedit'], function() {
+        var form = layui.form
+            ,$ = layui.$
+            ,table = layui.table
+            , element = layui.element
+            , likeedit = layui.likeedit;
+
+        //图片放大
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src,600);
+        });
+
+
+        getLists('freight');
+
+        //切换列表
+        element.on('tab(tab-all)', function (data) {
+            form.render('select');
+            var type = $(this).attr('data-type');
+            getLists(type);
+        });
+
+
+        form.on('submit(freight-search)', function (data) {
+            var field = data.field;
+            //执行重载
+            table.reload('freight-lists', {
+                where: field
+            });
+        });
+
+        form.on('submit(freight-clear-search)', function () {
+            $('#name').val('');
+            $('#charge_way').val('');
+            form.render('select');
+            //刷新列表
+            table.reload('freight-lists', {
+                where: []
+            });
+        });
+
+        function getLists(type) {
+            if (type == 'freight') {
+
+                like.tableLists('#freight-lists', '{:url("freight/lists")}', [
+                    {field: 'name',width:100, title: '模板名称'}
+                    ,{field: 'charge_way_text', width:120,title: '计费方式'}
+                    ,{field: 'remark', title: '备注'}
+                    ,{field: 'create_time', title: '创建时间'}
+                    ,{fixed: 'right', title: '操作',width:160, align: 'center', fixed: 'right', toolbar: '#freight-operation'}
+                ]);
+            }
+        }
+
+
+        //新增运费模板
+        var active = {
+            add: function(){
+                layer.open({
+                    type: 2
+                    ,title: '添加运费模板'
+                    ,content: '{:url("freight/add")}'
+                    ,area: ['90%','90%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'add-freight-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("freight/add")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1)
+                                    {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        });
+                                        layer.close(index); //关闭弹层
+                                        table.reload('freight-lists'); //数据刷新
+                                    }
+                                }
+                            });
+                        });
+
+                        submit.trigger('click');
+                    }
+                });
+            }
+        };
+        $('.layui-btn.layuiadmin-btn-freight').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        //运费模板监听工具条
+        table.on('tool(freight-lists)', function (obj) {
+            var id = obj.data.id;
+            //详情
+            if(obj.event === 'detail-freight'){
+                layer.open({
+                    type: 2
+                    ,title: '详情'
+                    ,content: '{:url("freight/detail")}?id='+id
+                    ,area: ['90%', '90%']
+                    ,yes: function(index, layero){
+                        table.reload('freight-lists'); //再执行关闭
+                    }
+                })
+            }
+
+            //编辑
+            if(obj.event === 'edit-freight'){
+                layer.open({
+                    type: 2
+                    ,title: '编辑'
+                    ,btn: ['确定', '取消']
+                    ,content: '{:url("freight/edit")}?id='+id
+                    ,area: ['90%', '90%']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'edit-freight-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("freight/edit")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1)
+                                    {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        });
+                                        layer.close(index); //关闭弹层
+                                        table.reload('freight-lists'); //数据刷新
+                                    }
+                                }
+                            });
+                        });
+
+                        submit.trigger('click');
+                    }
+                })
+            }
+
+            //删除运费模板
+            if(obj.event === 'del-freight'){
+                layer.confirm('删除后运费模板将消失，确认删除运费模板吗?', {
+                    btn: ['确认','取消'] //按钮
+                }, function(){
+                    like.ajax({
+                        url: '{:url("freight/del")}'
+                        , data: {'id': id}
+                        , type: 'post'
+                        , success: function (res) {
+                            if (res.code == 1) {
+                                layui.layer.msg(res.msg, {
+                                    offset: '15px'
+                                    , icon: 1
+                                    , time: 1000
+                                },function () {
+                                    table.reload('freight-lists');
+                                });
+                            }
+                        },
+                    });
+                });
+            }
+        });
+
+    });
+
+
+</script>

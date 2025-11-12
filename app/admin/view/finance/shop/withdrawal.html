@@ -1,0 +1,305 @@
+{layout name="layout1" /}
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*平台审核商家提交的提现申请。</p>
+                        <p>*提现转账失败后，提现金额会退回商家账户。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 提现汇总-->
+        <h2 style="margin:20px;">提现汇总</h2>
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-sm6 layui-col-md3" >
+                <div class="layui-card" style="box-shadow:none;">
+                    <div class="layui-card-header" style="border-bottom:0;">商家已提现金额</div>
+                    <div class="layui-card-body"><p id="count_user">￥{$summary.successWithdrawn}</p></div>
+                </div>
+            </div>
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card" style="box-shadow:none;">
+                    <div class="layui-card-header" style="border-bottom:0;">商家提现中金额</div>
+                    <div class="layui-card-body"><p id="add_user1">￥{$summary.handleWithdrawn}</p></div>
+                </div>
+            </div>
+            <div class="layui-col-sm6 layui-col-md3">
+                <div class="layui-card" style="box-shadow:none;">
+                    <div class="layui-card-header" style="border-bottom:0;">商家可提现金额</div>
+                    <div class="layui-card-body"><p id="T_add_user">￥{$summary.totalWallet}</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <h2 style="margin:20px;">提现记录</h2>
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="name" class="layui-form-label">商家名称：</label>
+                    <div class="layui-inline">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="name" name="name" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">提现时间：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="start_time" name="start_time" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">至</div>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" style="margin-right:0;">
+                            <input type="text" id="end_time" name="end_time" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="data-export">导出</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体内容 -->
+        <div class="layui-card-body">
+            <div class="layui-tab layui-tab-card" lay-filter="like-tab">
+                <ul class="layui-tab-title">
+                    <li lay-id="0" class="layui-this">待提现({$statistics.apply})</li>
+                    <li lay-id="1">提现中({$statistics.handle})</li>
+                    <li lay-id="2">提现成功({$statistics.success})</li>
+                    <li lay-id="3">提现失败({$statistics.error})</li>
+                </ul>
+                <div class="layui-tab-content" style="padding:20px;">
+                    <table id="like-table-lists" lay-filter="like-table-lists"></table>
+                    <script type="text/html" id="table-storeInfo">
+                        <img src="{{d.shop.logo}}" alt="图标" style="width:60px;height:60px;margin-right:5px;">
+                        <div class="layui-inline" style="text-align:left;">
+                            <p>商家编号：{{d.shop.id}}</p>
+                            <p>商家名称：{{d.shop.name}}</p>
+                            <p>商家类型：{{d.shop.type === 1 ? '官方自营' : '入驻商家'}}</p>
+                        </div>
+                    </script>
+                    <script type="text/html" id="table-poundage">
+                        <p>￥{{d.poundage_amount}}（{{d.poundage_ratio}}%）</p>
+                    </script>
+                    <script type="text/html" id="table-operation">
+                        <a class="layui-btn layui-btn-sm layui-btn-primary" lay-event="detail">详情</a>
+                        {{#  if(d.status === 0){ }}
+                            <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="examine">审核</a>
+                        {{#  } }}
+                        {{#  if(d.status === 1){ }}
+                            <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="transfer">转账</a>
+                            {{#  if(d.type === 10){ }}
+                            <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="transfer_online">在线转账</a>
+                            {{#  } }}
+                        {{#  } }}
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['form'], function(){
+        var $ = layui.$;
+        var form = layui.form;
+        var table = layui.table;
+        var element = layui.element;
+        var laydate = layui.laydate;
+
+        laydate.render({type:"datetime", elem:"#start_time", trigger:"click"});
+        laydate.render({type:"datetime", elem:"#end_time", trigger:"click"});
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {field:"id", width:60, title:"ID"}
+            ,{field:"sn", width:250, align:"center", title:"商家信息", templet:"#table-storeInfo"}
+            ,{field:"sn", width:250, align:"center", title:"提现单号"}
+            ,{field:"apply_amount", width:100, align:"center",title:"提现金额"}
+            ,{field:"poundage", width:150, align:"center", title:"提现手续费", templet:"#table-poundage"}
+            ,{field:"left_amount", width:90, align:"center", title:"到账金额"}
+            ,{field:"status_text", width:90, align:"center", title:"提现状态"}
+            ,{field:"create_time", width:160, align:"center", title:"提现时间"}
+            ,{title:"操作", width:220, align:"center", fixed:"right", toolbar:"#table-operation"}
+        ]);
+
+
+        var active = {
+            examine: function(obj) {
+                layer.open({
+                    type: 2
+                    ,title: "提现审核"
+                    ,content: "{:url('finance.Shop/WithdrawalExamine')}"
+                    ,area: ["480px", "400px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field['id'] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('finance.Shop/WithdrawalExamine')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        active.statistics();
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            transfer: function(obj) {
+                layer.open({
+                    type: 2
+                    ,title: "转账"
+                    ,content: "{:url('finance.Shop/WithdrawalTransfer')}?id="+obj.data.id
+                    ,area: ["480px", "500px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field['id'] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('finance.Shop/WithdrawalTransfer')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        active.statistics();
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            transfer_online : function (obj) {
+                const index = layer.confirm('确定在线转账?', {title: "提示"}, function (index) {
+
+                    layer.close(index);
+                    //do something
+                    like.ajax({
+                        url: "{:url('finance.Shop/WithdrawalTransferOnline')}",
+                        data: {
+                            id : obj.data.id
+                        },
+                        type: "POST",
+                        success:function(res) {
+                            if(res.code === 1) {
+                                active.statistics();
+                                layui.layer.msg(res.msg);
+                                layer.close(index);
+                                table.reload("like-table-lists", {
+                                    where: {},
+                                    page: { cur: 1 }
+                                });
+                            }
+                        }
+                    });
+                });
+            },
+            detail: function (obj) {
+                layer.open({
+                    type: 2
+                    ,title: "提现详细"
+                    ,content: "{:url('finance.Shop/WithdrawalDetail')}?id="+obj.data.id
+                    ,area: ["60%", "80%"]
+                });
+            },
+            statistics: function () {
+                like.ajax({
+                    url: "{:url('finance.Shop/withdrawalStatistics')}",
+                    type: "GET",
+                    success:function(res) {
+                        if(res.code === 1) {
+                            $(".layui-tab-title li[lay-id='0']").html("待提现("+res.data.apply+")");
+                            $(".layui-tab-title li[lay-id='1']").html("提现中("+res.data.handle+")");
+                            $(".layui-tab-title li[lay-id='2']").html("提现成功("+res.data.success+")");
+                            $(".layui-tab-title li[lay-id='3']").html("提现失败("+res.data.error+")");
+                        }
+                    }
+                });
+            }
+        };
+        like.eventClick(active);
+
+
+        element.on("tab(like-tab)", function(){
+            var type = this.getAttribute("lay-id");
+            table.reload("like-table-lists", {
+                where: {type: type},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(search)", function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(clear-search)", function(){
+            $("#start_time").val("");
+            $("#end_time").val("");
+            $("#name").val("");
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        // 导出
+        form.on('submit(data-export)', function (data) {
+            var field = data.field;
+            field.type = $(".layui-tab-title li.layui-this").attr("lay-id")
+            like.ajax({
+                url: '{:url("finance.Shop/withdrawalExport")}'
+                , data: field
+                , type: 'get'
+                , success: function (res) {
+                    if (res.code == 1) {
+                        window.location.href = res.data.url;
+                    }
+                }
+            });
+        });
+
+    });
+</script>

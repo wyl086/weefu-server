@@ -1,0 +1,24 @@
+{layout name="layout2" /}
+
+<div class="layui-card layui-form" style="box-shadow:none;">
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color:red;">*</span>提现账号：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="is_examine" value="1" title="审核通过" checked>
+                <input type="radio" name="is_examine" value="0" title="审核拒绝">
+                <div class="layui-form-mid layui-word-aux">审核拒绝后，提现金额会全部退回佣金账户</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">提现说明：</label>
+            <div class="layui-input-block">
+                <textarea name="explain" class="layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>

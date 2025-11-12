@@ -1,0 +1,439 @@
+{layout name="layout1" /}
+<style>
+    .layui-form-label {
+        width: 120px;
+    }
+    .copy{
+        margin-left: 10px;
+    }
+    .tips{
+        color: red;
+    }
+    .layui-form-item .layui-input-inline{
+        width: 410px;
+    }
+    .layui-input{
+        display: inline-block;
+        width: 80%;
+    }
+    .layuiadmin-big-font {
+        font-size: 25px;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body" pad15>
+            <div class="layui-form" lay-filter="">
+
+                    <!-- 平台汇总-->
+                    <div class="layui-form-item div-flex">
+                        <fieldset class="layui-elem-field layui-field-title">
+                            <legend>平台汇总</legend>
+                        </fieldset>
+                    </div>
+                
+                    
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-sm6 layui-col-md3" >
+                            <div class="layui-card" >
+                                <div class="layui-card-header" >
+                                    已结算交易服务费（平台收入）（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list" >
+                                    <p class="layuiadmin-big-font">{$shop.shopAmount}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    会员提现手续费（平台收入）（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list">
+                                    <p class="layuiadmin-big-font">{$shop.userPoundage}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    商家提现手续费（平台收入）（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list">
+                                    <p class="layuiadmin-big-font">{$shop.commissionAmount}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+<br>
+<br>
+
+                    <!-- 商家汇总-->
+                    <div class="layui-form-item div-flex">
+                        <fieldset class="layui-elem-field layui-field-title">
+                            <legend>商家汇总</legend>
+                        </fieldset>
+                    </div>
+
+
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-sm6 layui-col-md3" >
+                            <div class="layui-card" >
+                                <div class="layui-card-header" >
+                                    成交订单笔数
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list" >
+                                    <p class="layuiadmin-big-font">{$shop.orderNum}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    营业额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list">
+                                    <p class="layuiadmin-big-font">{$shop.orderAmount}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    退款订单金额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list">
+                                    <p class="layuiadmin-big-font">{$shop.refundAmount}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    待退款订单金额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list">
+                                    <p class="layuiadmin-big-font">{$shop.refundAmountIng}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    售后退款金额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list">
+                                    <p class="layuiadmin-big-font">{$shop.salesRefundAmount}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    待售后退款金额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list">
+                                    <p class="layuiadmin-big-font">{$shop.salesRefundAmountIng}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
+
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-sm6 layui-col-md3" >
+                            <div class="layui-card" >
+                                <div class="layui-card-header" >
+                                    已结算成交订单数
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list" >
+                                    <p class="layuiadmin-big-font">{$shop.settleOrederNum}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    已结算营业额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list">
+                                    <p class="layuiadmin-big-font">{$shop.settleOrederAmount}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    待结算营业额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list">
+                                    <p class="layuiadmin-big-font">{$shop.settleOrederAmountWait}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    已结算分销佣金金额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list">
+                                    <p class="layuiadmin-big-font">{$shop.settleDistributionAmount}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    已结算入账金额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list">
+                                    <p class="layuiadmin-big-font">{$shop.settleWithdrawalAmount}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-col-sm6 layui-col-md3">
+                            <div class="layui-card">
+                                <div class="layui-card-header">
+                                    已结算交易服务费（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list">
+                                    <p class="layuiadmin-big-font">{$shop.settlePoundageAmount}</p>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
+                        <div class="layui-row layui-col-space15">
+                            <div class="layui-col-sm6 layui-col-md3" >
+                                <div class="layui-card" >
+                                    <div class="layui-card-header" >
+                                        已提现金额（元）
+                                    </div>
+                                    <div class="layui-card-body layuiadmin-card-list" >
+                                        <p class="layuiadmin-big-font">{$shop.withdrawaLeftamount}</p>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="layui-col-sm6 layui-col-md3">
+                                <div class="layui-card">
+                                    <div class="layui-card-header">
+                                        提现中金额（元）
+                                    </div>
+                                    <div class="layui-card-body layuiadmin-card-list">
+                                        <p class="layuiadmin-big-font">{$shop.withdrawaLeftamountIng}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="layui-col-sm6 layui-col-md3">
+                                <div class="layui-card">
+                                    <div class="layui-card-header">
+                                        可提现金额（元）
+                                    </div>
+                                    <div class="layui-card-body layuiadmin-card-list">
+                                        <p class="layuiadmin-big-font">{$shop.shopWallet}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+<br>
+<br>
+
+
+                    <!-- 商家汇总-->
+                    <div class="layui-form-item div-flex">
+                        <fieldset class="layui-elem-field layui-field-title">
+                            <legend>会员汇总</legend>
+                        </fieldset>
+                    </div>
+
+
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-sm6 layui-col-md3" >
+                            <div class="layui-card" >
+                                <div class="layui-card-header" >
+                                    会员余额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list" >
+                                    <p class="layuiadmin-big-font">{$shop.userMoney}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-sm6 layui-col-md3" >
+                            <div class="layui-card" >
+                                <div class="layui-card-header" >
+                                    已结算分销佣金金额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list" >
+                                    <p class="layuiadmin-big-font">{$shop.userSettleDistributionAmount}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm6 layui-col-md3" >
+                            <div class="layui-card" >
+                                <div class="layui-card-header" >
+                                    已提现佣金金额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list" >
+                                    <p class="layuiadmin-big-font">{$shop.userDistributionMoney}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm6 layui-col-md3" >
+                            <div class="layui-card" >
+                                <div class="layui-card-header" >
+                                    提现中佣金金额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list" >
+                                    <p class="layuiadmin-big-font">{$shop.userDistributionMoneyIng}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-sm6 layui-col-md3" >
+                            <div class="layui-card" >
+                                <div class="layui-card-header" >
+                                    可提现佣金金额（元）
+                                </div>
+                                <div class="layui-card-body layuiadmin-card-list" >
+                                    <p class="layuiadmin-big-font">{$shop.userDistributionMoneyWait}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<br>
+<br>
+                <!-- 积分汇总-->
+                <div class="layui-form-item div-flex">
+                    <fieldset class="layui-elem-field layui-field-title">
+                        <legend>积分汇总</legend>
+                    </fieldset>
+                </div>
+
+
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-sm6 layui-col-md3" >
+                        <div class="layui-card" >
+                            <div class="layui-card-header" >
+                                总积分
+                            </div>
+                            <div class="layui-card-body layuiadmin-card-list" >
+                                <p class="layuiadmin-big-font">{$shop.all_integral}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-col-sm6 layui-col-md3">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                签到送出积分
+                            </div>
+                            <div class="layui-card-body layuiadmin-card-list">
+                                <p class="layuiadmin-big-font">{$shop.sign_in_integral}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-col-sm6 layui-col-md3">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                使用积分
+                            </div>
+                            <div class="layui-card-body layuiadmin-card-list">
+                                <p class="layuiadmin-big-font">{$shop.use_integral}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layui-col-sm6 layui-col-md3">
+                        <div class="layui-card">
+                            <div class="layui-card-header">
+                                下单赠送积分
+                            </div>
+                            <div class="layui-card-body layuiadmin-card-list">
+                                <p class="layuiadmin-big-font">{$shop.consume_award_integral}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form'], function () {
+        var $ = layui.$, form = layui.form
+
+        // 图片上传
+        $(document).on("click", "#qrimage", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "qr_code",
+                that: $(this)
+            });
+        })
+        // 删除图片
+        like.delUpload();
+        // 放大图片
+        $(document).on('click', 'img', function () {
+            var image = $(this).attr('src');
+            like.showImg(image,600);
+        });
+
+        //复制
+        $(document).on('click','.copy',function () {
+            var copyText = $(this).prev()
+            copyText.select()
+            document.execCommand("Copy");
+        })
+        // 提交表单
+        form.on('submit(setoa)', function (data) {
+            like.ajax({
+                url: '{:url("wechat.oa/setOa")}' //实际使用请改成服务端真实接口
+                , data: data.field
+                , type: 'post'
+                , success: function (res) {
+                    if (res.code == 1) {
+                        layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        });
+                    }
+
+                }
+            });
+        });
+    });
+
+</script>

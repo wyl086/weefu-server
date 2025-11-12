@@ -1,0 +1,25 @@
+{layout name="layout2" /}
+
+
+<div class="layui-card layui-form">
+    <div class="layui-card-body">
+        <input type="hidden" class="id" name="id" value="{$detail.id}">
+        <!-- 推荐值 -->
+        <div class="layui-form-item">
+            <label for="sort" class="layui-form-label" >推荐值：</label>
+            <div class="layui-input-block">
+                <input type="number" id="sort" name="sort" placeholder="填写推荐值" value="{$detail.sort}"
+                       class="layui-input" autocomplete="off" lay-verType="tips" lay-verify="required">
+                <div class="layui-form-mid layui-word-aux">推荐值必须为整数；数值越小，直播间越靠前</div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form'], function () {
+    });
+</script>

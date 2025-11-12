@@ -1,0 +1,150 @@
+<div class="layui-tab-item goods-content layui-show">
+    <div class="layui-card-body" pad15>
+        <div>
+            <!-- 商品类型 -->
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="form-label-asterisk">*</span>商品类型：</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="type" value="0" title="实物商品" lay-filter="goods_type" class="layui-input" checked/>
+                    <input type="radio" name="type" value="1" title="虚拟商品" lay-filter="goods_type" class="layui-input"  />
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <span style="color: #a3a3a3;font-size: 9px">选择好商品类型之后，编辑时不能修改类型。请谨慎选择</span>
+            </div>
+            <!--商品名称-->
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="form-label-asterisk">*</span>商品名称：</label>
+                <div class="layui-input-block">
+                    <input name="goods_id" type="hidden">
+                    <input type="text" name="name" lay-verify="custom_required" lay-verType="tips"
+                           autocomplete="off" maxlength="64"
+                           switch-tab="0" verify-msg="请输入商品名称，最多64个字符" placeholder="请输入商品名称，最少3个字符，最多64个字符"
+                           class="layui-input">
+                </div>
+            </div>
+            <!--商品编码-->
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品编码：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="code" lay-verType="tips" placeholder="若不填，系统随机8位数字" autocomplete="off" switch-tab="0" class="layui-input">
+                </div>
+            </div>
+            <!--平台分类-->
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="form-label-asterisk">*</span>平台分类：</label>
+                <div class="layui-input-inline">
+                    <select name="first_cate_id" lay-filter="first_category" lay-verify="custom_required"
+                            lay-verType="tips" switch-tab="0" verify-msg="请选择分类">
+                        <option value="">请选择分类</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <select name="second_cate_id" lay-filter="second_category" switch-tab="0" verify-msg="请选择分类">
+                        <option value="">请选择分类</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <select name="third_cate_id" lay-filter="third_category" switch-tab="0" verify-msg="请选择分类">
+                        <option value="">请选择分类</option>
+                    </select>
+                </div>
+            </div>
+            <!--商品分类-->
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品分类：</label>
+                <div class="layui-input-inline">
+                    <select name="shop_cate_id" lay-filter="shop_cate_id" switch-tab="0" verify-msg="请选择分类">
+                    </select>
+                </div>
+            </div>
+            <!--商品卖点-->
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品卖点：</label>
+                <div class="layui-input-block">
+                    <input type="text" maxlength="60" name="remark"  autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <!--商品单位-->
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品单位：</label>
+                <div class="layui-input-inline">
+                    <select name="unit_id"  switch-tab="0" verify-msg="请选择分类">
+                        <option value="">请选择单位</option>
+                    </select>
+                </div>
+            </div>
+            <!--商品品牌-->
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品品牌：</label>
+                <div class="layui-input-inline">
+                    <select name="brand_id" lay-verType="tips" switch-tab="0" verify-msg="请选择商品品牌">
+                        <option value="">请选择品牌</option>
+                    </select>
+                </div>
+            </div>
+            <!--供货商-->
+            <div class="layui-form-item">
+                <label class="layui-form-label">供货商：</label>
+                <div class="layui-input-inline">
+                    <select name="supplier_id" lay-verType="tips" switch-tab="0" verify-msg="请选择供货商">
+                        <option value="">请选择供货商</option>
+                    </select>
+                </div>
+            </div>
+            <!--商品主图-->
+            <div class="layui-form-item" style="margin-bottom: 0px">
+                <label class="layui-form-label"><span class="form-label-asterisk">*</span>商品封面图：</label>
+                <div class="layui-input-block" id="imageContainer">
+                    <div class="like-upload-image">
+                        <div class="upload-image-elem"><a class="add-upload-image" id="image"> + 添加图片</a></div>
+                      </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <span style="color: #a3a3a3;font-size: 9px">建议尺寸：800*800像素</span>
+            </div>
+            <!--自定义分享海报-->
+            <div class="layui-form-item" style="margin-bottom: 0px">
+                <label class="layui-form-label">分享海报：</label>
+                <div class="layui-input-block" id="posterContainer">
+                    <div class="like-upload-image">
+                        <div class="upload-image-elem"><a class="add-upload-image" id="poster"> + 添加图片</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <span style="color: #a3a3a3;font-size: 9px">建议尺寸：800*800像素</span>
+            </div>
+            <!--商品轮播图-->
+            <div class="layui-form-item" style="margin-bottom: 0px">
+                <label class="layui-form-label"><span class="form-label-asterisk">*</span>商品轮播图：</label>
+                <div class="layui-input-block" id="goodsImageContainer">
+                    <div class="like-upload-image">
+                        <div class="upload-image-elem"><a class="add-upload-image" id="goodsimage"> + 添加图片</a></div>
+                      </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <span style="color: #a3a3a3;font-size: 9px">建议尺寸：800*800像素，最多上传5张</span>
+            </div>
+            <!--商品视频-->
+            <div class="layui-form-item">
+                <label class="layui-form-label">商品视频：</label>
+                <div class="layui-input-block" id="videoContainer">
+                    <div class="like-upload-video">
+                        <div class="upload-image-elem"><a class="add-upload-video" id="video"> + 添加视频</a></div>
+                      </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <span style="color: #a3a3a3;font-size: 9px">商品视频，在商品详情页面播放。(限制4m内)</span>
+            </div>
+        </div>
+    </div>
+</div>

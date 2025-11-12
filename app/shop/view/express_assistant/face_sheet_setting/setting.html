@@ -1,0 +1,82 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" style="border:1px dashed #c4c4c4; margin-bottom: 30px;">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>* 系统支持的面单类型为快递100，需前往 <a href="https://b.kuaidi100.com/page/epCompany" target="_blank" style="color: rgb(64,115,250)">快递100</a> 官方申请账号并企业认证得到授权Key和Secret；</p>
+                        <p>* 需购买快递100云打印机，从打印机底部标签中可获取打印机设备编号(siid)，其他打印机不可用；</p>
+                        <p>* 需新建发件人信息模板，以供打印时选择发件人； </p>
+                        <p>* 需新建电子面单模板，以供打印时选择电子面单模板；</p>
+                        <p>* 特别注意：创建电子面单模板时用到的电子面单客户账号和密码，需自行联系快递公司开通获取并购买面单打印份额；</p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form">
+                <div class="layui-form-item">
+                    <label for="kd100_key" class="layui-form-label">面单类型：</label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="type" value="1" title="快递100" {if ($faceSheet.type ?? 1)==1}checked{/if}>
+                        <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">支持的第三方面单打印方式</div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="kd100_key" class="layui-form-label">授权Key：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="kd100_key" name="kd100_key" value="{$detail.kd100_key ?? ''}" autocomplete="off" class="layui-input">
+                        <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">授权Key在快递100企业管理后台 -> 我的信息 -> 企业信息获取</div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="kd100_secret" class="layui-form-label">Secret：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="kd100_secret" name="kd100_secret" value="{$detail.kd100_secret ?? ''}" autocomplete="off" class="layui-input">
+                        <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">Secret在快递100企业管理后台 -> 我的信息 -> 企业信息获取</div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="kd100_siid" class="layui-form-label">设备编号siid：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="kd100_siid" name="kd100_siid" value="{$detail.kd100_siid ?? ''}" autocomplete="off" class="layui-input">
+                        <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">设备编号siid在快递100面单打印机底部标签获取</div>
+                    </div>
+                </div>
+                <div class="layui-form-item" style="margin-top:30px">
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-bg-blue" lay-submit lay-filter="addSublime">提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form"], function() {
+        var form = layui.form;
+
+        // 监听提交
+        form.on('submit(addSublime)', function(data){
+            layui.$.ajax({
+                url: '{:url("express_assistant.FaceSheetSetting/setting")}'
+                , data: data.field
+                , type: 'post'
+                , success: function (res) {
+                    if(res.code === 1) {
+                        layer.msg(res.msg, {
+                            offset: '15px'
+                            ,icon: 1
+                            ,time: 1000
+                        });
+                        return false;
+                    }
+                }
+            });
+            return false;
+        });
+
+    });
+</script>

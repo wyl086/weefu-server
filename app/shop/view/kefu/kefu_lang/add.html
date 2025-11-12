@@ -1,0 +1,50 @@
+{layout name="layout2" /}
+
+<style>
+    .input-inline-width {
+        width: 200px;
+    }
+    .input-block-width {
+        width: 350px;
+    }
+</style>
+
+<div class="layui-card layui-form">
+    <div class="layui-card-body">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">话术标题：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="title" autocomplete="off" class="layui-input"  lay-verify="required" >
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label  class="layui-form-label">话术内容：</label>
+            <div class="layui-input-block input-block-width">
+                <textarea placeholder="请输入内容" name="content" class="layui-textarea" cols="50" rows="10"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序：</label>
+            <div class="layui-input-block input-inline-width">
+                <input type="number" name="sort" autocomplete="off" class="layui-input" value="1" min="0">
+                <label class="layui-form-mid layui-word-aux">排序值越小越靠前，默认值为1</label>
+            </div>
+        </div>
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.config({
+        version: "{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form'], function () {
+        var form = layui.form;
+
+    });
+</script>

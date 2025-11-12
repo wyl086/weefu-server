@@ -1,0 +1,27 @@
+{layout name="layout2" /}
+
+<div class="layui-form"  style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">提醒类型：</label>
+        <div class="layui-input-inline">
+            <input type="hidden" name="id" value="{$detail.id}">
+            <span style="line-height: 37px;">{$detail.name}</span>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">提醒内容：</label>
+        <div class="layui-input-block">
+            <span style="line-height: 37px;">{$detail.template}</span>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">气泡状态：</label>
+        <div class="layui-input-inline">
+            <input type="radio" name="status" value=1 title="开启"  {if $detail.status==1}checked{/if}>
+            <input type="radio" name="status" value=0 title="关闭" {if $detail.status==0}checked{/if}>
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+    </div>
+</div>

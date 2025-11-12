@@ -1,0 +1,33 @@
+{layout name="layout2" /}
+<style>
+    .tips{
+        color: red;
+    }
+</style>
+<div class="layui-form" lay-filter="layuiadmin-form" id="layuiadmin-form" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="tips">*</span>广告位：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" lay-vertype="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="white-space:nowrap;">广告位尺寸：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="size" class="layui-input">
+            <div class=" layui-form-mid layui-word-aux" style="white-space:nowrap;">广告位尺寸，填写格式：300*300，单位：px,用于提醒需要上传的广告尺寸</div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="white-space:nowrap;">广告位状态：</label>
+        <div class="layui-input-inline">
+            <input type="radio" name="status" value=0 title="停用" checked>
+            <input type="radio" name="status" value=1 title="启用">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+    </div>
+</div>

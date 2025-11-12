@@ -1,0 +1,224 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*平台发布文章，可在商城新闻资讯栏目查看。</p>
+                        <p>*设置文章为商城公告后，文章标题会在商城首页的新闻公告轮播显示。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="title" class="layui-form-label">文章标题：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="title" name="title" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="cid" class="layui-form-label">文章分类：</label>
+                    <div class="layui-input-inline">
+                        <select name="cid" id="cid">
+                            <option value="">全部</option>
+                            {volist name="category" id="vo"}
+                                <option value="{$vo.id}">{$vo.name}</option>
+                            {/volist}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label for="is_notice" class="layui-form-label">商城公告：</label>
+                    <div class="layui-input-inline">
+                        <select name="is_notice" id="is_notice">
+                            <option value="">全部</option>
+                            <option value="1">是</option>
+                            <option value="0">否</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layEvent" lay-event="add">新增文章</button>
+
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+            <script type="text/html" id="table-image">
+                {{#  if(d.image){ }}
+                    <img src="{{d.image}}" alt="图" style="width:28px;height:28px;">
+                {{#  } }}
+            </script>
+            <script type="text/html" id="table-operation">
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</a>
+                {{#  if(d.is_show == '显示'){ }}<a class="layui-btn layui-btn-normal layui-btn-sm layui-btn-warm" lay-event="hide">隐藏</a>{{#  } }}
+                {{#  if(d.is_show == '隐藏'){ }}<a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="hide">显示</a>{{#  } }}
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+            </script>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form"], function(){
+        var table = layui.table;
+        var form  = layui.form;
+
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {field:"id", width:60, title:"ID"}
+            ,{field:"title", width:200, align:"center", title:"文章标题"}
+            ,{field:"image", width:100, align:"center", title:"封面图", templet:"#table-image"}
+            ,{field:"category", width:150, align:"center", title:"文章分类"}
+            ,{field:"is_notice", width:100, align:"center", title:"商城公告"}
+            ,{field:"is_show", width:100, align:"center", title:"文章状态"}
+            ,{field:"visit", width:100, align:"center", title:"浏览量"}
+            ,{field:"likes", width:100, align:"center", title:"点赞量"}
+            ,{field:"sort", width:100, align:"center", title:"排序"}
+            ,{field:"create_time", width:180, align:"center", title:"创建时间"}
+            ,{title:"操作", width:200, align:"center", fixed:"right", toolbar:"#table-operation"}
+        ]);
+
+
+        var active = {
+            add: function() {
+                layer.open({
+                    type: 2
+                    ,title: "新增文章"
+                    ,content: "{:url('content.Article/add')}"
+                    ,area: ["90%", "90%"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            like.ajax({
+                                url: "{:url('content.Article/add')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            edit: function(obj) {
+                layer.open({
+                    type: 2
+                    ,title: "编辑文章"
+                    ,content: "{:url('content.Article/edit')}?id=" + obj.data.id
+                    ,area: ["90%", "90%"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field['id'] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('content.Article/edit')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            del: function(obj) {
+                layer.confirm("确定删除文章："+obj.data.title, function(index) {
+                    like.ajax({
+                        url: "{:url('content.Article/del')}",
+                        data: {id: obj.data.id},
+                        type: "POST",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg);
+                                layer.close(index);
+                                obj.del();
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            },
+            hide: function(obj) {
+                var text = obj.data.is_show === '显示' ? '确定隐藏：' : '确定显示：';
+                layer.confirm(text+obj.data.title, function(index) {
+                    like.ajax({
+                        url: "{:url('content.Article/hide')}",
+                        data: {id: obj.data.id},
+                        type: "POST",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg);
+                                layer.close(index);
+                                table.reload("like-table-lists", {
+                                    where: {},
+                                    page: { cur: 1 }
+                                });
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            }
+        };
+        like.eventClick(active);
+
+        form.on("submit(search)", function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        form.on("submit(clear-search)", function(){
+            $("#title").val("");
+            form.render("select");
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+    })
+</script>

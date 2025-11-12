@@ -1,0 +1,96 @@
+{layout name="layout2" /}
+<style>
+    .tips{
+        color: red;
+    }
+</style>
+<div class="layui-form" lay-filter="">
+    <div class="layui-tab">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span class="tips">*</span>名称：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="name" lay-verify="required" lay-verType="tips" placeholder="请输入名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span class="tips">*</span>图标：</label>
+            <div class="layui-input-block">
+                <div class="like-upload-image">
+                    <div class="upload-image-elem"><a class="add-upload-image"> + 添加图片</a></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label"></label>
+            <span style="color: #a3a3a3;font-size: 9px">建议尺寸：宽200像素*高200像素的jpg，jpeg，png，gif图片</span>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span class="tips">*</span>链接地址：</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="link_type" value="1" title="商城模块" checked>
+            </div>
+            <div class="layui-input-inline">
+                <select name="menu"  lay-search="">
+                    <option value="">请选择菜单</option>
+                    {foreach $menu_list as $menu}
+                    <option value="{$menu.index}">{$menu.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label"></label>
+            <span style="color: #a3a3a3;font-size: 9px">选择系统默认的链接地址</span>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-inline">
+                <input type="radio" name="link_type" value="2" title="自定义链接">
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" name="url" placeholder="请输入链接" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label"></label>
+            <span style="color: #a3a3a3;font-size: 9px"> 如：https://www.likecms.net/。可设置关联公众号的文章，其它地址需登录微信小程序管理后台配置业务域名</span>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序：</label>
+            <div class="layui-input-inline">
+                <input type="number" name="sort" min="1"  class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label"></label>
+            <span style="color: #a3a3a3;font-size: 9px">    只能填写大于0整数，数字越大排序越前</span>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">显示：</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="is_show" value="1" title="显示" checked>
+                <input type="radio" name="is_show" value="0" title="隐藏">
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(["table", "laydate","form"], function(){
+        var table   = layui.table;
+        var element = layui.element;
+        var form = layui.form;
+
+        like.delUpload();
+        $(document).on("click", ".add-upload-image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "image",
+                that: $(this)
+            });
+        })
+
+    });
+</script>

@@ -1,0 +1,127 @@
+.layui-table-cell {height: auto; }
+.like-layui-collapse {
+    border-width: 1px;
+    border-style: dashed;
+    border-radius: 2px;
+    border-color: #c4c4c4;
+}
+.like-layui-colla-title {
+    position: relative;
+    height: 42px;
+    line-height: 42px;
+    padding: 0 15px 0 35px;
+    color: #333;
+    background-color: #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+    overflow: hidden;
+}
+.like-layui-colla-title:hover {
+    color: #2ba1fc;
+}
+
+
+.like-layui-form-label{
+    margin: 20px;
+    padding-left: 5px;
+    border-left: solid #2ba1fc 8px;
+    text-align: left;
+    width: 100px
+}
+.like-layui-elem-quote {
+    margin-bottom: 10px;
+    padding: 15px;
+    line-height: 22px;
+    border-left: 5px solid #2ba1fc;
+    border-radius: 0 2px 2px 0;
+    background-color: #f2f2f2;
+}
+
+.layui-form-select dl dd.layui-this {
+    background-color: #1E9FFF;
+}
+
+.layui-form-onswitch {
+    border-color: #1E9FFF;
+    background-color: #1E9FFF;
+}
+
+.layui-laypage .layui-laypage-curr .layui-laypage-em {
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    padding: 1px;
+    width: 100%;
+    height: 100%;
+    background-color: #1E9FFF;
+}
+
+.info_footer {
+    text-align: center;
+    bottom: 20px;
+    left: 40%;
+    font-size:14px;
+    color:rgba(112,112,112,1);
+    font-weight:400;
+    margin-bottom: 12px;
+}
+
+
+/** 按钮样式 **/
+.layui-form-radioed>i {
+    color: #1E9FFF;
+}
+.layui-form-radio>i:hover, .layui-form-radioed>i {
+    color: #1E9FFF;
+}
+.layui-form-checked[lay-skin=primary] i {
+    border-color: #1E9FFF!important;
+    background-color: #1E9FFF;
+    color: #fff;
+}
+.layui-form-checkbox[lay-skin=primary]:hover i {
+    border-color: #1E9FFF;
+    color: #fff;
+}
+.layui-btn-primary:hover {
+    border-color: #1E9FFF;
+    color: #333;
+}
+.layui-form-radio:hover *, .layui-form-radioed, .layui-form-radioed > i{
+    color: #1E9FFF;
+}
+
+
+
+/** 文件仓库 FZR **/
+.file-manager { display: flex; justify-content: flex-start; position: absolute; top: 0; right: 0; left: 0; bottom: 0; background-color: #FFFFFF; }
+.file-manager .layui-icon-file:before { content: "\e623"; }
+.file-manager .cate-tree-more { width: 150px; flex-shrink: 0; border-right: 1px #EEEEEE solid; }
+.file-manager .gallery { flex: 1; }
+.file-manager .warehouse:after { content: "";  height: 0; line-height: 0;  display: block; visibility: hidden; clear: both; }
+.file-manager .warehouse li { cursor: pointer; width: 120px; height: 127px; float: left; margin: 5px 0 0 10px; text-align: center; position: relative; border-radius: 5px; border: 2px solid #EEEEEE; }
+.file-manager .warehouse li:hover { border-radius: 5px; background-color: #f1f5fa; }
+.file-manager .warehouse li.on { border-radius: 5px; border: 2px solid #3B91FF; background-color: #f1f5fa; }
+.file-manager .warehouse .file-icon  { position: relative; margin: 9px auto 0; width: 84px; height: 84px; background-repeat: no-repeat; overflow: hidden; }
+.file-manager .warehouse .file-image { width: 100%; height: 100%; vertical-align: middle; }
+.file-manager .warehouse .file-name { display: block; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; margin: 6px 5px 5px; }
+.file-manager .footer { display: flex; justify-content: space-between; height: 55px; min-height: 55px; align-items: center; padding: 0 30px; position: fixed; bottom: 0; left: 201px; right: 0; border-top: 1px solid #EEEEEE; background-color: #FFFFFF; }
+.file-manager .footer #page { margin:  0 20px; }
+.file-manager .empty { width: 100%; text-align: center; margin-top: 70px; }
+.file-manager .empty i { font-size:120px; color:#EEEEEE; }
+.file-manager .empty p {font-size: 14px; margin-top: 20px; color:#999; }
+
+/** 图片上传容器 FZR **/
+.like-upload-image:after { content: "";  height: 0; line-height: 0;  display: block; visibility: hidden; clear: both; }
+.upload-image-div, .upload-image-elem { position: relative; height: 80px; width: 80px; float: left; opacity: 1; margin: 4px; text-align: center; border: 1px dashed #a0a0a0; background-image: url(/static/admin/images/image.png); background-repeat: no-repeat; background-position: 50% 35%; }
+.upload-image-div:hover .del-upload-btn { visibility: visible; }
+.upload-image-div img { width: 100%; height: 100%; box-sizing: border-box; }
+.add-upload-image { cursor: pointer; position: absolute; z-index: 100; top: 58px; right: -10%; width: 100px; height: 20px; font-size: 8px; line-height: 16px; text-align: center; border-radius: 10px; color: #4e8bff; }
+.del-upload-btn { visibility: hidden; display: flex; align-items: center; justify-content: center; position: absolute; z-index: 100; top: -11px; right: -9px; width: 20px; height: 20px; cursor: pointer; font-size: 14px; color: #FFFFFF; border-radius: 50%; background: hsla(0, 0%, 60%, .6); }
+
+/* 视频上传容器 */
+.like-upload-video:after { content: "";  height: 0; line-height: 0;  display: block; visibility: hidden; clear: both; }
+.upload-video-div, .upload-video-elem { position: relative; height: 80px; width: 80px; float: left; opacity: 1; margin: 4px; text-align: center; border: 1px dashed #a0a0a0; background-image: url(/static/lib/layui/images/other/video.png); background-repeat: no-repeat; background-position: 50% 35%; }
+.upload-video-div:hover .del-upload-btn { visibility: visible; }
+.upload-video-div video { width: 100%; height: 100%; box-sizing: border-box; }
+.add-upload-video { cursor: pointer; position: absolute; z-index: 100; top: 58px; right: -10%; width: 100px; height: 20px; font-size: 8px; line-height: 16px; text-align: center; border-radius: 10px; color: #4e8bff; }

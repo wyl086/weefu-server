@@ -1,0 +1,58 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card layui-form">
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show tips">
+                        *移动端商城店铺街设置
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:85px;">店铺街功能：</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="shop_street_hide" value="1" title="显示" {if $shop_street_hide==1}checked{/if}>
+                    <input type="radio" name="shop_street_hide" value="0" title="隐藏" {if $shop_street_hide==0}checked{/if}>
+                </div>
+                <div class="layui-form-mid layui-word-aux">设置关闭店铺街功能时，用户进入店铺街会显示暂无数据，方便微信小程序提交审核</div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="addBtn">确定</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(["form"], function () {
+        var form = layui.form;
+
+        form.on('submit(addBtn)', function(data){
+            like.ajax({
+                url: "{:url('decoration.MenuDecorate/shop')}",
+                data: data.field,
+                type: "POST",
+                success:function(res) {
+                    if(res.code === 1) {
+                        layui.layer.msg(res.msg);
+                        setTimeout(function () {
+                            location.reload()
+                        }, 500);
+                    }
+                }
+            });
+
+        });
+    })
+
+</script>

@@ -1,0 +1,91 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+            
+        <!-- 结算汇总 -->
+        <h2 style="margin: 20px;">结算汇总</h2>
+        <div style="margin: 0 20px">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-sm6 layui-col-md3" >
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">已结算成交订单数</div>
+                        <div class="layui-card-body"><p>{$statistics.settleOrederNum}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm6 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">已结算营业额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.settleOrederAmount}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm6 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">待结算营业额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.settleOrederAmountWait}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm6 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">已结算分销佣金金额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.settleDistributionAmount}</p></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-sm6 layui-col-md3" >
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">已结算入账金额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.settleWithdrawalAmount}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm6 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">已结算交易服务费</div>
+                        <div class="layui-card-body"><p>￥{$statistics.settlePoundageAmount}</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- 结算记录 -->
+        <h2 style="padding:20px;">结算记录</h2>
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+            <script type="text/html" id="table-operation">
+                <a class="layui-btn layui-btn-sm layui-btn-primary" lay-event="detail">批次详情</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(["table"], function(){
+        like.tableLists("#like-table-lists", "{:url()}?shop_id={$shop_id}", [
+            {field:"id", width:60, title:"ID"}
+            ,{field:"settle_sn", width:200, align:"center", title:"结算批次号", templet:"#table-storeInfo"}
+            ,{field:"deal_order_count", width:160, align:"center",title:"已结算成交订单数"}
+            ,{field:"business_money", width:160, align:"center", title:"已结算营业额"}
+            ,{field:"refund_order_money", width:160, align:"center", title:"退款订单金额"}
+            ,{field:"after_sales_money", width:160, align:"center", title:"售后退款金额"}
+            ,{field:"distribution_money", width:160, align:"center", title:"已结算分销佣金金额"}
+            ,{field:"entry_account_money", width:160, align:"center", title:"已结算入账金额"}
+            ,{field:"create_time", width:160, align:"center", title:"结算时间"}
+            ,{title:"操作", width:100, align:"center", fixed:"right", toolbar:"#table-operation"}
+        ]);
+
+        var active = {
+            detail: function (obj) {
+                layer.open({
+                    type: 2
+                    ,title: "批次详情"
+                    ,content: "{:url('finance.Shop/settlementDetail')}?settle_id="+obj.data.id
+                    ,area: ["90%", "90%"]
+                });
+            }
+        };
+        like.eventClick(active);
+    })
+</script>

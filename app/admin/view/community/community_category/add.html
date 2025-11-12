@@ -1,0 +1,32 @@
+{layout name="layout2" /}
+<div class="layui-card layui-form" style="padding-bottom: 10%">
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label"><span style="color:red;">*</span>分类名称：</label>
+            <div class="layui-input-block" style="width: 50%">
+                <input type="text" name="name" id="name" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span style="color:red;">*</span>状态：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="is_show" value="1" title="显示" checked>
+                <input type="radio" name="is_show" value="0" title="隐藏" >
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="sort" class="layui-form-label">排序：</label>
+            <div class="layui-input-block" style="width: 50%">
+                <input type="number" name="sort" id="sort" value="255" lay-verType="tips" lay-verify="number" min="0"
+                       autocomplete="off" class="layui-input">
+                <div class=" layui-form-mid layui-word-aux">排序值必须为整数;数值越小,越靠前</div>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>

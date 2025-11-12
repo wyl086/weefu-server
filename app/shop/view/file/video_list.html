@@ -1,0 +1,322 @@
+{layout name="layout2" /}
+<div class="file-manager">
+    <div id="cate-tree-more" class="cate-tree-more" style="width: 200px"></div>
+    <div class="gallery">
+        <div class="layui-card" style="box-shadow:none;">
+            <div class="layui-card-header">
+                <button type="button" class="layui-btn layui-btn layui-btn-sm layui-btn-normal layEvent" lay-event="addCate"><i class="layui-icon layui-icon-add-circle"></i> 添加分类</button>
+                <button type="button" class="layui-btn layui-btn layui-btn-sm layui-btn-normal" id="upload">
+                    <i class="layui-icon layui-icon-upload"></i>上传视频
+                </button>
+                <button type="button" class="layui-btn layui-btn layui-btn-sm layEvent layui-btn layui-btn-warm" lay-event="move" style="margin-left:5px;"><i class="layui-icon layui-icon-water"></i>  移动分类</button>
+                <button type="button" class="layui-btn layui-btn layui-btn-sm layEvent layui-btn layui-btn-danger" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除文件</button>
+            </div>
+            <div class="layui-card-body">
+                <script id="manager" type="text/html">
+                    <ul class="warehouse">
+                        {{#  layui.each(d, function(index, item){ }}
+                        <li lay-id="{{item.id}}" lay-href="{{item.uri}}">
+                            <div class="file-icon"><video class="file-image" src="{{item.uri}}"></video></div>
+                            <div class="file-name"><a href="javascript:">{{item.name}}</a></div>
+                        </li>
+                        {{#  }); }}
+                    </ul>
+                    {{#  if(d.length === 0){ }}
+                    <div class="empty">
+                        <i class="layui-icon layui-icon-release" style=""></i>
+                        <p>木有数据，请去上传</p>
+                    </div>
+                    {{#  } }}
+                </script>
+                <div id="view"></div>
+            </div>
+        </div>
+        <div style="height:55px;"></div>
+        <div class="footer">
+            <button type="button" id="okFile" class="layui-btn layui-btn layui-btn-sm layui-btn-normal">使用选中文件</button>
+            <div id="page"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(["form", "element", "tree", "laytpl", "laypage", "upload"], function() {
+        var $ = layui.jquery;
+        var tree     = layui.tree;
+        var laytpl   = layui.laytpl;
+        var laypage  = layui.laypage;
+        var upload   = layui.upload;
+        var category = JSON.parse('{$category|raw}');
+        var curCid   = 0;
+
+        var uploadIns = upload.render({
+            elem: "#upload"
+            ,url: "{:url('Upload/video')}"
+            ,accept: "video"
+            ,exts: "wmv|avi|mpg|mpeg|3gp|mov|mp4|flv|f4v|rmvb|mkv"
+            ,data : {
+                "cid": curCid,
+                "type": 20
+            }
+            ,number: 5
+            ,multiple: true
+            ,size: 4096
+            ,done: function (res) {
+                if (res.code === 1) {
+                    var li  = "<li lay-id='"+res.data.id+"' lay-href='"+res.data.uri+"'>\n";
+                    li += "<div class='file-icon'><video class='file-image' src='"+res.data.uri+"' autoplay></video></div>\n"
+                    li += "<div class='file-name'><a href='javascript:'>"+res.data.name+"</a></div>\n";
+                    li += "</li>"
+                    $(".warehouse").prepend(li)
+                }
+
+                layer.msg(res.msg);
+            }
+        });
+
+        var active = {
+            getFile: function (cid, page) {
+                cid = cid === undefined ? 0 : cid;
+                page = page === undefined ? 1 : page;
+                var data = {cid:cid, page:page, type: 20};
+                var index = layer.load(1, {shade: false});
+                like.ajax({
+                    url: "{:url('File/lists')}",
+                    type: "GET",
+                    data: data,
+                    success:function(res) {
+                        layer.close(index);
+                        if(res.code === 1) {
+                            active.renderList(res.data.data);
+                            laypage.render({
+                                elem: "page"
+                                ,count: res.data.total
+                                ,curr: res.data.current_page
+                                ,limit: res.data.per_page
+                                ,last: res.data.last_page
+                                ,jump: function (obj, first) {
+                                    if (!first) {
+                                        active.getFile(cid, obj.curr)
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            },
+            renderList: function(data) {
+                var getTpl = document.getElementById("manager").innerHTML;
+                var view   = document.getElementById('view');
+                laytpl(getTpl).render(data, function(html){
+                    view.innerHTML = html;
+                });
+            },
+            getChoice: function() {
+                var ids  = [];
+                var href = [];
+                $(".warehouse li.on").each(function () {
+                    ids.push($(this).attr("lay-id"));
+                    href.push($(this).attr("lay-href"));
+                });
+
+                return {ids:ids, href:href}
+            },
+            move: function () {
+                var fileData = active.getChoice();
+                if (fileData.ids.length === 0) {
+                    layer.msg("尚未选择任何文件");
+                    return false;
+                }
+                layer.open({
+                    type: 2
+                    ,title: "移动文件"
+                    ,content: "{:url('File/move')}?type=20"
+                    ,area: ["400px", "440px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field["file_ids"] = fileData.ids;
+                            data.field["type"] = 20;
+                            like.ajax({
+                                url: "{:url('File/move')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        // if (data.field['cid'] !== '0') {
+                                        //     $(".warehouse li.on").remove();
+                                        // }
+                                        active.getFile(curCid, 1);
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                        return false;
+                    }
+                });
+            },
+            del: function () {
+                var fileData = active.getChoice();
+                if (fileData.ids.length === 0) {
+                    layer.msg("尚未选择任何文件");
+                    return false;
+                }
+                layer.confirm('确定删除所选文件？', function(index){
+                    like.ajax({
+                        url: "{:url('File/del')}",
+                        data: {file_ids: fileData.ids, type: 20},
+                        type: "POST",
+                        success:function(res) {
+                            console.log(res)
+                            if(res.code === 1) {
+                                active.getFile(curCid, 1);
+                                layui.layer.msg(res.msg);
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+
+            },
+            addCate: function () {
+                layer.open({
+                    type: 2
+                    ,title: "新增分类"
+                    ,content: "{:url('File/addCate')}?type=20"
+                    ,area: ["400px", "400px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field["type"] = 20;
+                            like.ajax({
+                                url: "{:url('File/addCate')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        category = res.data;
+                                        active.renderTree();
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            editCate: function (obj) {
+                if (obj.data.id === 0) {
+                    layer.msg("此分类不允许编辑", {icon: 2});
+                    return false;
+                }
+                layer.open({
+                    type: 2
+                    ,title: "编辑分类"
+                    ,content: "{:url('File/editCate')}?id="+ obj.data.id + '&&type=20'
+                    ,area: ["400px", "400px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field['id'] = obj.data.id;
+                            data.field["type"] = 20;
+                            like.ajax({
+                                url: "{:url('File/editCate')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        category = res.data;
+                                        active.renderTree();
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                        return false;
+                    }
+                });
+            },
+            delCate: function(obj) {
+                if (obj.data.id === 0) {
+                    layer.msg("此分类不允许删除", {icon: 2});
+                    return false;
+                }
+                like.ajax({
+                    url: "{:url('File/delCate')}",
+                    data: {id: obj.data.id, type: 20},
+                    type: "POST",
+                    success:function(res) {
+                        if(res.code === 1) {
+                            category = res.data;
+                            active.renderTree();
+                            layui.layer.msg(res.msg);
+                        }else{
+                            category = res.data;
+                            active.renderTree();
+                        }
+                    }
+                });
+            },
+            renderTree: function () {
+                tree.render({
+                    elem: '#cate-tree-more'
+                    ,edit: ['update', 'del']
+                    ,customOperate: false
+                    ,onlyIconControl:true
+                    ,data: category
+                    ,click: function (obj) {
+                        // 节点被点击
+                        var cid = obj.data.id;
+                        var page = 1;
+                        curCid = cid;
+                        active.getFile(cid, page);
+                        uploadIns.reload({
+                            elem: "#upload"
+                            ,url: "{:url('Upload/video')}"
+                            ,data : {
+                                "cid": curCid,
+                                "type": 20
+                            }
+                        });
+                    }
+                    ,operate: function(obj){
+                        switch (obj.type) {
+                            case "update":
+                                active.editCate(obj);
+                                break;
+                            case "del":
+                                active.delCate(obj);
+                                break;
+                        }
+                    }
+                });
+            }
+        };
+
+        like.eventClick(active);
+        active.renderTree();
+        active.getFile();
+
+
+        $(document).on("click", ".warehouse li", function () {
+            if ($(this).hasClass("on")) {
+                $(this).removeClass("on");
+            } else {
+                $(this).addClass("on");
+            }
+        });
+    })
+</script>

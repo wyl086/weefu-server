@@ -1,0 +1,178 @@
+{layout name="layout2" /}
+<style>
+    .layui-form-label { width: 110px; }
+</style>
+
+<div class="layui-card layui-form" style="box-shadow:none;">
+    <div class="layui-card-body">
+        <!-- 选择商品 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label"><font color="red">*</font>拼团商品：</label>
+            <div class="layui-input-block">
+                <a class="layui-btn layui-btn-normal layEvent" lay-event="select">选择拼团商品</a>
+            </div>
+        </div>
+        <!-- 商品信息 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-block">
+                <div class="goods_info">
+                    <img src="{$detail.goods.image}" alt="商品图片" style="width:80px;height:80px;">
+                    <span style="margin-left:5px;">{$detail.goods.name}</span>
+                    <input type="hidden" name="goods_id" value="{$detail.goods.id}">
+                </div>
+                <table id="goods_list" class="layui-table" lay-size="sm" style="width:630px;">
+                    <thead>
+                        <tr style="background-color: #f3f5f9">
+                            <th style="width: 120px;text-align: center">商品规格</th>
+                            <th style="width: 60px;text-align: center">商品价格</th>
+                            <th style="width: 40px;text-align: center">拼团价格</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {volist name="$detail.teamGoods" id="vo"}
+                            <tr>
+                                <td style="text-align: center">{$vo.spec_value_str}</td>
+                                <td style="text-align: center">{$vo.price}</td>
+                                <td style="width: 40px;">
+                                    <input type="number" name=item[{$vo.goods_id}][{$vo.item_id}]
+                                           lay-verType="tips" lay-verify="required" autocomplete="off"
+                                           class="layui-input" value="{$vo.team_price}">
+                                </td>
+                            </tr>
+                        {/volist}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 拼团人数 -->
+        <div class="layui-form-item" style="margin-bottom: 0;">
+            <label for="people_num" class="layui-form-label"><font color="red">*</font>拼团人数：</label>
+            <div class="layui-input-inline">
+                <input type="number" min="2" id="people_num" name="people_num"
+                       class="layui-input" autocomplete="off" value="{$detail.people_num}"
+                       onkeyup="value=value.replace(/[^\d]/g,'')"
+                       lay-verType="tips" lay-verify="required|number|people_num">
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">最少两人成团，设置商品拼团人数</div>
+            </div>
+            <div class="layui-form-mid">人</div>
+        </div>
+        <!-- 拼团时效 -->
+        <div class="layui-form-item" style="margin-bottom: 0;">
+            <label for="effective_time" class="layui-form-label"><font color="red">*</font>成团有效期：</label>
+            <div class="layui-input-inline">
+                <input type="number" min="0" id="effective_time" name="effective_time"
+                       class="layui-input" autocomplete="off" value="{$detail.effective_time}"
+                       onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                       lay-verType="tips" lay-verify="required|number|effective_time">
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">拼团有效期，超出时间还未成团则拼团失败</div>
+            </div>
+            <div class="layui-form-mid">小时</div>
+        </div>
+        <!-- 拼团活动时间 -->
+        <div class="layui-form-item" style="margin-bottom: 0;">
+            <label class="layui-form-label"><font color="red">*</font>拼团活动时间：</label>
+                <div class="layui-input-block">
+                <div class="layui-inline">
+                    <input type="text" id="activity_start_time" name="activity_start_time" value="{$detail.activity_start_time}"
+                           class="layui-input" autocomplete="off" lay-verType="tips" lay-verify="required">
+                </div>
+                <div class="layui-inline">-</div>
+                <div class="layui-inline">
+                    <input type="text" id="activity_end_time" name="activity_end_time" value="{$detail.activity_end_time}"
+                           class="layui-input" autocomplete="off" lay-verType="tips" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;margin-left:140px;">商品参与拼团营销活动的时间，超出活动时间则不能开启新团</div>
+        </div>
+        <!-- 拼够分享标题 -->
+        <div class="layui-form-item" style="margin-bottom: 0;">
+            <label for="share_title" class="layui-form-label" style="width:110px;">拼团分享标题：</label>
+            <div class="layui-input-inline" style="width: 300px;">
+                <input type="text" id="share_title" name="share_title" value="{$detail.share_title}"
+                       class="layui-input" autocomplete="off" lay-verType="tips">
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">分享拼团活动时的标题，不填则默认使用商品标题</div>
+            </div>
+        </div>
+        <!-- 拼够分享简介 -->
+        <div class="layui-form-item" style="margin-bottom: 0;">
+            <label for="share_intro" class="layui-form-label" style="width:110px;">拼团分享简介：</label>
+            <div class="layui-input-inline" style="width: 300px;">
+                <input type="text" id="share_intro" name="share_intro" value="{$detail.share_intro}"
+                       class="layui-input" autocomplete="off" lay-verType="tips">
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">分享拼团活动时的简介，不填则默认使用商品简介</div>
+            </div>
+        </div>
+        <!-- 拼团状态 -->
+        <div class="layui-form-item" style="margin-bottom: 0;">
+            <label class="layui-form-label"><font color="red">*</font>拼团状态：</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="status" value="1" title="开启" {if $detail.status==1}checked{/if}>
+                <input type="radio" name="status" value="0" title="关闭" {if $detail.status==0}checked{/if}>
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商品参与拼团营销活动的状态，停止活动则不能开启新团</div>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(["laydate"], function () {
+        var laydate = layui.laydate;
+
+        laydate.render({type:'datetime',elem:'#activity_start_time',trigger:'click'});
+        laydate.render({type:'datetime',elem:'#activity_end_time',trigger:'click'});
+
+        var active = {
+            select: function () {
+                layer.open({
+                    type: 2
+                    ,title: "选择拼购商品"
+                    ,content: "{:url('team.Activity/select')}"
+                    ,area: ["80%", "90%"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var data = iframeWindow.callbackData();
+                        var goods_ids = [];
+                        if(data.length){
+                            $('#goods_list tbody').remove();
+                        }
+
+                        data.forEach(function(item) {
+                            // 商品基本信息
+                            var goods_info_html  = '<img src="'+item.image+'" alt="商品图片" style="width:80px;height:80px;">\n';
+                                goods_info_html += '<span style="margin-left:5px;">'+item.name+'</span>\n';
+                                goods_info_html += '<input type="hidden" name="goods_id" value="'+item.id+'">';
+                                $(".goods_info").html(goods_info_html);
+
+                            // 商品规格表格
+                            for(var i = 0; item.GoodsItem.length > i; i++){
+                                var goods_item = item.GoodsItem[i];
+                                if(goods_ids.indexOf(goods_item.id) === -1) {
+                                    goods_ids.push(goods_item.id);
+                                    var goods_html  = '<tr>\n';
+                                        goods_html += '<td style="text-align: center">'+goods_item.spec_value_str+'</td>\n';
+                                        goods_html += '<td style="text-align: center">'+goods_item.price+'</td>\n';
+                                        goods_html += '<td style="width: 40px;">';
+                                        goods_html += '<input type="number" name=item['+item.id+']['+goods_item.id+'] lay-verType="tips" lay-verify="required" autocomplete="off" class="layui-input">\n';
+                                        goods_html += '</td></tr>';
+                                        $('#goods_list').append(goods_html);
+                                }
+                            }
+
+                            // 显示规格表格
+                            $('table#goods_list').show();
+                        });
+
+
+                    }
+                });
+            }
+        };
+        like.eventClick(active);
+    })
+</script>

@@ -1,0 +1,241 @@
+{layout name="layout2" /}
+<style>
+    .reqRed::before {
+        content: '*';
+        color: red;
+        margin-right: 5px;
+    }
+</style>
+<div class="layui-form" lay-filter="layuiadmin-form-ad_position" id="layuiadmin-form-category" style="padding: 20px 30px 0 0;background-color: #ffffff;margin-top:15px;">
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">活动状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="0" title="关闭" {if $config.status == 0}checked{/if}>
+            <input type="radio" name="status" value="1" title="开启" {if $config.status == 1}checked{/if}>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">活动商品</label>
+        <div class="layui-input-block">
+            <input type="radio" name="goods_type" value="1" title="全部商品" {if $config.goods_type == 1}checked{/if}>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">活动规则</label>
+        <div class="layui-input-block">
+            <input type="radio" name="free_rule" value="1" title="按订单金额包邮" {if $config.free_rule == 1}checked{/if}>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">活动区域</label>
+        <div class="layui-input-block">
+            <table class="layui-table">
+                <colgroup>
+                    <col width="70%">
+                    <col width="15%">
+                    <col width="15%">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>配送区域</th>
+                    <th class="th_first_unit">订单金额</th>
+                    <th class="able-operat">操作</th>
+                </tr>
+                </thead>
+                <tbody >
+                {if empty($region)}
+                <!--全国-->
+                <tr class='area_all'>
+                    <td><span class='all_area_name'>全国地区默认规则</span></td>
+                    <input type='hidden' class='region' name='region[]' value='all'>
+                    <td><input type='number' min="0" name='order_amount[]' lay-verify='required' autocomplete='off' class='layui-input '></td>
+                    <td></td>
+                </tr>
+                {else /}
+                {foreach $region as $k => $item}
+                <tr class='area_tr area_tr{$k}' data-id="{$k}">
+                    <input type='hidden' class='region region{$k}' name='region[]' value="{$item.region}">
+                    <td class='area_name area_name{$k}' style="text-align: left">
+                        {$item.region_name}
+                    </td>
+                    <td><input type='number' min="0" name='order_amount[]' lay-verify='required' value="{$item.order_amount}" autocomplete='off' class='layui-input'></td>
+
+                    {if condition =" $item.region neq 'all' "}
+                    <td  style="text-align: center">
+                        <button class='layui-btn layui-btn-sm layui-btn-normal' type='button' onclick='editArea("{$k}")'>
+                            <i class="layui-icon layui-icon-edit"></i>
+                        </button>
+                        <button class='layui-btn layui-btn-sm layui-btn-danger' type='button' onclick='delArea("{$k}")'>
+                            <i class="layui-icon layui-icon-delete"></i>
+                        </button>
+                    </td>
+                    {/if}
+                </tr>
+                {/foreach}
+                {/if}
+                <tr class="area_tbody"></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <div class="layui-inline">
+            <button type="button" id="btn-area" class="layui-btn layui-btn-sm layui-btn-normal layuiadmin-btn-select_area" >添加活动规则区域</button>
+        </div>
+        <div class="layui-inline">
+            <button type="button" lay-submit lay-filter="free-shipping-submit" id="free-shipping-submit" class="layui-btn layui-btn-sm layui-btn-normal layuiadmin-btn-select_area" >保存设置</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("html").css('background-color','#FFFFFF');
+
+    var araeDataIds = '';
+    var araeDataNmae = '';
+
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/'
+    }).extend({
+        likeedit: 'likeedit/likeedit',
+    }).use(['table', 'form', 'element', 'likeedit'], function() {
+        var form = layui.form
+            ,$ = layui.$
+            ,table = layui.table
+            , element = layui.element
+            , likeedit = layui.likeedit;
+
+        window.callTree = function (data) {
+            for (var i =0;i< data.length; i++){
+                araeDataNmae += data[i]['context']+',';
+                araeDataIds += data[i]['nodeId'] + ',';
+            }
+
+            araeDataNmae = araeDataNmae.substring(0,araeDataNmae.length-1);
+            araeDataIds = araeDataIds.substring(0,araeDataIds.length-1);
+        };
+
+        $(document).on('click', '#btn-area', function () {
+            layer.open({
+                type: 2
+                ,title: '配送区域'
+                ,content: '{:url("freight/area")}'
+                ,area: ['90%', '90%']
+                ,btn: ['确定','返回']
+                ,yes: function(index, layero){
+                    var iframeWindow = window['layui-layer-iframe'+ index]
+                        ,submitID = 'area-freight-submit'
+                        ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                    //监听提交
+                    iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                        if (araeDataIds == ''){
+                            layer.msg('请选择地区');
+                            return ;
+                        }
+                        addArea(araeDataNmae);
+                        $('input.region:last').val(araeDataIds);
+                        araeDataNmae = '';
+                        araeDataIds = '';
+                        layer.close(index);
+                    });
+                    submit.trigger('click');
+                }
+
+            });
+        });
+
+        form.on('submit(free-shipping-submit)', function (data) {
+            var field = data.field;
+
+            like.ajax({
+                url: '{:url("free_shipping.free_shipping/index")}'
+                , data: field
+                , type: 'post'
+                , success: function (res) {
+                    if (res.code == 1) {
+                        layui.layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        },function () {
+                        });
+                    }
+                },
+            });
+        });
+    });
+
+
+    function addArea(data) {
+        var add = ".area_tr";
+        var id = $('tr.area_tr:last').attr('data-id');
+        if (id === undefined){
+            id = 1;
+            add = ".area_tbody";
+        }else{
+            add = add+id;
+        }
+        var v = parseInt(id) + 1;
+        var str = "<tr class='area_tr area_tr"+v+"' data-id='" + v + "'>" +
+            "<td><span class=' area_name area_name"+v+" '>"+data+"</span></td>" +
+            "<input type='hidden' class='region region"+v+" ' name='region["+v+"]' value=''>" +
+            "<td><input type='number' min='0' name='order_amount["+v+"]' lay-verify='required'  autocomplete='off' class='layui-input '></td>" +
+            "<td style='text-align:center'>" +
+            "<button class='layui-btn layui-btn-sm layui-btn-normal' type='button' onclick='editArea(" + v + ")'>" +
+            "<i class='layui-icon layui-icon-edit'></i>" +
+            "</button>" +
+            "<button class='layui-btn layui-btn-sm layui-btn-danger' type='button' onclick='delArea(" + v + ")'>" +
+            "<i class='layui-icon layui-icon-delete'></i>" +
+            "</button>" +
+            "</td>" +
+            "</tr>";
+
+        $(add).after(str);
+    }
+
+    function delArea(value) {
+        $(".area_tr" + value).remove();
+    }
+
+
+    //编辑模板行
+    function editArea(value) {
+
+        var regionSelected = '.region'+value;//选择编辑的行
+        var selectIds = $(regionSelected).val();//选中行的地区id
+
+        layer.open({
+            type: 2
+            , title: '配送区域'
+            , content: '{:url("freight/areaEdit")}'
+            , area: ['90%', '90%']
+            , btn: ['确定', '返回']
+            , success: function (layero,index) {
+                var iframe = window['layui-layer-iframe' + index];
+                iframe.editSelected(selectIds);
+            }
+            , yes: function (index, layero) {
+                var iframeWindow = window['layui-layer-iframe' + index]
+                    , submitID = 'area-freight-submit'
+                    , submit = layero.find('iframe').contents().find('#' + submitID);
+                //监听提交
+                iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                    if (araeDataIds == '') {
+                        layer.msg('请选择地区');
+                        return;
+                    }
+                    $(".area_name" + value).text(araeDataNmae);
+                    $(".region" + value).val(araeDataIds);
+                    araeDataNmae = '';
+                    araeDataIds = '';
+                    layer.close(index);
+                });
+                submit.trigger('click');
+            }
+        });
+    }
+</script>

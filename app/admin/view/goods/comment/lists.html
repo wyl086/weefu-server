@@ -1,0 +1,284 @@
+{layout name="layout1" /}
+<!-- 样式 -->
+<style>
+    .layui-table-cell {
+        height: auto;
+    }
+</style>
+<!-- 操作提示 -->
+<div class="layui-fluid">
+    <div class="layui-card" style="margin-top: 15px;">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*商家可以对会员的商品评价进行回复，平台拥有评价显示、隐藏和删除权限；</p>
+                        <p>*商品评价会在商城的商品详情中进行显示；</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+            <div class="layui-tab layui-tab-card" lay-filter="tabContainer">
+                <ul class="layui-tab-title">
+                    <li data-type="1" class="layui-this">已回复评价</li>
+                    <li data-type="0">待回复评价</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <!-- 搜索 -->
+                    <div class="layui-form">
+                        <div class="layui-form-item layui-row">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">商家名称:</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="shop_name" class="layui-input" />
+                                </div>
+                                <label class="layui-form-label">评价信息:</label>
+                                <div class="layui-input-inline">
+                                    <select name="search_type">
+                                        <option value="name">商品名称</option>
+                                        <option value="sn">会员编号</option>
+                                        <option value="nickname">会员昵称</option>
+                                    </select>
+                                </div>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="search_word" class="layui-input" />
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">评价等级:</label>
+                                <div class="layui-input-inline">
+                                    <select name="goods_comment">
+                                        <option value="">全部</option>
+                                        <option value="1">好评</option>
+                                        <option value="2">中评</option>
+                                        <option value="3">差评</option>
+                                    </select>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">显示状态:</label>
+                                    <div class="layui-input-inline">
+                                        <select name="status">
+                                            <option value="">全部</option>
+                                            <option value="1">显示</option>
+                                            <option value="2">隐藏</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">评价时间:</label>
+                                <div class="layui-input-inline" style="width: 390px">
+                                    <input type="text" class="layui-input" name="start_end" id="start_end">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="search">查询</button>
+                                <button class="layui-btn layui-btn-primary" lay-submit lay-filter="clear-search">重置</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 数据表格 -->
+            <table id="comment-lists" lay-filter="comment-lists"></table>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/html" id="shop-info">
+    <img src="{{d.shop_logo}}" style="height:80px;width: 80px;margin-right: 10px;" class="image-show">
+    <div class="layui-input-inline" style="text-align:left;width: 240px">
+        <p>商家编号：{{d.shop_id}}</p>
+        <p style="width: 180px;text-overflow:ellipsis;overflow: hidden">商家名称：{{d.shop_name}}</p>
+        <p>商家类型：{{d.shop_type_desc}}</p>
+    </div>
+</script>
+<script type="text/html" id="user-info">
+    <img src="{{d.avatar}}" style="height:80px;width: 80px;margin-right: 10px;" class="image-show">
+    <div class="layui-input-inline" style="text-align:left;width: 240px">
+        <p>会员编号：{{d.sn}}</p>
+        <p style="width: 180px;text-overflow:ellipsis;overflow: hidden">昵称：{{d.nickname}}</p>
+        <p>会员等级：{{d.levelName}}</p>
+    </div>
+</script>
+<script type="text/html" id="goods-info">
+    <img src="{{d.item_image}}" style="height:80px;width: 80px;margin-right: 10px;" class="image-show">
+    <div class="layui-input-inline" style="text-align:left;width: 240px">
+        <p>{{d.goods_name}}</p>
+        <p style="width: 180px;text-overflow:ellipsis;overflow: hidden">{{d.spec_value_str}}</p>
+    </div>
+</script>
+<script type="text/html" id="image-lists">
+    {{#  layui.each(d.comment_image, function(index, item){ }}
+    <img src="{{item}}" style="height:80px;width: 80px;margin-right: 10px;" class="image-show">
+    {{#  }); }}
+</script>
+<script type="text/html" id="operate">
+    <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="changeStatus">
+        {{# if( d.status == 0 ){ }}
+        显示
+        {{# } else { }}
+        隐藏
+        {{# } }}
+    </button>
+    <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</button>
+</script>
+<script>
+    layui.config({
+        version: "{$front_version}",
+        base: '/static/lib/'
+    }).use(['layer', 'table', 'form', 'element', 'laydate'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var table = layui.table;
+        var element = layui.element;
+
+        // 日期范围选择器
+        laydate.render({
+            elem: '#start_end',
+            type: 'datetime',
+            range: '~'
+        });
+
+        // 监听选项卡切换
+        element.on('tab(tabContainer)', function(data) {
+            // 获取类型
+            var type = $(this).attr('data-type');
+            // 重置搜索
+            $('input[name=shop_name]').val('');
+            $('input[name=search_word]').val('');
+            $('input[name=start_end]').val('');
+            $('select[name=search_type]').val('name');
+            $('select[name=goods_comment]').val('');
+            $('select[name=status]').val('');
+            form.render('select');
+            // 重新加载数据表格
+            getList(type);
+        });
+
+        // 监听查询
+        form.on('submit(search)', function(data){
+            var field = data.field;
+            // 执行重载
+            table.reload('comment-lists', {
+                where: field,
+                page: {curr: 1}
+            });
+        });
+
+        // 重置查询
+        form.on('submit(clear-search)', function(data){
+            // 重置搜索
+            $('input[name=shop_name]').val('');
+            $('input[name=search_word]').val('');
+            $('input[name=start_end]').val('');
+            $('select[name=search_type]').val('name');
+            $('select[name=goods_comment]').val('');
+            $('select[name=status]').val('');
+            form.render('select');
+            // 重新加载数据表格
+            table.reload('comment-lists', {
+                where: {},
+                page: {curr: 1}
+            });
+        });
+
+        // 首次进入
+        getList(1); // 1 已回复列表
+
+        function getList(type) {
+            table.render({
+                id: 'comment-lists'
+                ,elem: '#comment-lists'
+                ,url: "{:url('goods.comment/lists')}?type=" + type
+                , parseData: function(res) { // res 原始返回数据
+                    return {
+                        'code' : res.code  // 0 代表正常返回
+                        , 'msg' : res.msg  // 提示消息
+                        , 'count' : res.data.count // 数据长度
+                        , 'data' : res.data.lists  // 数据列表
+                    }
+                }
+                , response: { // 重新设定返回的数据格式
+                    statusCode: 1, // 成功的状态码，默认0
+                }
+                , page: true // 开启分页
+                , limit: 10
+                , limits: [10, 20, 30, 40, 50]
+                , text: {
+                    none: '暂无数据'
+                }
+                , cols: [[ // 设置表头，二维数组，方法渲染必填
+                    { title: '商家信息', width: 250, align: 'center', templet: '#shop-info' },
+                    { title: '会员信息', width: 250, align: 'center', templet: '#user-info' },
+                    { title: '商品信息', width: 250, align: 'center', templet: '#goods-info' },
+                    { field: 'goods_comment_desc', title: '评分等级', width: 100,align: 'center' },
+                    { field: 'comment', title: '买家评价', width: 200, align: 'center' },
+                    { title: '评论图片', width: 250, align: 'center',templet: '#image-lists' },
+                    { field: 'reply', title: '商家回复', width: 200, align: 'center' },
+                    { field: 'status_desc', title: '显示状态', width: 100, align: 'center' },
+                    { field: 'create_time', title: '评价时间', width: 180, align: 'center' },
+                    { fixed: 'right' ,title: '操作',width: 160, align: 'center', toolbar: '#operate' }
+                ]], done: function () {
+                    setTimeout(function () {
+                        $(".layui-table-main tr").each(function (index, val) {
+                            $($(".layui-table-fixed-l .layui-table-body tbody tr")[index]).height($(val).height());
+                            $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height());
+                        });
+                    }, 200);
+                }
+            });
+        }
+
+        table.on('tool(comment-lists)', function(obj) {
+            if(obj.event == 'changeStatus') { // 修改显示状态
+                if(obj.data.status == 0) {
+                    var tips = '确定显示此条评论吗?';
+                }else{
+                    var tips = '确定隐藏此条评论吗?';
+                }
+                layer.confirm(tips, {icon: 3, title:'提示'}, function(index){
+                    like.ajax({
+                        url: '{:url("goods.comment/changeStatus")}',
+                        data: {'id': obj.data.id},
+                        type: "post",
+                        success: function (res) {
+                            if(res.code == 1) {
+                                layer.msg(res.msg);
+                            }
+                            table.reload('comment-lists', {
+                                where: {},
+                                page: {curr: 1}
+                            });
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+
+            if(obj.event == 'del') { // 删除
+                layer.confirm('确定要删除此条评论吗?', {icon: 3, title:'提示'}, function(index){
+                    like.ajax({
+                        url: '{:url("goods.comment/del")}',
+                        data: {'id': obj.data.id},
+                        type: "post",
+                        success: function (res) {
+                            if(res.code == 1) {
+                                layer.msg(res.msg);
+                            }
+                            table.reload('comment-lists', {
+                                where: {},
+                                page: {curr: 1}
+                            });
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+    });
+</script>

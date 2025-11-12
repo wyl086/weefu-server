@@ -1,0 +1,150 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-form" lay-filter="">
+        <div class="layui-card" >
+            <div class="layui-card-body">
+
+        <div class="layui-inline">
+            <label class="layui-form-label">排序方式:</label>
+            <div class="layui-input-block">
+                <select name="search_key">
+                    <option value="sales_volume">按销量排序</option>
+                    <option value="sales_price">按销售金额排序</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-sm layuiadmin-btn-ad {$view_theme_color}" lay-submit
+                    lay-filter="goods-search">查询
+            </button>
+            <button class="layui-btn layui-btn-sm layuiadmin-btn-ad layui-btn-primary " lay-submit
+                    lay-filter="goods-clear-search">重置
+            </button>
+        </div>
+
+            </div>
+        </div>
+        <div class="layui-tab-item layui-show">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <table id="goods-lists" lay-filter="goods-lists"></table>
+
+
+                    <!--商品信息-->
+                    <script type="text/html" id="goods">
+                        <div class="goods-content">
+                            <div style="text-align: left;" class="goods-data">
+                                <img src="{{ d.goods_image }}" style="height:80px;width: 80px" class="image-show layui-col-md4">
+                                <div class="layui-input-inline layui-col-md8">
+                                    <span class="layui-col-md7 goods_name_hide">{{ d.goods_name }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </script>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+<script>
+
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/plug/layui-admin/dist/layuiadmin/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index','table','like','echarts','form'], function(){
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table
+            , like = layui.like
+            , element = layui.element
+            , laydate = layui.laydate;
+
+        //日期时间范围
+        laydate.render({
+            elem: '#start_time'
+            , type: 'datetime'
+        });
+
+        laydate.render({
+            elem: '#end_time'
+            , type: 'datetime'
+        });
+
+        //监听搜索
+        form.on('submit(goods-search)', function (data) {
+            var field = data.field;
+            //执行重载
+            table.reload('goods-lists', {
+                where: field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+        //清空查询
+        form.on('submit(goods-clear-search)', function () {
+            form.render('select');
+            //刷新列表
+            table.reload('goods-lists', {
+                where: [],
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        
+        //获取列表
+        getList();
+        function getList() {
+            table.render({
+                elem: '#goods-lists'
+                ,url:'{:url("statistics/goods")}'
+                , cols: [[
+                    {field:'number',title: '排序',width:120,align: 'center'}
+                    , {field: 'goods', title: '商品信息', align: 'center',templet:'#goods',width:300}
+                    , {field: 'sales_volume', title: '销量', align: 'center',width:120}
+                    , {field: 'sales_price', title: '销售额', align: 'center',width:120}
+                ]]
+                , page: true
+                , limits: [10,20,30,40,50]
+                , text: {none: '暂无数据！'}
+                ,response: {
+                    statusCode: 1 
+                  } 
+                , parseData: function (res) {
+                    return {
+                        "code": res.code,
+                        "msg": res.msg,
+                        "count": res.data.count,
+                        "data": res.data.lists,
+                    };
+                }
+                ,done: function(res, curr, count){
+                    // 解决操作栏因为内容过多换行问题
+                    $(".layui-table-main tr").each(function (index, val) {
+                        $($(".layui-table-fixed-l .layui-table-body tbody tr")[index]).height($(val).height());
+                        $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height());
+                    });
+                }
+            });
+        }
+
+
+    });
+
+</script>
+
+
+</body>
+</html>

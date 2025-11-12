@@ -1,0 +1,98 @@
+{layout name="layout2" /}
+
+<style>
+    .input-inline-width {
+        width: 250px;
+    }
+</style>
+
+<div class="layui-card layui-form">
+    <div class="layui-card-body">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">管理员：</label>
+            <div class="layui-inline">
+                <button class="layui-btn layui-btn-sm layui-bg-blue" id="show-admin">选择管理员</button>
+            </div>
+            <div class="layui-inline">
+                <span id="admin_selected"></span>
+            </div>
+            <input type="hidden" name="admin_id" id="admin_id">
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">客服头像：</label>
+            <div class="layui-input-block">
+                <div class="like-upload-image" switch-tab="0" lay-verType="tips">
+                    <div class="upload-image-elem"><a class="add-upload-image"> + 添加</a></div>
+                </div>
+                <div class="layui-form-mid layui-word-aux">建议尺寸：500*500像</div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="nickname" class="layui-form-label">客服昵称：</label>
+            <div class="layui-input-inline input-inline-width">
+                <input type="text" id="nickname" name="nickname" lay-verify="required" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序：</label>
+            <div class="layui-input-inline input-inline-width">
+                <input type="number" name="sort" autocomplete="off" class="layui-input" value="1">
+                <label class="layui-form-mid layui-word-aux">排序值越小越靠前，默认值为1</label>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态：</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="disable" lay-skin="switch" lay-text="开启|关闭" checked>
+            </div>
+            <label class="layui-form-mid layui-word-aux">客服账号状态，默认开启，关闭后禁止登录客服工作台</label>
+        </div>
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.config({
+        version: "{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form'], function () {
+        var form = layui.form;
+
+
+        $('#show-admin').click(function () {
+            layer.open({
+                type: 2
+                , title: "选择管理员"
+                , content: "{:url('kefu.kefu/adminLists')}"
+                , area: ["90%", "90%"]
+                , btn: ["确定", "取消"]
+                , yes: function (index, layero) {
+                    var iframeWindow = window["layui-layer-iframe" + index];
+                    let admin_selected = iframeWindow.admin_selected();
+                    $('#admin_selected').html(admin_selected.name + '(' + admin_selected.account + ')');
+                    $('#admin_id').val(admin_selected.id);
+                    layer.close(index);
+                }
+            });
+            return false;
+        });
+
+        like.delUpload();
+        $(document).on("click", ".add-upload-image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "avatar",
+                that: $(this)
+            });
+        });
+    });
+</script>

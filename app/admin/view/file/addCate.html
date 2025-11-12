@@ -1,0 +1,38 @@
+{layout name="layout2" /}
+
+
+<div class="layui-card layui-form" style="box-shadow:none;">
+
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label for="pid" class="layui-form-label">上级分类：</label>
+            <div class="layui-input-inline">
+                <select name="pid" id="pid" lay-verType="tips" lay-verify="required|number">
+                    <option value="0">顶级分类</option>
+                    {volist name="categoryTree" id="vo"}
+                    {foreach $categoryTree as $item => $val}
+                        <option value="{$item}">{$val}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label">分类名称：</label>
+            <div class="layui-input-inline">
+                <input type="text" name="name" id="name" lay-verType="tips" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="sort" class="layui-form-label">排序：</label>
+            <div class="layui-input-inline">
+                <input type="number" name="sort" id="sort" lay-verType="tips" lay-verify="require|number"
+                      autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+    </div>
+</div>

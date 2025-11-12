@@ -1,0 +1,154 @@
+{layout name="layout2" /}
+
+<div class="layui-container">
+    <div class="layui-row" >
+        <div class="layui-col-xs12" style="margin: 5px;padding: 5px">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>商家信息</legend>
+            </fieldset>
+        </div>
+    </div>
+    <div class="layui-row">
+        <div class="layui-col-xs1">
+            &nbsp;
+        </div>
+        <div class="layui-col-xs11">
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                商家名称：{$detail.shop.name}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                商家ID：{$detail.shop.id}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                商家类型：{$detail.shop.type}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                主营类目：{$detail.shop.category.name}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                联系人名称：{$detail.shop.nickname}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                联系电话：{$detail.shop.mobile}
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-row" >
+        <div class="layui-col-xs12" style="margin: 5px;padding: 5px">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>收款信息</legend>
+            </fieldset>
+        </div>
+    </div>
+
+    <?php if(isset($detail['withdrawal']['type']) && $detail['withdrawal']['type'] == 0): ?>
+    <div class="layui-row">
+        <div class="layui-col-xs1">
+            &nbsp;
+        </div>
+        <div class="layui-col-xs11">
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                收款方式：{$detail.withdrawal.type_text|default=""}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                提现银行：{$detail.bank.name|default=""}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                银行支行称：{$detail.bank.branch|default=""}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                开户名称：{$detail.bank.nickname|default=""}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                银行账号：{$detail.bank.account|default=""}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                提现金额：{$detail.withdrawal.apply_amount}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                提现手续费：{$detail.withdrawal.poundage_amount} ({$detail.withdrawal.poundage_ratio}%)
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                到账金额：<span style="color: red">{$detail.withdrawal.left_amount}</span>
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                申请时间：{$detail.withdrawal.create_time}
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <?php if(isset($detail['withdrawal']['type']) && $detail['withdrawal']['type'] == 10): ?>
+    <div class="layui-row">
+        <div class="layui-col-xs1">
+            &nbsp;
+        </div>
+        <div class="layui-col-xs11">
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                收款方式：{$detail.withdrawal.type_text|default=""}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                认证姓名：{$detail.alipay.username|default=""}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                支付宝账号：{$detail.alipay.account|default=""}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                提现金额：{$detail.withdrawal.apply_amount}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                提现手续费：{$detail.withdrawal.poundage_amount} ({$detail.withdrawal.poundage_ratio}%)
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                到账金额：<span style="color: red">{$detail.withdrawal.left_amount}</span>
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                申请时间：{$detail.withdrawal.create_time}
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <div class="layui-row" >
+        <div class="layui-col-xs12" style="margin: 5px;padding: 5px">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>审核信息</legend>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="layui-row">
+        <div class="layui-col-xs1">
+            &nbsp;
+        </div>
+        <div class="layui-col-xs11">
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                提现状态：{$detail.withdrawal.status_text}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                提现说明：{$detail.withdrawal.explain ?: '无'}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                转账时间：
+                {if $detail.withdrawal.transfer_time === 0}
+                无
+                {else}
+                {$detail.withdrawal.transfer_time|date='Y-m-d H:i'}
+                {/if}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                转账说明：{$detail.withdrawal.transfer_content ?: '无'}
+            </div>
+            <div class="layui-col-xs6" style="margin-top: 5px;margin-bottom: 5px;">
+                转账凭证：
+                {if $detail.withdrawal.transfer_voucher}
+                <img src="{$detail.withdrawal.transfer_voucher}" alt="img" style="max-width:200px; max-height:100px;">
+                {else}
+                无
+                {/if}
+            </div>
+        </div>
+    </div>
+
+</div>

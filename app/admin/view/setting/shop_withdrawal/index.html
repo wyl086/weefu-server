@@ -1,0 +1,113 @@
+{layout name="layout1" /}
+
+<style>
+    .layui-form-label { width: 100px; }
+</style>
+
+<div class="wrapper" >
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>商家提现金额要求设置。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form" style="margin-top: 20px;">
+                <div class="layui-form-item" style="margin-bottom: 0;">
+                    <label class="layui-form-label">提现方式</label>
+                    <div class="layui-input-block">
+                        <?php foreach($type_list as $type_key => $type_value){ ?>
+                        <?php if(in_array($type_value[0], $detail['withdrawal_type'])){ ?>
+                        <input type="checkbox" name="withdrawal_type[{$type_key}]" lay-skin="primary" value="{$type_value[0]}" title="{$type_value[1]}" checked>
+                        <?php } else { ?>
+                        <input type="checkbox" name="withdrawal_type[{$type_key}]" lay-skin="primary" value="{$type_value[0]}" title="{$type_value[1]}">
+                        <?php } ?>
+                        <?php } ?>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"></label>
+                    <div class="layui-input-block">
+                        <div class="layui-row layui-form-mid layui-word-aux" style="white-space:nowrap;">默认至少保留一种体现方式</div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">最低提现金额：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="min_withdrawal_money"
+                               onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                               value="{$detail.min_withdrawal_money}" autocomplete="off" class="layui-input">
+                        <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商家提现需满足最低提现金额，才能提交提现申请。</div>
+                    </div>
+                    <div class="layui-form-mid">元</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">最高提现金额：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="max_withdrawal_money"
+                               onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                               value="{$detail.max_withdrawal_money}" autocomplete="off" class="layui-input">
+                        <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商家提现允许的最高提现金额。</div>
+                    </div>
+                    <div class="layui-form-mid">元</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">提现手续费：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="withdrawal_service_charge"
+                               onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                               value="{$detail.withdrawal_service_charge}" autocomplete="off" class="layui-input">
+                        <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商家提现时收取的手续费占比。</div>
+                    </div>
+                    <div class="layui-form-mid">%</div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="addForm">确定</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(["form"], function(){
+        var form = layui.form;
+
+        form.on('submit(addForm)', function(data) {
+            var min = data.field.min_withdrawal_money;
+            var max = data.field.max_withdrawal_money;
+
+            if(parseFloat(min) > parseFloat(max)) {
+                layui.layer.msg('最低提现金额不可大于最高提现金额', {
+                    offset: '15px'
+                    , icon: 2
+                    , time: 1000
+                });
+                return false;
+            }
+
+            like.ajax({
+                url:'{:url("setting.ShopWithdrawal/set")}',
+                data: data.field,
+                type:"post",
+                success:function(res) {
+                    if(res.code === 1) {
+                        layui.layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        });
+                    }
+                }
+            });
+        });
+
+    });
+</script>

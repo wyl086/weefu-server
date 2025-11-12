@@ -1,0 +1,131 @@
+<div class="layui-tab-item">
+    <!--库存预警-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">库存预警：</label>
+        <div class="layui-input-inline">
+            <input type="number" name="stock_warn" autocomplete="off" class="layui-input"  value="">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">设置最低库存预警值，当库存低于预警值时会出现在库存预警商品列表页，0为不预警</span>
+    </div>
+    <!-- 库存显示 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label">库存显示：</label>
+        <div class="layui-input-block">
+            <input type="radio" name="is_show_stock" value="1" title="显示"  class="layui-input" />
+            <input type="radio" name="is_show_stock" value="0" title="不显示" class="layui-input" checked />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">商品详情显示剩余库存数量</span>
+    </div>
+
+    <!--配送方式-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">配送方式：</label>
+        <div class="layui-input-block">
+            <div class="delivery_express">
+                <input type="checkbox" name="delivery_type[]" value="1" lay-skin="primary" title="快递发货" checked/>
+                <input type="checkbox" name="delivery_type[]" value="3" lay-skin="primary" title="线下自提"/>
+            </div>
+            <div class="delivery_virtual" style="display: none">
+                <input type="checkbox" name="delivery_type[]" value="2" lay-skin="primary" title="虚拟发货"/>
+            </div>
+        </div>
+    </div>
+
+    <!--虚拟商品内容-->
+    <div class="layui-form-item virtual-goods-data" style="display: none">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span class="form-label-asterisk">*</span>买家付款后：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="after_pay" value="1" title="自动发货"  class="layui-input" checked/>
+                <input type="radio" name="after_pay" value="2" title="手动发货" class="layui-input" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span class="form-label-asterisk">*</span>发货后：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="after_delivery" value="1" title="自动完成订单"  class="layui-input" checked/>
+                <input type="radio" name="after_delivery" value="2" title="需要买家确认收货" class="layui-input" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span class="form-label-asterisk">*</span>发货内容：</label>
+            <div class="layui-input-block" style="width: 50%">
+                <textarea name="delivery_content" autocomplete="off" class="layui-textarea" placeholder="多行输入"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!--快递运费-->
+    <div class="layui-form-item actual-goods-data">
+        <label class="layui-form-label"><span class="form-label-asterisk">*</span>快递运费：</label>
+        <div class="layui-input-inline">
+            <input type="radio"  name="express_type" value="1" title="包邮" checked>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-inline" style="margin-right: 0px;width: auto">
+                <input type="radio" name="express_type" value="2" title="统一运费">
+            </div>
+            <div class="layui-input-inline" style="width: 180px">
+                <input type="number" name="express_money" class="layui-input">
+            </div>
+            <div class="unit-tips">元</div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-inline" style="margin-right: 0px;width: auto">
+                <input type="radio" name="express_type" value="3" title="运费模板">
+            </div>
+            <div class="layui-input-inline" style="width: 180px">
+                <select name="express_template_id">
+                    <option value=""></option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <!-- 会员价 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label">会员价：</label>
+        <div class="layui-input-block">
+            <input type="radio" name="is_member" value="0" title="不参与会员价"  class="layui-input" />
+            <input type="radio" name="is_member" value="1" title="参与会员价" class="layui-input" checked />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">根据会员等级设置的会员折扣自动打折，拼团和秒杀等营销活动不参与会员折扣</span>
+    </div>
+    <!--商品排序-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">商品排序：</label>
+        <div class="layui-input-inline">
+            <input type="number" name="sort" autocomplete="off" class="layui-input"  value="255" min="0">
+        </div>
+    </div>
+    <!--店内推荐-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">店内推荐：</label>
+        <div class="layui-input-block">
+            <input type="radio" name="is_recommend" value="1" title="推荐" lay-verify="is_recommend" >
+            <input type="radio" name="is_recommend" value="0" title="不推荐"lay-verify="is_recommend" checked>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">勾选店内推荐后，推荐商品会在相关推荐位显示</span>
+    </div>
+    <!--销售状态-->
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="form-label-asterisk">*</span>销售状态：</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="1" title="立即上架" verify-msg="选择销售状态" lay-verify="status" >
+            <input type="radio" name="status" value="0" title="放入仓库" verify-msg="选择销售状态" lay-verify="status" checked>
+        </div>
+    </div>
+</div>

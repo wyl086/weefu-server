@@ -1,0 +1,112 @@
+{layout name="layout2" /}
+<style>
+    .tips{
+        color: red;
+    }
+</style>
+<div class="layui-form" lay-filter="layuiadmin-form" id="layuiadmin-form" style="padding: 20px 30px 0 0;">
+    <input type="hidden" name="id" value="{$detail.id}">
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="tips">*</span>导航名称：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" lay-vertype="tips" autocomplete="off" value="{$detail.name}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="tips">*</span>导航颜色：</label>
+        <div class="layui-input-inline" style="width: 120px;">
+            <input type="hidden"  value="{$detail.color}" name="color" placeholder="请选择颜色" class="layui-input" id="color-input">
+        </div>
+        <div class="layui-inline" >
+            <div id="color"></div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="tips">*</span>导航图标：</label>
+        <div class="layui-input-block">
+            <div class="like-upload-image">
+                {if $detail.icon}
+                <div class="upload-image-div">
+                    <img src="{$detail.icon}" alt="img">
+                    <input type="hidden" name="icon" value="{$detail.icon}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image icon"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image icon"> + 添加图片</a></div>
+                {/if}
+            </div>
+            <div class="layui-form-mid layui-word-aux">建议尺寸：宽100像素*高100像素的jpg，jpeg，png，gif图片。不传则使用默认图标</div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="tips">*</span>选中颜色：</label>
+        <div class="layui-input-inline" style="width: 120px;">
+            <input type="hidden" value="{$detail.select_color}" name="select_color" placeholder="请选择颜色" class="layui-input" id="select-color-input">
+        </div>
+        <div class="layui-inline" >
+            <div id="select-color"></div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="tips">*</span>选中图标：</label>
+        <div class="layui-input-block">
+            <div class="like-upload-image">
+                {if $detail.select_icon}
+                <div class="upload-image-div">
+                    <img src="{$detail.select_icon}" alt="img">
+                    <input type="hidden" name="select_icon" value="{$detail.select_icon}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image select_icon"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image select_icon"> + 添加图片</a></div>
+                {/if}
+            </div>
+            <div class="layui-form-mid layui-word-aux">建议尺寸：宽100像素*高100像素的jpg，jpeg，png，gif图片。不传则使用默认图标</div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="editSubmit" id="editSubmit" value="确认">
+    </div>
+</div>
+<script>
+    layui.use(["table","colorpicker"], function(){
+        //表单赋值
+        var colorpicker = layui.colorpicker;
+        colorpicker.render({
+            elem: '#color'
+            ,color: "{$detail.color}"
+            ,done: function(color){
+                $('#color-input').val(color);
+            }
+        });
+        colorpicker.render({
+            elem:'#select-color'
+            ,color: "{$detail.select_color}"
+            ,done: function(color){
+                $('#select-color-input').val(color);
+
+            }
+        })
+
+        like.delUpload();
+        $(document).on("click", ".icon", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "icon",
+                that: $(this)
+            });
+        })
+        $(document).on("click", ".select_icon", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "select_icon",
+                that: $(this)
+            });
+        })
+    })
+</script>
+

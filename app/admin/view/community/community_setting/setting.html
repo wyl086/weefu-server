@@ -1,0 +1,89 @@
+{layout name="layout1" /}
+<style>
+    .layui-form-label {
+        width: 120px;
+    }
+    .layui-input-block {
+        margin-left: 150px;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <!--操作提示-->
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*设置是否启用种草功能,以及文章和评论相关审核设置,默认都开启审核</p>
+                    </div>
+                </div>
+            </div>
+
+            <!--表单区域-->
+            <div class="layui-form" style="margin-top: 15px;">
+                <div class="layui-field-box">
+                    <div class="layui-form-item">
+                        <lable class="layui-form-label">种草功能：</lable>
+                        <div class="layui-input-block" style="width:300px;">
+                            <input type="radio" name="status" value="1" title="开启" {if $config.status == 1} checked {/if}>
+                            <input type="radio" name="status" value="0" title="关闭" {if !$config.status} checked {/if}>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <lable class="layui-form-label">文章审核：</lable>
+                        <div class="layui-input-block" style="width:300px;">
+                            <input type="radio" name="audit_article" value="1" title="开启" {if $config.audit_article == 1} checked {/if}>
+                            <input type="radio" name="audit_article" value="0" title="关闭" {if !$config.audit_article} checked {/if}>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <lable class="layui-form-label">评论审核：</lable>
+                        <div class="layui-input-block" style="width:300px;">
+                            <input type="radio" name="audit_comment" value="1" title="开启" {if $config.audit_comment == 1} checked {/if}>
+                            <input type="radio" name="audit_comment" value="0" title="关闭" {if !$config.audit_comment} checked {/if}>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="set">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/'
+    }).use(['form','element'], function(){
+        var $ = layui.$,
+            form = layui.form,
+            element = layui.element;
+
+        form.on('submit(set)', function(data) {
+            like.ajax({
+                url:'{:url("community.CommunitySetting/setting")}',
+                data: data.field,
+                type:"post",
+                success:function(res)
+                {
+                    if(res.code == 1)
+                    {
+                        layui.layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        });
+                    }
+                }
+            });
+        });
+
+    });
+</script>

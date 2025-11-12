@@ -1,0 +1,192 @@
+<div class="layui-tab-item goods-content">
+    <!--规格型号-->
+    <div class="layui-card-body" pad15>
+        <div lay-filter="">
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="form-label-asterisk">*</span>商品规格：</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="spec_type" lay-filter="spec-type" value="1" title="统一规格" checked>
+                    <input type="radio" name="spec_type" lay-filter="spec-type" value="2" title="多规格">
+                </div>
+            </div>
+            <!-- 规格项 -->
+            <div class="layui-form-item" style="display: none">
+                <label class="layui-form-label"></label>
+                <div class="layui-input-block goods-spec-div" id="goods-spec-project">
+                </div>
+            </div>
+            <!-- 添加规格项目按钮 -->
+            <div class="layui-form-item" style="display: none">
+                <label class="layui-form-label"></label>
+                <button class="layui-btn layui-btn-normal layui-btn-sm" id="add-spec" lay-verify="add_more_spec"
+                        lay-verType="tips" autocomplete="off" switch-tab="1" verify-msg="至少添加一个规格">添加规格项目
+                </button>
+                <br>
+                <span style="color: #a3a3a3;font-size: 9px;margin-left:130px;">最多支持3个规格项</span>
+            </div>
+            <!-- 统一规格 -->
+            <div class="layui-form-item" id="one-spec-lists">
+                <label class="layui-form-label">规格明细：</label>
+                <div class="layui-input-block goods-spec-div">
+                    <table id="one-spec-lists-table" class="layui-table spec-lists-table" lay-size="sm">
+                        <colgroup>
+                            <col width="60px">
+                        </colgroup>
+                        <thead>
+                        <tr style="background-color: #f3f5f9">
+                            <th>规格图片</th>
+                            <th>市场价(元)</th>
+                            <th><span class="form-label-asterisk">*</span>价格(元)</th>
+                            <th>成本价(元)</th>
+                            <th><span class="form-label-asterisk">*</span>库存</th>
+                            <th>重量(kg)</th>
+                            <th>体积(m3)</th>
+                            <th>条码</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <div class="like-upload-image goods-spec-img-div">
+                                    <div class="upload-image-elem"><a class="add-upload-image" id="one_spec_image"> + 添加图片</a></div>
+                                  </div>
+                            </td>
+                            <td><input type="number" class="layui-input"
+                                       lay-verify=""
+                                       lay-verType="tips"
+                                       autocomplete="off" switch-tab="1" verify-msg="请输入市场价"
+                                       name="one_market_price"></td>
+                            <td><input type="number" class="layui-input"
+                                       lay-verify="one_spec_required|one_price"
+                                       lay-verType="tips"
+                                       autocomplete="off" switch-tab="1" verify-msg="请输入价格"
+                                       name="one_price"></td>
+                            <td><input type="number" class="layui-input"
+                                       lay-verify=""
+                                       lay-verType="tips"
+                                       autocomplete="off" switch-tab="1" verify-msg="请输入成本价"
+                                       name="one_chengben_price"></td>
+                            <td><input type="number" class="layui-input" lay-verify="one_spec_required|one_stock"
+                                       lay-verType="tips"
+                                       autocomplete="off" switch-tab="1" verify-msg="请输入库存" name="one_stock">
+                            </td>
+                            <td><input type="number" class="layui-input"
+                                lay-verify="" name="one_weight"
+                                lay-verType="tips" autocomplete="off" switch-tab="1" verify-msg="请输入重量"></td>
+                            <td><input type="number" class="layui-input" lay-verify="" lay-verType="tips"
+                                       name="one_volume" autocomplete="off" switch-tab="1" verify-msg="请输入体积"></td>
+                            <td><input type="number" name="one_bar_code" class="layui-input"
+                                       lay-verType="tips" autocomplete="off" switch-tab="1" verify-msg="请输入条码"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 多规格 -->
+            <div class="layui-form-item" id="more-spec-lists" style="display: none">
+                <label class="layui-form-label">规格明细：</label>
+                <div class="layui-input-block goods-spec-div">
+                    <div class="batch-div"><span class="batch-spec-title">批量设置：</span>
+                        <div>
+                            <span class="batch-spec-content click-a" input-name="market_price">市场价</span>
+                            <span class="batch-spec-content click-a" input-name="price">价格</span>
+                            <span class="batch-spec-content click-a" input-name="chengben_price">成本价</span>
+                            <span class="batch-spec-content click-a" input-name="stock">库存</span>
+                            <span class="batch-spec-content click-a" input-name="weight">重量</span>
+                            <span class="batch-spec-content click-a" input-name="volume">体积</span>
+                            <span class="batch-spec-content click-a" input-name="bar_code">条码</span>
+                        </div>
+                    </div>
+                    <table id="more-spec-lists-table" class="layui-table spec-lists-table" lay-size="sm">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--规格项模板-->
+<script type="text/html" id="template-spec">
+    <div class="goods-spec-div goods-spec" lay-verify="add_more_spec|repetition_spec_name" lay-verType="tips"
+         autocomplete="off"
+         switch-tab="1" verify-msg="至少添加一个规格，且规格需要规格值">
+        <a class="goods-spec-del-x" style="display: none;">x</a>
+        <div class="layui-form-item"><label class="layui-form-label">规格项：</label>
+            <div class="layui-input-block" style="width: 500px">
+                <div class="layui-input-inline">
+                    <input type="hidden" name="spec_id[]" value="0">
+                    <input type="text" name="spec_name[]" lay-verify="more_spec_required" lay-verType="tips"
+                           switch-tab="1"
+                           verify-msg="规格项不能为空"
+                           placeholder="请填写规格名" autocomplete="off" class="layui-input spec_name" value="{value}">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-block goods-spec-value-dev" lay-verify="repetition_spec_value" lay-verType="tips"
+                 switch-tab="1">
+                <div class="layui-input-inline">
+                    <input type="hidden" class="spec_values" name="spec_values[]" value="">
+                    <input type="hidden" class="spec_value_ids" name="spec_value_ids[]" value="">
+                    <a href="#" class="add-spec-value">+ 添加规格值</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!--规格值模板-->
+<script type="text/html" id="template-spec-value">
+    <div class="layui-input-inline goods-spec-value" style="width: 90px">
+        <a class="goods-spec-value-del-x" style="display: none;">x</a>
+        <input value="{spec_value}" spec-value-temp-id="{spec_value_temp_id}" class="layui-input goods-spec-value-input"
+               placeholder="规格值"
+               lay-verify="more_spec_required" lay-verType="tips" switch-tab="1" verify-msg="规格值不能为空">
+        <input type="hidden" class="goods-sepc-value-id-input" value="{spec_value_id}">
+    </div>
+</script>
+<!-- 多规格表头模板 -->
+<script type="text/html" id="template-spec-table-th">
+    <colgroup>
+        <col width="60px">
+    </colgroup>
+    <thead>
+    <tr style="background-color: #f3f5f9">
+        {spec_th}
+        <th>规格图片</th>
+        <th>市场价(元)</th>
+        <th><span class="form-label-asterisk">*</span>价格(元)</th>
+        <th>成本价(元)</th>
+        <th><span class="form-label-asterisk">*</span>库存</th>
+        <th>重量(kg)</th>
+        <th>体积(m3)</th>
+        <th>条码</th>
+    </tr>
+    </thead>
+</script>
+<!--多规格行模板-->
+<script type="text/html" id="template-spec-table-tr">
+    {spec_td}
+    <td>
+        <div class="like-upload-image goods-spec-img-div">
+            <input class="upload-spec-image" type="hidden" name="spec_image[]">
+            <div class="upload-image-elem"><a class="add-upload-image more_spec_image"> + 添加图片</a></div>
+        </div>
+    </td>
+    <td><input type="number" class="layui-input" lay-verify="" lay-verType="tips"
+               autocomplete="off" switch-tab="1" name="market_price[]"></td>
+    <td><input type="number" class="layui-input" lay-verify="more_spec_required|more_price" lay-verType="tips"
+               autocomplete="off" switch-tab="1" verify-msg="请输入价格" name="price[]"></td>
+    <td><input type="number" class="layui-input" lay-verify="" lay-verType="tips"
+               autocomplete="off" switch-tab="1" verify-msg="请输入成本价" name="chengben_price[]"></td>
+    <td><input type="number" class="layui-input" lay-verify="more_spec_required|more_stock" lay-verType="tips"
+               autocomplete="off" switch-tab="1" verify-msg="请输入库存" name="stock[]"></td>
+    <td><input type="number" class="layui-input" lay-verify="" lay-verType="tips"
+               name="weight[]" autocomplete="off" switch-tab="1" verify-msg="请输入重量"></td>
+    <td><input type="number" class="layui-input" lay-verify="" lay-verType="tips"
+               name="volume[]" autocomplete="off" switch-tab="1" verify-msg="请输入体积"></td>
+    <td><input type="number" name="bar_code[]" class="layui-input"
+               lay-verType="tips" autocomplete="off" switch-tab="1"></td>
+    </tr>
+</script>

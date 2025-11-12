@@ -1,0 +1,95 @@
+{layout name="layout2" /}
+<style>
+    .layui-form-label { width: 85px; }
+    .layui-input-block { margin-left: 115px; }
+</style>
+
+<div class="layui-card layui-form" style="box-shadow:none;">
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label class="layui-form-label">提现方式</label>
+            <div class="layui-input-block">
+                <?php foreach($types as $type_key => $type_value){ ?>
+                <input type="radio" name="type" lay-skin="primary" value="{$type_value[0]}" lay-filter="type" title="{$type_value[1]}">
+                <?php } ?>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="bank_id" class="layui-form-label"><span style="color:red;">*</span>提现账号：</label>
+            <div class="layui-input-block" id="select-accounts-view">
+                <select id="aaaa" name="aaaa" lay-verify="required">
+                    <option value="">请选择提现方式</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="apply_amount" class="layui-form-label"><span style="color:red;">*</span>提现金额：</label>
+            <div class="layui-input-block">
+                <input type="number" name="apply_amount" id="apply_amount" lay-verType="tips" lay-verify="required" autocomplete="off" class="layui-input">
+                <div class="layui-form-mid layui-word-aux">可提现金额：{$shop.wallet}</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">提现手续费：</label>
+            <div class="layui-input-block">
+                <div class="layui-form-mid layui-word-aux"> {$withdrawal_service_charge}% (提现金额扣除提现手续费后为实际到账金额)</div>
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+        </div>
+    </div>
+</div>
+<script type="text/html" id="select-accounts">
+    {{#  if(d.type === 0){ }}
+    <select name="bank_id" lay-verify="required">
+        <option value=""></option>
+        {{#  layui.each(d.list, function(index, item){ }}
+        <option value="{{ item.id }}">{{ item.name }}</option>
+        {{#  }); }}
+    </select>
+    {{#  } }}
+    {{#  if(d.type === 10){ }}
+    <select name="alipay_id" lay-verify="required">
+        <option value=""></option>
+        {{#  layui.each(d.list, function(index, item){ }}
+        <option value="{{ item.id }}">{{ item.account }}</option>
+        {{#  }); }}
+    </select>
+    {{#  } }}
+</script>
+<script type="application/javascript">
+    layui.use([ 'form', 'laytpl' ], function() {
+        var form = layui.form;
+        var laytpl = layui.laytpl;
+        var $ = layui.$;
+
+        form.on('radio(type)', function(data) {
+
+            // console.log(data.elem); //得到radio原始DOM对象
+            // console.log(data.value); //被点击的radio的value值
+
+            var type = data.value;
+
+            like.ajax({
+                url: "{:url('finance.Withdrawal/add_accounts', [], false)}/type/" + type,
+                data: {},
+                type: "GET",
+                success:function(res) {
+                    if(res.code === 1) {
+                        var data = {
+                            type : parseInt(type),
+                            list : res.data
+                        };
+                        console.log(data);
+                        laytpl($('#select-accounts').html()).render(data, function(html) {
+                            $('#select-accounts-view').html(html);
+                        });
+                        form.render('select');
+                    }
+                }
+            });
+        });
+    });
+</script>

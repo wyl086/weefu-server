@@ -1,0 +1,79 @@
+{layout name="layout2" /}
+<style>
+    .div-flex {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+    }
+    .image {
+        height: 80px;
+        width: 80px;
+    }
+</style>
+
+<div class="layui-card-body">
+    <!--基本信息-->
+    <div class="layui-form" lay-filter="layuiadmin-form-order" id="layuiadmin-form-order">
+        <input type="hidden" class="id" name="id" value="{$detail.id}">
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">产品来源</label>
+            <div class="div-width">{$detail.source_type_text}</div>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">商品名称:</label>
+            <div class="div-width">{$detail.name}</div>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">商品封面:</label>
+            <div class="div-width"><img src="{$detail.cover_img}" class="image-show image"></div>
+        </div>
+
+        <!-- 价格形式-->
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">价格形式:</label>
+            <div class="div-width">
+                <span>{$detail.price_type_text}</span>
+                <span>{$detail.price_tips}</span>
+            </div>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">商品链接:</label>
+            <div class="div-width">{$detail.url}</div>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">审核状态:</label>
+            <div class="div-width">{$detail.audit_status_text}</div>
+        </div>
+
+        <div class="layui-form-item" style="text-align: center">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary width_160 " id="back">返回</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    layui.use(['form'], function () {
+        var $ = layui.$;
+        //主图放大
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src, 400);
+        });
+
+        $('#back').click(function () {
+            var index=parent.layer.getFrameIndex(window.name); //获取当前窗口的name
+            parent.layer.close(index);
+            parent.layui.table.reload('like-table-lists');
+            return true;
+        });
+
+    });
+</script>

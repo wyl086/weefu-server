@@ -1,0 +1,164 @@
+{layout name="layout1" /}
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" style="border:1px dashed #c4c4c4; margin-bottom: 30px;">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        *设置商城分享标题，分享简介。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form">
+            <div class="layui-tab layui-tab-card">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">H5商城</li>
+                    <li>小程序商城</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <!-- H5 -->
+                    <div class="layui-tab-item layui-show">
+                        <!-- H5分享标题 -->
+                        <div class="layui-form-item" style="margin-bottom:0;">
+                            <label for="h5_share_title" class="layui-form-label">分享标题：</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="h5_share_title" name="h5_share_title"
+                                       value="{$config.h5.h5_share_title}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label"></label>
+                            <div class="layui-input-block">
+                                <div class="layui-form-mid layui-word-aux">H5商城分享页面时，显示的分享标题</div>
+                            </div>
+                        </div>
+                        <!-- H5分享简介 -->
+                        <div class="layui-form-item" style="margin-bottom:0;">
+                            <label for="h5_share_intro" class="layui-form-label">分享简介：</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="h5_share_intro" name="h5_share_intro"
+                                       value="{$config.h5.h5_share_intro}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label"></label>
+                            <div class="layui-input-block">
+                                <div class="layui-form-mid layui-word-aux">H5商城分享页面时，显示的分享简介</div>
+                            </div>
+                        </div>
+                        <!-- H5分享图片 -->
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">分享图片：</label>
+                            <div class="layui-input-inline">
+                                <div class="like-upload-image">
+                                    {if !empty($config.h5.h5_share_image)}
+                                    <div class="upload-image-div">
+                                        <img src="{$config.file_url}{$config.h5.h5_share_image}" alt="img" style="height: 80px;width:auto">
+                                        <input name="h5_share_image" type="hidden" value="{$config.h5.h5_share_image}">
+                                        <div class="del-upload-btn">x</div>
+                                    </div>
+                                    <div class="upload-image-elem" style="display:none;"><a class="add-upload-image h5_share_image"> + 添加图片</a></div>
+                                    {else}
+                                    <div class="upload-image-elem"><a class="add-upload-image h5_share_image"> + 添加图片</a></div>
+                                    {/if}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 小程序 -->
+                    <div class="layui-tab-item">
+                        <!-- 小程序分享标题 -->
+                        <div class="layui-form-item" style="margin-bottom:0;">
+                            <label for="mnp_share_title" class="layui-form-label">分享标题：</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="mnp_share_title" name="mnp_share_title"
+                                       value="{$config.mnp.mnp_share_title}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label"></label>
+                            <div class="layui-input-block">
+                                <div class="layui-form-mid layui-word-aux">小程序商城分享页面时，显示的分享标题</div>
+                            </div>
+                        </div>
+                        <!-- 小程序分享图片 -->
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">分享图片：</label>
+                            <div class="layui-input-inline">
+                                <div class="like-upload-image">
+                                    {if !empty($config.mnp.mnp_share_image)}
+                                    <div class="upload-image-div">
+                                        <img src="{$config.file_url}{$config.mnp.mnp_share_image}" alt="img" style="height: 80px;width:auto">
+                                        <input name="mnp_share_image" type="hidden" value="{$config.mnp.mnp_share_image}">
+                                        <div class="del-upload-btn">x</div>
+                                    </div>
+                                    <div class="upload-image-elem" style="display:none;"><a class="add-upload-image mnp_share_image"> + 添加图片</a></div>
+                                    {else}
+                                    <div class="upload-image-elem"><a class="add-upload-image mnp_share_image"> + 添加图片</a></div>
+                                    {/if}
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <!-- 提交 -->
+                    <div class="layui-form-item" style="margin-top:30px">
+                        <div class="layui-input-block">
+                            <button class="layui-btn layui-bg-blue" lay-submit lay-filter="addSublime">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    layui.use(['table', 'form'], function () {
+        var form = layui.form;
+
+        like.delUpload();
+        $(document).on("click", ".h5_share_image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "h5_share_image",
+                that: $(this)
+            });
+        });
+
+        $(document).on("click", ".mnp_share_image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "mnp_share_image",
+                that: $(this)
+            });
+        });
+
+        // 监听提交
+        form.on('submit(addSublime)', function (data) {
+            like.ajax({
+                url: '{:url("setting.Basic/setShare")}'
+                , data: data.field
+                , type: 'post'
+                , success: function (res) {
+                    if (res.code === 1) {
+                        layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        },function () {
+                            location.href = location.href;
+                        });
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>

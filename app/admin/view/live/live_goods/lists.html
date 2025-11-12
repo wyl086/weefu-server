@@ -1,0 +1,254 @@
+{layout name="layout1" /}
+<style>
+    .layui-table-cell {
+        height: auto;
+        white-space: normal;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>* 商家提交直播商品后，平台审核后，将交由微信再次进行审核；</p>
+                        <p>* 直播商品每天最多可添加500次，删除商品每天最多可删除1000次。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">商家名称:</label>
+                    <div class="layui-input-block">
+                        <select name="shop_id" id="shop_id">
+                            <option value="">全部</option>
+                            {foreach $shop as $val}
+                            <option value="{$val.id}">{$val.name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label for="goods_name" class="layui-form-label">商品名称：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="goods_name" name="goods_name"  placeholder="请输入商品名称"
+                                   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-tab layui-tab-card" lay-filter="tab-all">
+            <ul class="layui-tab-title">
+                <li data-type="all" class="layui-this">全部</li>
+                <li data-type="ing">审核中</li>
+                <li data-type="success">审核通过</li>
+                <li data-type="fail">审核未通过</li>
+            </ul>
+            <div class="layui-tab-item layui-show">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="padding-bottom: 10px;" class="add">
+<!--                            <button class="layui-btn layui-btn-sm layuiadmin-btn layui-btn-primary" data-type="sync">-->
+<!--                                同步商品库-->
+<!--                            </button>-->
+                        </div>
+                        <table id="like-table-lists" lay-filter="like-table-lists"></table>
+                        <script type="text/html" id="operation">
+                            {{#  if(d.sys_audit_status < 1 ){ }}
+                            <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="audit">审核</a>
+                            {{#  } }}
+                            <a class="layui-btn layui-btn-primary layui-btn-sm" lay-event="detail">详情</a>
+                            {{#  if(d.sys_audit_status > 1 ){ }}
+                            <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+                            {{#  } }}
+                        </script>
+                        <!-- 商品信息 -->
+                        <script type="text/html" id="table-goods">
+                            <div class="goods-content">
+                                <div style="text-align: left;">
+                                    <img src="{{ d.cover_img }}" style="height:80px;width: 80px" class="image-show">
+                                    <div class="layui-input-inline ">
+                                        <span class="">{{ d.name }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </script>
+                        <!-- 商品价格 -->
+                        <script type="text/html" id="table-price">
+                            <div class="price-content">
+                                <span>{{ d.price_text }}</span>
+                            </div>
+                        </script>
+                        <!-- 审核状态 -->
+                        <script type="text/html" id="table-audit">
+                            <div class="audit-content">
+                                <span>{{ d.audit_status_text }}</span>
+                                <span>{{ d.audit_remark }}</span>
+                            </div>
+                        </script>
+                        <!-- 商家状态 -->
+                        <script type="text/html" id="table-shop">
+                            <img src="{{d.shop.logo}}" alt="图标" style="width:60px;height:60px;margin-right:5px;">
+                            <div class="layui-inline" style="text-align:left;">
+                                <p>商家名称：{{d.shop.name}}</p>
+                                <p>商家类型：{{d.shop.type_desc}}</p>
+                            </div>
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    layui.use(['table', 'laydate', 'form'], function () {
+        var $ = layui.$
+            , table = layui.table
+            , element = layui.element
+            , form = layui.form
+            , status = 'all';
+
+
+        form.on("submit(search)", function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(clear-search)", function(){
+            $("#goods_name").val("");
+            $("#shop_id").val("");
+            form.render();
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        getList();
+        element.on('tab(tab-all)', function (data) {
+            status = $(this).attr('data-type');
+            getList();
+        });
+
+        function getList() {
+            like.tableLists("#like-table-lists", '{:url("live.LiveGoods/lists")}?status=' + status, [
+                {field: 'goodsId', width: 80, title: 'ID', sort: true, hide: true}
+                ,{field:"storeInfo", title:"商家信息", templet:"#table-shop", width:250}
+                , {field: 'goods_info', title: '商品信息', width: 300, templet:'#table-goods'}
+                , {field: 'price', title: '商品价格', width: 200, align: 'center',templet: '#table-price'}
+                , {field: 'url', title: '商品链接', width: 320, align: 'center'}
+                , {field: 'audit_status', title: '状态', width: 200, align: 'center', templet:'#table-audit'}
+                , {fixed: 'right', title: '操作', width: 150, align: 'center', toolbar: '#operation'}
+            ]);
+        }
+
+        //图片放大
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src, 400);
+        });
+
+        //事件
+        var active = {
+            audit: function (obj) {
+                layer.open({
+                    type: 2
+                    , title: '审核'
+                    , content: '{:url("live.LiveGoods/audit")}?id=' + obj.data.id
+                    , area: ['90%', '90%']
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'addSubmit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field;
+                            console.log(field);
+                            like.ajax({
+                                url: '{:url("live.LiveGoods/audit")}',
+                                data: field,
+                                type: "post",
+                                success: function (res) {
+                                    if (res.code === 1) {
+                                        layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                                        layer.close(index);
+                                        table.reload('like-table-lists');
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            },
+            detail: function (obj) {
+                layer.open({
+                    type: 2
+                    , title: '商品信息'
+                    , content: '{:url("live.LiveGoods/detail")}?id=' + obj.data.id
+                    , area: ['90%', '90%']
+                    , yes: function (index, layero) {
+                    }
+                });
+            },
+            // 同步商品库
+            sync: function () {
+                table.reload('like-table-lists');
+            },
+            // 删除
+            del: function (obj) {
+                layer.confirm('确定要删除商品:' + obj.data.name, function (index) {
+                    like.ajax({
+                        url: '{:url("live.LiveGoods/del")}',
+                        data: {id: obj.data.id},
+                        type: "post",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                                layer.close(index);
+                                obj.del();
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            }
+        };
+
+        // 监听表格右侧工具条
+        table.on('tool(like-table-lists)', function (obj) {
+            var type = obj.event;
+            active[type] ? active[type].call(this, obj) : '';
+        });
+
+        // 绑定点击按钮事件
+        $('.layui-btn.layuiadmin-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+
+    });
+</script>

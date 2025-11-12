@@ -1,0 +1,86 @@
+{layout name="layout2" /}
+<style>
+    .div-flex {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+    }
+    .width-160 {
+        width: 200px;
+    }
+    .layui-table th {
+        text-align: center;
+    }
+    .table-margin{
+        margin-left: 50px;
+        margin-right: 50px;
+        text-align: center;
+    }
+    .image{
+        height:80px;
+        width: 80px;
+    }
+
+    .mt50{
+        margin-left: 50px;
+    }
+
+</style>
+<div class="layui-card-body" >
+    <!--基本信息-->
+    <div class="layui-form" lay-filter="layuiadmin-form-after-sale" id="layuiadmin-form-after-sale" >
+
+        <div class="layui-form-item">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>商品信息</legend>
+            </fieldset>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">商品编号:</label>
+            <div class="width-160">{$detail.goods_id}</div>
+            <label class="layui-form-label ">商品名称:</label>
+            <div class="width-160">{$detail.name}</div>
+            <label class="layui-form-label ">商品图片:</label>
+            <img src="{$detail.image}" class="image-show image" width="60px" height="60px">
+            <label class="layui-form-label ">商品价格:</label>
+            <div class="width-160">￥{$detail.min_price}~￥{$detail.max_price}</div>
+        </div>
+
+        <div class="layui-form-item">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>砍价活动信息</legend>
+            </fieldset>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">分享标题:</label>
+            <div class="width-160">{$detail.share_title}</div>
+            <label class="layui-form-label ">分享简介:</label>
+            <div class="width-160">{$detail.share_intro}</div>
+            <label class="layui-form-label ">有效时间:</label>
+            <div class="width-160">{$detail.time_limit}小时</div>
+        </div>
+
+        <div class="layui-form-item">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>审核信息</legend>
+            </fieldset>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">审核状态:</label>
+            <div class="width-160">{$detail.audit_status}</div>
+            <label class="layui-form-label ">审核备注:</label>
+            <div class="width-160">{$detail.audit_remark}</div>
+        </div>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+
+</script>

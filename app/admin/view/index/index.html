@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{$view_env_name}{$config.name}</title>
+    <link rel="shortcut icon" href="{$storageUrl}{$config.web_favicon}"/>
+    <link rel="stylesheet" href="__PUBLIC__/static/lib/layui/css/layui.css">
+    <link rel="stylesheet" href="__PUBLIC__/static/admin/css/app.css">
+    <script src="__PUBLIC__/static/lib/layui/layui.js"></script>
+    <script src="__PUBLIC__/static/admin/js/app.js"></script>
+</head>
+<body>
+    <!-- 头部区域 -->
+    <div class="layui-header">
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item">
+                <a class="refresh" href="javascript:" title="刷新">
+                   <i class="layui-icon layui-icon-refresh-3"></i>
+                </a>
+            </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item layui-hide-xs">
+                <a class="fullscreen" href="javascript:">
+                    <i class="layui-icon layui-icon-screen-full"></i>
+                </a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="javascript:">
+                    <cite>{$admin_name}（{$role_name}）</cite>
+                <span class="layui-nav-more"></span></a>
+                <dl class="layui-nav-child layui-anim layui-anim-upbit userinfo">
+<!--                    <dd><a lay-id="u-1" href="javascript:" data-url="pages/member/user.html">个人中心<span class="layui-badge-dot"></span></a></dd>-->
+<!--                    <dd><hr></dd>-->
+                    <dd><a href="{:url('login/logout')}" id="logout">退出登录</a></dd>
+                </dl>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 菜单区域 -->
+    <div class="layui-sidebar ">
+        <div class="layui-logo">
+            <img style="height:20px;width: 77px" src="{$storageUrl}{$config.backstage_logo}">
+        </div>
+        <ul class="layui-side-menu">
+            {volist name="menu" id="vo"}
+                <li>
+                    {empty name="vo.sub"}
+                        <a lay-id="{$vo.id}" lay-href="{:url($vo.uri)}" class="active">
+                            <i class="layui-icon {$vo.icon}"></i>
+                            <cite>{$vo.name}</cite>
+                        </a>
+                    {else/}
+                        <a href="javascript:">
+                            <i class="layui-icon {$vo.icon}"></i>
+                            <cite>{$vo.name}</cite>
+                        </a>
+
+                        <dl class="child-menu">
+                            <dt><strong>{$vo.name}</strong></dt>
+                            {volist name="vo.sub" id="second"}
+                                <dd>
+                                    {empty name="second.sub"}
+                                        <a lay-id="{$second.id}" lay-href="{:url($second.uri)}">{$second.name}</a>
+                                    {else /}
+                                        <a class="child-menu-title">
+                                            <i class="layui-icon layui-icon-triangle-d"></i>
+                                            <cite>{$second.name}</cite>
+                                        </a>
+                                        <dl>
+                                            {volist name="second.sub" id="third"}
+                                            <dd><a lay-id="{$third.id}" lay-href="{:url($third.uri)}">{$third.name}</a></dd>
+                                            {/volist}
+                                        </dl>
+                                    {/empty}
+                                </dd>
+                            {/volist}
+                        </dl>
+                    {/empty}
+                </li>
+            {/volist}
+        </ul>
+    </div>
+
+    <!-- 标签区域 -->
+    <div class="lay-pagetabs" id="LAY_app_tabs">
+        <div class="layui-icon lay-tabs-control layui-icon-prev" lay-event="leftPage"></div>
+        <div class="layui-icon lay-tabs-control layui-icon-next" lay-event="rightPage"></div>
+        <div class="layui-icon lay-tabs-control layui-icon-down">
+            <ul class="layui-nav lay-tabs-select" lay-filter="lay-pagetabs-nav">
+                <li class="layui-nav-item" lay-unselect>
+                    <a href="javascript:"><span class="layui-nav-more"></span></a>
+                    <dl class="layui-nav-child layui-anim-fadein11 ">
+                        <dd lay-event="closeThisTabs"><a href="javascript:">关闭当前标签页</a></dd>
+                        <dd lay-event="closeOtherTabs"><a href="javascript:">关闭其它标签页</a></dd>
+                        <dd lay-event="closeAllTabs"><a href="javascript:">关闭全部标签页</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        <div class="layui-tab" lay-unauto lay-allowclose="true" lay-filter="lay-layout-tabs" id="lay-layout-tabs ul">
+            <ul class="layui-tab-title" id="LAY_app_tabsheader">
+                <li lay-id="0" lay-attr="{:url('index/stat')}" class="layui-this">工作台<i class="layui-icon layui-tab-close">ဆ</i></li>
+                
+            </ul>
+        </div>
+    </div>
+
+    <!-- 主体区域 -->
+    <div class="layui-body" id="LAY_app_body">
+        <div lay-id="0" class="lay-tabsbody-item layui-show">
+            <iframe src="{:url('index/stat')}" class="lay-iframe" name="view_frame"></iframe>
+        </div>
+    </div>
+<script>
+   function refreshHighlight(url,id) {
+       console.log(url);
+        $ = layui.jquery;
+
+        $(".layui-nav[lay-filter='lay-pagetabs-nav'] a").each(function (ind, val) {
+            if($(this).attr('href') === url){
+                $('.layui-nav dd').removeClass('layui-this');
+
+                $(this).parent('dd').addClass('layui-this');
+            console.log(id);
+
+            }else{
+                var html = '<li lay-id="'+id+'" lay-attr="'+url+'" class="layui-this">工作台2<i class="layui-icon layui-tab-close">ဆ</i></li>';
+                $('.lay-layout-tabs ul').append(html);
+            console.log(html);
+            }
+        })
+
+    }
+
+</script>
+</body>
+</html>

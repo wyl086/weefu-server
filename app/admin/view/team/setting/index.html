@@ -1,0 +1,61 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card layui-form">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-card-body">
+                <div class="layui-collapse like-layui-collapse" style="border:1px dashed #c4c4c4">
+                    <div class="layui-colla-item">
+                        <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                        <div class="layui-colla-content layui-show">
+                            <p>*设置参与拼团活动的商品。</p>
+                            <p>*用户退出拼团，需商家后台审核通过之后，方可原路退回支付金额</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 内容 -->
+        <div class="layui-card-body">
+            <div class="layui-form-item" style="margin-bottom: 0;">
+                <label class="layui-form-label" style="width:110px;"><font color="red">*</font>系统自动成团：</label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="automatic" value="1" title="开始" {if $automatic==1}checked{/if}>
+                    <input type="radio" name="automatic" value="0" title="关闭" {if $automatic==0}checked{/if}>
+                    <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">开启系统自动成团后，成团有效期结束后自动成团</div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="addSubmit">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form;
+
+        form.on('submit(addSubmit)', function(data){
+            like.ajax({
+                url:'{:url("team.Setting/set")}',
+                data: data.field,
+                type: "post",
+                success:function(res) {
+                    if(res.code === 1) {
+                        layui.layer.msg(res.msg, { offset:'15px', icon:1, time:1000 });
+                        location.reload();
+                    } else {
+                        layui.layer.msg(res.msg, { offset:'15px', icon:2, time:1000 });
+                    }
+                }
+            });
+            return false;
+        });
+
+    })
+</script>

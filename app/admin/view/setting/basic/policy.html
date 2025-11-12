@@ -1,0 +1,123 @@
+{layout name="layout1" /}
+
+<link href="__PUBLIC__/static/lib/layui/layeditor/layedit.css" rel="stylesheet"/>
+<script src="__PUBLIC__/static/lib/layui/layeditor/index.js"></script>
+<script src="__PUBLIC__/static/lib/layui/layeditor/ace/ace.js"></script>
+
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*会员注册时的服务协议，在登录注册页面显示。</p>
+                        <p>*会员隐私政策协议，在登录注册页面显示。</p>
+                        <p>*售后保障协议，在退款申请页面显示。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form" lay-filter="">
+            <div class="layui-tab layui-tab-card">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">服务协议</li>
+                    <li>隐私政策</li>
+                    <li>售后保障</li>
+                    <li>用户注销协议</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <label class="layui-form-label" style="white-space: nowrap;">内容：</label>
+                        <div class="layui-input-block">
+                            <textarea name="service" id="service" lay-verify="content" class="field-content">{$config.service}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="layui-tab-item">
+                        <label class="layui-form-label" style="white-space: nowrap;">内容：</label>
+                        <div class="layui-input-block">
+                            <textarea name="privacy" id="privacy" lay-verify="content" class="field-content">{$config.privacy}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="layui-tab-item">
+                        <label class="layui-form-label" style="white-space: nowrap;">内容：</label>
+                        <div class="layui-input-block">
+                            <textarea name="after_sale" id="after_sale" lay-verify="content" class="field-content">{$config.after_sale}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="layui-tab-item">
+                        <label class="layui-form-label" style="white-space: nowrap;">内容：</label>
+                        <div class="layui-input-block">
+                            <textarea name="user_delete" id="user_delete" lay-verify="content" class="field-content">{$config.user_delete}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn {$view_theme_color}" lay-submit lay-filter="addSubmit">确认</button>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.config({
+        base: "/static/lib/"
+    }).extend({
+        likeedit: "likeedit/likeedit"
+    }).use(["form", "layEditor"], function () {
+        var $ = layui.$
+            , form = layui.form
+            , layEditor = layui.layEditor;
+
+        //富文本
+        layEditor.set({
+            uploadImage: {
+                url: '{:url("file/lists")}?type=10'
+            },
+        })
+        var likeedit_service = layEditor.build('service');
+        var likeedit_privacy = layEditor.build('privacy');
+        var likeedit_after_sale = layEditor.build('after_sale');
+        var likeedit_user_delete = layEditor.build('user_delete');
+        form.verify({
+            content: function () {
+                layEditor.sync(likeedit_service);
+                layEditor.sync(likeedit_privacy);
+                layEditor.sync(likeedit_after_sale);
+                layEditor.sync(likeedit_user_delete);
+            }
+        });
+
+        form.on("submit(addSubmit)", function(data){
+            data.field['service'] = layEditor.getContent(likeedit_service);
+            data.field['privacy'] = layEditor.getContent(likeedit_privacy);
+            data.field['after_sale'] = layEditor.getContent(likeedit_after_sale);
+            data.field['user_delete'] = layEditor.getContent(likeedit_user_delete);
+            like.ajax({
+                url: "{:url('setting.basic/setPolicy')}",
+                data: data.field,
+                type: "POST",
+                success:function(res) {
+                    if(res.code === 1) {
+                        layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1500
+                        },function () {
+                            location.href = location.href;
+                        });
+                    }
+                }
+            });
+        });
+    });
+</script>

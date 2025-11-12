@@ -1,0 +1,56 @@
+{layout name="layout2" /}
+
+<div class="layui-card layui-form" style="padding: 20px 30px 0 0;">
+    <div class="layui-card-body">
+        <input type="hidden" name="id" value="{$info.id}">
+        <!--连续签到-->
+        <div class="layui-form-item">
+            <label class="layui-form-label">连续签到：</label>
+            <div class="layui-input-inline">
+                <input type="number" name="days" value="{$info.days}" lay-verify="required" lay-verType="tips" placeholder="请输入天数" min="0"
+                       autocomplete="off" class="layui-input">
+            </div>
+                <label class="layui-form-mid">天</label>
+        </div>
+        <!--签到奖励- 赠送积分-->
+        <div class="layui-form-item">
+            <label class="layui-form-label">签到奖励：</label>
+            <div class="layui-input-inline " style="margin-right: 0px;width: 110px">
+                <input type="checkbox" name="integral_status" title="赠送积分" lay-skin="primary" {if condition="$info['integral_status'] eq 1" }checked{/if}>
+            </div>
+            <div class="layui-input-inline">
+                <input type="number" name="integral" value="{$info.integral}" lay-verType="tips" placeholder="请输入积分" min="0"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-input-inline">
+                <label class="layui-form-mid">积分</label>
+            </div>
+        </div>
+        <!--签到奖励- 赠送成长值-->
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-inline" style="margin-right: 0px;width: 110px">
+                <input type="checkbox" name="growth_status"  title="赠送成长值" lay-skin="primary" {if condition="$info['growth_status'] eq 1" }checked{/if}>
+            </div>
+            <div class="layui-input-inline">
+                <input type="number" name="growth" value="{$info.growth}" lay-verify="" lay-verType="tips" placeholder="请输入成长值" min="0"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-input-inline">
+                <label class="layui-form-mid">成长值</label>
+            </div>
+        </div>
+        <div class="layui-form-item layui-hide">
+            <input type="button" lay-submit lay-filter="edit-sign_daily-submit" id="edit-sign_daily-submit" value="确认">
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['table'], function () {
+        var $ = layui.$
+            , form = layui.form;
+
+
+    });
+</script>

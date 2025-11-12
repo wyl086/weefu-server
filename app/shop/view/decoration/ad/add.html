@@ -1,0 +1,114 @@
+{layout name="layout2" /}
+<style>
+  .layui-form-label {
+    color: #6a6f6c;
+    width: 140px;
+  }
+  .layui-input-block{
+    margin-left:170px;
+  }
+  .reqRed::before {
+    content: '*';
+    color: red;
+  }
+</style>
+<div class="layui-form" lay-filter="layuiadmin-form-category" id="layuiadmin-form-category" style="padding: 20px 30px 0 0;">
+
+  <div class="layui-form-item">
+    <label class="layui-form-label reqRed">广告标题：</label>
+    <div class="layui-input-inline">
+      <input type="text" name="title" lay-verify="required" lay-verType="tips" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label reqRed" >广告位置</label>
+    <div class="layui-input-inline">
+      <select name="place" lay-verify="required">
+        <option value=""></option>
+        {foreach $placeList as $key => $value}
+        <option value="{$key}">{$value}</option>
+        {/foreach}
+      </select>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label reqRed">终端：</label>
+    <div class="layui-input-inline">
+      {foreach $terminalList as $key => $value}
+      <input type="radio" name="terminal" value="{$key}" title="{$value}">
+      {/foreach}
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label reqRed">广告图片：</label>
+    <div class="layui-input-inline">
+      <div class="like-upload-image">
+        <div class="upload-image-elem"><a class="add-upload-image"> + 添加图片</a></div>
+      </div>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label"></label>
+    <span style="color: #a3a3a3;font-size: 9px">建议尺寸：宽750像素*高950像素的jpg，jpeg，png图片</span>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">广告链接：</label>
+    <div class="layui-input-inline">
+      <input type="text" name="link" lay-verType="tips" autocomplete="off" id="link" class="layui-input">
+    </div>
+    <div class="layui-input-inline">
+      <button type="button" class="layui-btn layui-bg-blue" id="select-ad-link">选择链接</button>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">排序：</label>
+    <div class="layui-input-inline">
+      <input type="number" name="sort" value="255" class="layui-input">
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">状态：</label>
+    <div class="layui-input-inline">
+      <input type="radio" name="status" value="1" title="开启" checked>
+      <input type="radio" name="status" value="0" title="关闭">
+    </div>
+  </div>
+
+  <div class="layui-form-item layui-hide">
+    <input type="button" lay-submit lay-filter="add-submit" id="add-submit" value="确认">
+  </div>
+</div>
+<script>
+  layui.config({
+    version:"{$front_version}",
+    base: '/static/lib' //静态资源所在路径
+  }).use(['form'], function(){
+    var $ = layui.$ ,form = layui.form;
+
+    //上传图片
+    like.delUpload();
+    $(document).on("click", ".add-upload-image", function () {
+      like.imageUpload({
+        limit: 1,
+        field: "image",
+        that: $(this),
+        content: '/shop/file/lists?type=10'
+      });
+    })
+    // 选择链接
+    $(document).on('click', '#select-ad-link', function () {
+      var link = $('#link').val();
+      parent.layer.open({
+        type: 2,
+        area: [ '90%', '90%' ],
+        'title': "选择链接",
+        content: '{:url("decoration.ad/select_link")}?link=' + link,
+      });
+    });
+  })
+</script>

@@ -1,0 +1,228 @@
+{layout name="layout1" /}
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>* 平台可以查看商家发布的优惠券</p>
+                    </div>
+                </div>
+            </div>
+            <!--搜索模块-->
+            <div class="layui-form" style="margin-top: 30px;">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">商家名称：</label>
+                        <div class="layui-input-inline" style="width: 160px;">
+                            <input type="text" id="shop_name" name="shop_name" placeholder="请输入商家名称" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">优惠券名称：</label>
+                        <div class="layui-input-inline" style="width: 160px;">
+                            <input type="text" id="name" name="name" placeholder="请输入优惠券名称" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">领取方式：</label>
+                        <div class="layui-input-inline" style="width: 160px;">
+                            <select name="get_type" id="get_type">
+                                <option value="">全部</option>
+                                <option value="1">直接领取</option>
+                                <option value="2">商家赠送</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">创建时间:</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input time" id="start_time" name="start_time"  autocomplete="off">
+                        </div>
+                        <div class="layui-input-inline" style="margin-right: 5px;width: 10px;">
+                            <label class="layui-form-mid">-</label>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input time" id="end_time" name="end_time"  autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layui-btn-sm layuiadmin-btn-coupon {$view_theme_color}" lay-submit lay-filter="coupon-search">查询</button>
+                        <button class="layui-btn layui-btn-sm layuiadmin-btn-coupon layui-btn-primary }" lay-submit lay-filter="coupon-clear-search">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--选项卡-->
+        <div class="layui-tab layui-tab-card" lay-filter="tab-all">
+
+            <ul class="layui-tab-title">
+                <li data-type='1' class="layui-this">上架中</li>
+                <li data-type='0' >已下架</li>
+            </ul>
+
+            <div class="layui-tab-item layui-show">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <!--                        动态表格-->
+                        <table id="coupon-lists" lay-filter="coupon-lists"></table>
+                        <!--                        行工具模板 功能按钮-->
+                        <script type="text/html" id="coupon-operation">
+                            <a class="layui-btn layui-btn-primary layui-btn-sm" lay-event="detail">详情</a>
+                            <a class="layui-btn layui-btn-primary layui-btn-sm" lay-event="record">发放记录</a>
+                        </script>
+                        <script type="text/html" id="shop-info">
+                            <img src="{{d.logo}}" style="height:80px;width: 80px;margin-right: 10px;" class="image-show">
+                            <div class="layui-input-inline" style="text-align:left;width: 180px">
+                                <p>商家编号：{{d.shop_id}}</p>
+                                <p style="width: 180px;text-overflow:ellipsis;overflow: hidden">商家名称：{{d.shop_name}}</p>
+                                <p>商家类型：{{d.shop_type_desc}}</p>
+                            </div>
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<style>
+    .layui-table-cell {
+        height: auto;
+    }
+    .layui-form-label{
+        width: 86px;
+    }
+</style>
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['table','laydate','form'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,table = layui.table
+            ,laydate = layui.laydate
+            ,element = layui.element;
+
+        // 监听行工具栏按钮
+        $('.layui-btn.layuiadmin-btn-coupon').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        //日期时间范围
+        laydate.render({
+            elem: '#start_time'
+            , type: 'datetime'
+            ,theme: '#1E9FFF'
+        });
+
+        laydate.render({
+            elem: '#end_time'
+            , type: 'datetime'
+            ,theme: '#1E9FFF'
+        });
+
+        //监听搜索
+        form.on('submit(coupon-search)', function(data){
+            var field = data.field;
+            //执行重载
+            table.reload('coupon-lists', {
+                where: field,
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+        });
+        //清空查询
+        form.on('submit(coupon-clear-search)', function(){
+            $('#name').val('');  //清空输入框
+            $('#get_type').val('');
+            $('#start_time').val('');
+            $('#end_time').val('');
+            form.render('select');
+            //刷新列表
+            table.reload('coupon-lists', {
+                where: [],
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+        });
+        //获取列表
+        getList('1')
+        //切换列表
+        element.on('tab(tab-all)', function (data) {
+            var type = $(this).attr('data-type');
+            getList(type)
+        });
+
+        //监听工具条
+        table.on('tool(coupon-lists)', function(obj){
+            var id = obj.data.id;
+            if(obj.event === 'detail'){
+                layer.open({
+                    type: 2
+                    ,title: '优惠券详情'
+                    ,content: '{:url("coupon.shop_coupon/detail")}?id='+id
+                    ,area: ['90%', '90%']
+                })
+            }
+            //发放记录
+            if(obj.event === 'record'){
+                layer.open({
+                    type: 2
+                    ,title: '发放记录'
+                    ,content: '{:url("coupon.shop_coupon/record")}?id='+id
+                    ,area: ['90%', '90%']
+                })
+            }
+        });
+
+        function getList(type) {
+            var cols  = [
+                {align: 'center',width:280,title: '商家信息', templet: '#shop-info'}
+                ,{field: 'name',align: 'center',width:200,title: '优惠券名称'}
+                ,{field: 'use_goods_type_desc',align: 'center',width:120, title: '使用场景'}
+                ,{field: 'condition_type_desc',align: 'center',width:220, title: '优惠金额'}
+                ,{field: 'send_total_type_desc',align: 'center',width:320, title: '已领取/剩余'}
+                ,{field: 'get_type_desc',align: 'center',width:180,title: '领取方式'}
+                ,{field: 'statusDesc',align: 'center',width:180,title: '状态'}
+                ,{field: 'send_time',align: 'center',width: 320, align: 'center',title:'发放时间'}
+                ,{field: 'use_time_desc',align: 'center',width:320, title:'用券时间'}
+                ,{field: 'create_time',align: 'center',width:160, title:'创建时间'}
+                ,{fixed: 'right', title: '操作',width:360, align: 'center', toolbar: '#coupon-operation'}
+            ];
+
+            table.render({
+                id:'coupon-lists'
+                ,elem: '#coupon-lists'
+                ,url: '{:url("coupon.shop_coupon/lists")}?type='+type  //模拟接口
+                ,cols: [cols]
+                ,page:true
+                ,text: {none: '暂无数据！'}
+                ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
+                    return {
+                        "code":res.code,
+                        "msg":res.msg,
+                        "count": res.data.count, //解析数据长度
+                        "data": res.data.list, //解析数据列表
+                    };
+                },
+                response: {
+                    statusCode: 1
+                }
+                ,done: function(res, curr, count){
+                    // 解决操作栏因为内容过多换行问题
+                    $(".layui-table-main tr").each(function (index, val) {
+                        $($(".layui-table-fixed-l .layui-table-body tbody tr")[index]).height($(val).height());
+                        $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height());
+                    });
+                }
+            });
+        }
+
+    });
+</script>

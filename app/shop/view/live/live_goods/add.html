@@ -1,0 +1,188 @@
+{layout name="layout2" /}
+<style>
+    .layui-form-label {
+        color: #6a6f6c;
+        width: 100px;
+    }
+    .layui-input-block {
+        margin-left: 130px;
+    }
+    .tips {
+        color: red;
+    }
+    .unit-tips {
+        float: left;
+        display: block;
+        padding: 9px 0 !important;
+        line-height: 20px;
+        margin-right: 10px;
+    }
+    .layui-form-mid.layui-word-aux {
+        width: 392px;
+    }
+    .mintop {
+        padding-top: -350px;
+        position: relative;
+        top: -40px;
+    }
+    .one_price {
+        margin-bottom: 11px !important;
+    }
+    .input_width {
+        width: 40% !important;
+    }
+</style>
+<div class="layui-form" lay-filter="layuiadmin-form-coupon" id="layuiadmin-form-coupon" style="padding: 20px 30px 0 0;">
+
+    <!-- 产品来源 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label"><font color="red">*</font>产品来源：</label>
+        <input type="hidden" name="source_id" id="source_id" value="0">
+        <div class="layui-input-inline input_width">
+            <input type="radio" name="source_type" value="0" title="商品库" checked>
+        </div>
+    </div>
+
+    <!-- 选择商品 -->
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <a class="layui-btn layui-btn-normal select-goods">选择商品</a>
+        </div>
+    </div>
+    <!-- 商品名称 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label"><font color="red">*</font>商品名称：</label>
+        <div class="layui-input-inline input_width">
+            <input type="text" id="goods_name" name="name"
+                   class="layui-input" autocomplete="off" lay-verType="tips" lay-verify="required">
+        </div>
+    </div>
+
+    <!-- 商品封面 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label"><font color="red">*</font>商品封面：</label>
+        <div class="layui-input-block">
+            <div class="like-upload-image " switch-tab="0" lay-verType="tips">
+                <div class="upload-image-elem"><a class="add-upload-image upload-cover-img"> + 添加</a></div>
+            </div>
+            <div class="layui-form-mid layui-word-aux">建议尺寸：200像素 * 200像素，图片尺寸不能超过300像素 * 300像素。</div>
+        </div>
+    </div>
+
+    <!-- 价格形式-->
+    <div class="layui-form-item">
+        <label class="layui-form-label"><span class="tips">*</span>价格形式：</label>
+        <!--一口价 -->
+        <div class="layui-form-item mintop one_price">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-inline" style="margin-right: 0px;width: 120px;">
+                <input type="radio" name="price_type" value="1" title="一口价" checked>
+            </div>
+            <div class="unit-tips">价格</div>
+            <div class="layui-input-inline" style="width: 110px">
+                <input type="number" name="price" id="price" class="layui-input" min="0">
+            </div>
+            <div class="unit-tips">元</div>
+        </div>
+
+        <!-- 价格区间-->
+        <label class="layui-form-label"></label>
+        <div class="mintop">
+            <div class="layui-input-inline" style="margin-right: 0px;width: 120px;">
+                <input type="radio" name="price_type" value="2" title="价格区间">
+            </div>
+            <div class="unit-tips">价格</div>
+            <div class="layui-input-inline" style="width: 110px">
+                <input type="number" name="section_price_start" class="layui-input " autocomplete="off" min="0">
+            </div>
+            <div class="unit-tips">元&nbsp;&nbsp;&nbsp;-</div>
+            <div class="layui-input-inline" style="width: 110px">
+                <input type="number" name="section_price_end" class="layui-input " autocomplete="off" min="0">
+            </div>
+            <div class="unit-tips">元</div>
+        </div>
+
+        <!--显示折扣价 -->
+        <div class="layui-form-item mintop" style="padding-top: 10px">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-inline" style="margin-right: 0px;width: 120px;">
+                <input type="radio" name="price_type" value="3" title="显示折扣价">
+            </div>
+            <div class="unit-tips">原价</div>
+            <div class="layui-input-inline" style="width: 110px">
+                <input type="number" name="discount_price_start" class="layui-input " autocomplete="off" min="0">
+            </div>
+            <div class="unit-tips">元&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <div class="unit-tips">现价</div>
+            <div class="layui-input-inline" style="width: 110px">
+                <input type="number" name="discount_price_end" class="layui-input " autocomplete="off" min="0">
+            </div>
+            <div class="unit-tips">元</div>
+        </div>
+    </div>
+
+    <!-- 商品链接 -->
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="margin-top:-15px;"><font color="red">*</font>商品链接：</label>
+        <div class="layui-input-inline input_width" style="margin-top:-15px;">
+            <input type="text" id="url" name="url"
+                   class="layui-input" autocomplete="off" lay-verType="tips" lay-verify="required">
+            <div class="layui-form-mid " style="color: #999;">
+                请确保小程序页面路径可被访问，例如：pages/goods_details/goods_details?id=goods_id
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="addSubmit" id="addSubmit" value="确认">
+    </div>
+</div>
+
+<script>
+    layui.use(['table', 'form'], function () {
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table;
+
+        // 选择商品
+        $(document).on('click', '.select-goods', function () {
+            layer.open({
+                type: 2
+                , title: '选择商品'
+                , content: '{:url("common/selectGoods")}'
+                , area: ['90%', '90%']
+                , btn: ['确认', '取消']
+                , yes: function (index, layero) {
+                    var data = window["layui-layer-iframe" + index].callbackdata();
+                    data.forEach(function (item, index) {
+                        $('.del-upload-btn').parent().remove()
+                        $('#goods_name').val(item.name);
+                        $('imput[name="price_type"]:eq(0)').attr('checked', true);
+                        $('#price').val(item.min_price);
+                        $('#url').val('pages/goods_details/goods_details?id=' + item.id);
+                        var template  = '<div class="upload-image-div">';
+                        template += '<img src="'+item.image+'" alt="img">';
+                        template += '<input type="hidden" name="cover_img" value="'+item.image+'">';
+                        template += '<div class="del-upload-btn">x</div>';
+                        $('.upload-image-elem').parent().before(template);
+                        $('.upload-image-elem').hide();
+                        $('#source_id').val(item.id);
+                    });
+                }
+            })
+        });
+
+
+        like.delUpload();
+        // 直播背景
+        $(document).on("click", ".upload-cover-img", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "cover_img",
+                that: $(this),
+                content: '/shop/file/lists?type=10',
+            });
+        });
+
+    });
+</script>

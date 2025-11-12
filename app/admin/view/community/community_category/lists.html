@@ -1,0 +1,191 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*可对社区文章分类管理，分类有关联话题则不允许删除。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="name" class="layui-form-label">分类名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="name" name="name" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layEvent" lay-event="add">新增分类</button>
+
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+            <script type="text/html" id="table-operation">
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+            </script>
+            <script type="text/html" id="showTpl">
+                <input type="checkbox" lay-filter="switch-show" data-id={{d.id}} lay-skin="switch"
+                       lay-text="显示|隐藏" {{# if(d.is_show==1){ }} checked {{# } }}/>
+            </script>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form"], function(){
+        var table   = layui.table;
+        var form   = layui.form;
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {field:"name",  align:"center", title:"分类名称"}
+            ,{field:"is_show", align:"center", title:"状态",  templet: "#showTpl"}
+            ,{field:"sort", align:"center", title:"排序"}
+            ,{field:"create_time",  align:"center", title:"创建时间"}
+            ,{title:"操作", align:"center", fixed:"right", toolbar:"#table-operation"}
+        ]);
+
+        var active = {
+            add: function() {
+                layer.open({
+                    type: 2
+                    ,title: "新增分类"
+                    ,content: "{:url('community.CommunityCategory/add')}"
+                    ,area: ["60%", "60%"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            like.ajax({
+                                url: "{:url('community.CommunityCategory/add')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            edit: function(obj) {
+                layer.open({
+                    type: 2
+                    ,title: "编辑分类"
+                    ,content: "{:url('community.CommunityCategory/edit')}?id=" + obj.data.id
+                    ,area: ["60%", "60%"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            data.field['id'] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('community.CommunityCategory/edit')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            del: function(obj) {
+                var cateName =  "<span style='color: red'>"+obj.data.name+"</span>";
+                layer.confirm("确定删除分类："+cateName, function(index) {
+                    like.ajax({
+                        url: "{:url('community.CommunityCategory/del')}",
+                        data: {id: obj.data.id},
+                        type: "POST",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                                layer.close(index);
+                                obj.del();
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            }
+        };
+        like.eventClick(active);
+
+
+        form.on("submit(search)", function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        form.on("submit(clear-search)", function(){
+            $("#name").val("");
+            form.render("select");
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        // 状态切换
+        form.on('switch(switch-show)', function (obj) {
+            var id = obj.elem.attributes['data-id'].nodeValue;
+            var show = 0;
+            if (obj.elem.checked) {
+                show = 1;
+            }
+            var data = {is_show: show, id: id};
+            like.ajax({
+                url: '{:url("community.CommunityCategory/status")}',
+                data: data,
+                type: "post",
+                success: function (res) {
+                    if (res.code === 1) {
+                        layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                    }
+                }
+            });
+        });
+
+    })
+</script>

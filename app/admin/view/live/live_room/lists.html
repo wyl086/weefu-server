@@ -1,0 +1,265 @@
+{layout name="layout1" /}
+<style>
+    .layui-table-cell{
+        height:auto;
+        overflow:hidden;
+        text-overflow:inherit;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>* 商家提交直播间后，平台审核通过之后才可开始直播</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">商家名称:</label>
+                    <div class="layui-input-block">
+                        <select name="shop_id" id="shop_id">
+                            <option value="">全部</option>
+                            {foreach $shop as $val}
+                            <option value="{$val.id}">{$val.name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">直播状态:</label>
+                    <div class="layui-input-block">
+                        <select name="live_status" id="live_status">
+                            <option value="">全部</option>
+                            {foreach $live_status as $item => $val}
+                            <option value="{$item}">{$val}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-row">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开播时间:</label>
+                        <div class="layui-input-inline">
+                            <div class="layui-input-inline">
+                                <input type="text" name="start_time" class="layui-input" id="start_time"
+                                       placeholder="" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="layui-input-inline" style="margin-right: 5px;width: 20px;">
+                            <label class="layui-form-mid">至</label>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" name="end_time" class="layui-input" id="end_time"
+                                   placeholder="" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                        <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-tab layui-tab-card" lay-filter="tab-all">
+            <ul class="layui-tab-title">
+                <li data-type="" class="layui-this">全部</li>
+                <li data-type="0">待审核</li>
+                <li data-type="1">审核通过</li>
+                <li data-type="2">审核未通过</li>
+            </ul>
+            <div class="layui-tab-item layui-show">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div style="padding-bottom: 10px;">
+<!--                            <button class="layui-btn layui-btn-sm layuiadmin-btn layui-btn-primary" data-type="sync">-->
+<!--                                同步直播间-->
+<!--                            </button>-->
+                        </div>
+                        <table id="like-table-lists" lay-filter="like-table-lists"></table>
+                        <script type="text/html" id="operation">
+                            <a class="layui-btn layui-btn-primary layui-btn-sm" lay-event="detail">详情</a>
+                            {{#  if(d.audit_status == 0 ){ }}
+                            <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="audit">审核</a>
+                            {{#  } }}
+                            <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="recommend">推荐直播间</a>
+                        </script>
+
+                        <!-- 直播间信息 -->
+                        <script type="text/html" id="table-anchor">
+                            <img src="{{ d.feeds_img }}" style="height:80px;width: 80px" class="image-show">
+                            <div class="layui-input-inline" style="text-align: left;">
+                                <p >{{ d.name }}</p>
+                                <p >主播：{{ d.anchor_name }}</p>
+                            </div>
+                        </script>
+
+                        <script type="text/html" id="table-shop">
+                            <img src="{{d.shop.logo}}" alt="图标" style="width:60px;height:60px;margin-right:5px;">
+                            <div class="layui-inline" style="text-align:left;">
+                                <p>商家名称：{{d.shop.name}}</p>
+                                <p>商家类型：{{d.shop.type_desc}}</p>
+                            </div>
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(['table', 'form', 'laydate', 'element'], function () {
+        var $ = layui.$
+            , table = layui.table
+            , laydate = layui.laydate
+            , element = layui.element
+            , form = layui.form
+            , status = -1;
+
+        //日期时间范围
+        laydate.render({
+            elem: '#start_time'
+            , type: 'datetime'
+            , theme: '#1E9FFF'
+        });
+
+        laydate.render({
+            elem: '#end_time'
+            , type: 'datetime'
+            , theme: '#1E9FFF'
+        });
+
+        form.on("submit(search)", function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(clear-search)", function(){
+            $("#shop_id").val("");
+            $("#live_status").val("");
+            $("#start_time").val("");
+            $("#end_time").val("");
+            form.render();
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        getList();
+        element.on('tab(tab-all)', function (data) {
+            status = $(this).attr('data-type');
+            getList();
+        });
+
+        function getList() {
+            like.tableLists("#like-table-lists", '{:url("live.LiveRoom/lists")}?status=' + status, [
+                {field: 'id', title: 'ID', sort: true, hide: true}
+                ,{field:"storeInfo", title:"商家信息", templet:"#table-shop", width:250}
+                , {field: 'live_time_text', title: '开播时间', align: 'center', width:250}
+                , {field: 'anchor', title: '直播间信息', align: 'center', templet:'#table-anchor', width:300}
+                , {field: 'audit_status_text', title: '审核状态', align: 'center', width:120}
+                , {field: 'live_status_text', title: '直播状态', align: 'center', width:120}
+                , {field: 'goods_num', title: '商品数量', align: 'center', width:120}
+                , {field: 'sort', title: '推荐值', align: 'center', width:120}
+                , {fixed: 'right', title: '操作', align: 'center', toolbar: '#operation', width:250}
+            ]);
+        }
+
+        //事件
+        var active = {
+            audit: function (obj) {
+                layer.open({
+                    type: 2
+                    , title: '审核'
+                    , content: '{:url("live.LiveRoom/audit")}?id=' + obj.data.id
+                    , area: ['90%', '90%']
+                    , yes: function (index, layero) {
+                    }
+                });
+            },
+            detail: function (obj) {
+                layer.open({
+                    type: 2
+                    , title: '直播间信息'
+                    , content: '{:url("live.LiveRoom/detail")}?id=' + obj.data.id
+                    , area: ['90%', '90%']
+                    , yes: function (index, layero) {
+                    }
+                });
+            },
+            recommend: function (obj) {
+                layer.open({
+                    type: 2
+                    , title: '推荐直播间'
+                    , content: '{:url("live.LiveRoom/recommend")}?id=' + obj.data.id
+                    , area: ['40%', '40%']
+                    , btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        console.log(obj.id)
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'addSubmit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field;
+                            like.ajax({
+                                url: '{:url("live.LiveRoom/recommend")}',
+                                data: field,
+                                type: "post",
+                                success: function (res) {
+                                    if (res.code === 1) {
+                                        layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                                        layer.close(index);
+                                        table.reload('like-table-lists');
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            },
+            // 同步直播间
+            sync: function () {
+                table.reload('like-table-lists');
+            },
+        };
+
+        // 监听表格右侧工具条
+        table.on('tool(like-table-lists)', function (obj) {
+            var type = obj.event;
+            active[type] ? active[type].call(this, obj) : '';
+        });
+
+        // 绑定点击按钮事件
+        $('.layui-btn.layuiadmin-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        // 图片
+        $(document).on('click', '.image-show', function () {
+            var src = $(this).attr('src');
+            like.showImg(src, 400);
+        });
+
+    });
+</script>

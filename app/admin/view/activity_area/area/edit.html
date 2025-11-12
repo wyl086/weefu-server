@@ -1,0 +1,80 @@
+{layout name="layout2" /}
+<style>
+    .reqRed::before {
+        content: '*';
+        color: red;
+        margin-right: 5px;
+    }
+    .layui-form-label {
+        width: 120px;
+    }
+</style>
+<div class="layui-form" lay-filter="layuiadmin-form" id="layuiadmin-form" style="padding: 20px 30px 0 0;">
+    <input type="hidden" name="id" value="{$detail.id}" >
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">专区名称：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" value="{$detail.name}" lay-vertype="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <!--活动专区封面图-->
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">封面图：</label>
+        <div class="layui-input-inline">
+            {if $detail.image}
+            <div class="upload-image-div">
+                <img src="{$detail.image}" alt="img">
+                <input type="hidden" name="image" value="{$detail.image}">
+                <div class="del-upload-btn">x</div>
+            </div>
+            <div class="upload-image-elem" style="display:none;"><a class="add-upload-image" id="image"> + 添加图片</a></div>
+            {else}
+            <div class="upload-image-elem"><a class="add-upload-image" id="image"> + 添加图片</a></div>
+            {/if}
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <label class=" layui-form-mid layui-word-aux">活动专区封面图。建议尺寸：宽100px*高100px，jpg，jpeg，png格式</label>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">专区描述：</label>
+        <div class="layui-input-inline">
+            <textarea name="synopsis" lay-verify="required"  class="layui-textarea">{$detail.synopsis}</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">专区状态：</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" lay-filter="disable" name="status" lay-skin="switch" lay-text="显示|隐藏" {if ($detail.status == 1)}checked{/if} />
+            <!--            <div class=" layui-form-mid layui-word-aux">显示或者隐藏商品栏目</div>-->
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="edit-submit" id="edit-submit" value="确认">
+    </div>
+</div>
+<script>
+    layui.use(['form'], function(){
+        var $ = layui.$
+            ,form = layui.form;
+
+        like.delUpload();
+        $(document).on("click", ".add-upload-image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "image",
+                that: $(this)
+            });
+        });
+
+        //删除图片
+        $(document).on('click', '.pay-img-del-x', function () {
+            $(this).parent().siblings('input').val('');
+            $(this).parent().siblings().css('display','block');
+            $(this).parent().remove();
+        });
+    })
+</script>

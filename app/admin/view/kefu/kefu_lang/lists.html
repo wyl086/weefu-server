@@ -1,0 +1,139 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 操作提示 -->
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*添加在线客服语术。方便客服快捷回复</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layEvent" lay-event="add">新增话术</button>
+
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+            <script type="text/html" id="table-operation">
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+            </script>
+            <script type="text/html" id="statusTpl">
+                <input type="checkbox" lay-filter="switch-disable" data-id={{d.id}} lay-skin="switch"
+                       lay-text="开启|关闭" {{# if(d.disable==1){ }} checked {{# } }}/>
+            </script>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form"], function () {
+        var table = layui.table;
+        var form = layui.form;
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {field: "id", width: 60, title: "ID"}
+            , {field: "title", align: "center", title: "标题"}
+            , {field: "content", align: "center", title: "内容"}
+            , {field: "sort", align: "center", title: "排序"}
+            , {field: "create_time", align: "center", title: "创建时间"}
+            , {title: "操作", align: "center", fixed: "right", toolbar: "#table-operation"}
+        ]);
+
+        var active = {
+            add: function () {
+                layer.open({
+                    type: 2
+                    , title: "新增话术"
+                    , content: "{:url('kefu.KefuLang/add')}"
+                    , area: ["90%", "90%"]
+                    , btn: ["确定", "取消"]
+                    , yes: function (index, layero) {
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function (data) {
+                            like.ajax({
+                                url: "{:url('kefu.KefuLang/add')}",
+                                data: data.field,
+                                type: "POST",
+                                success: function (res) {
+                                    if (res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: {cur: 1}
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            edit: function (obj) {
+                layer.open({
+                    type: 2
+                    , title: "编辑话术"
+                    , content: "{:url('kefu.KefuLang/edit')}?id=" + obj.data.id
+                    , area: ["90%", "90%"]
+                    , btn: ["确定", "取消"]
+                    , yes: function (index, layero) {
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#editSubmit");
+                        iframeWindow.layui.form.on("submit(editSubmit)", function (data) {
+                            data.field['id'] = obj.data.id;
+                            like.ajax({
+                                url: "{:url('kefu.KefuLang/edit')}",
+                                data: data.field,
+                                type: "POST",
+                                success: function (res) {
+                                    if (res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: {cur: 1}
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            del: function (obj) {
+                layer.confirm("确定删除话术：" + obj.data.title, function (index) {
+                    like.ajax({
+                        url: "{:url('kefu.KefuLang/del')}",
+                        data: {id: obj.data.id},
+                        type: "POST",
+                        success: function (res) {
+                            if (res.code === 1) {
+                                layui.layer.msg(res.msg);
+                                layer.close(index);
+                                obj.del();
+                                table.reload("like-table-lists", {
+                                    where: {},
+                                    page: {cur: 1}
+                                });
+                            }
+                        }
+                    });
+                    layer.close(index);
+                })
+            }
+        };
+        like.eventClick(active);
+
+
+    })
+</script>

@@ -1,0 +1,157 @@
+{layout name="layout1" /}
+<style>
+    .layui-form-label {
+        width: 220px;
+    }
+</style>
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*设置订单自动取消、完成时间，订单售后退款时长等信息</p>
+                    </div>
+                </div>
+            </div>
+<!--            表单区域-->
+            <div class="layui-form" style="margin-top: 15px;">
+                <div class="layui-form-item">
+                    <lable class="layui-form-label">商品库存显示:</lable>
+                    <div class="layui-input-block">
+                        <input type="radio" name="is_show_stock" value="1" title="显示" {if $config.is_show_stock ==1 }checked{/if} />
+                        <input type="radio" name="is_show_stock" value="0" title="不显示" {if $config.is_show_stock == 0 }checked{/if} />
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <span class="layui-word-aux">商品详情显示剩余库存数量</span>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label">成长值赠送比例:</lable>
+                    <div class="layui-inline">
+                        <input type="number" min="0" name="money_to_growth" value="{$config.money_to_growth}" class="layui-input" step="0.01"  min="0" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''">
+                    </div>
+                    <div class="layui-inline">
+                        元可赠送1成长值
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <span class="layui-word-aux">填写消费多少元可以赠送1成长值，不填或填0表示消费不送成长值</span>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label">未付款订单自动取消时长:</lable>
+                    <div class="layui-inline">
+                        <input type="number" min="0" lay-verify="number|Ndouble|max" name="unpaid_order_cancel_time" value="{$config.unpaid_order_cancel_time}" class="layui-input" step="0.01"  min="0" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''">
+                    </div>
+                    <div class="layui-inline">
+                        分钟
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <span class="layui-word-aux">未付款订单多久时间后自动关闭，不填或填0表示订单不自动关闭</span>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label">已支付订单允许取消时长：</lable>
+                    <div class="layui-inline">
+                        <input type="number" min="0" lay-verify="number|Ndouble|max" name="paid_order_cancel_time" value="{$config.paid_order_cancel_time}" class="layui-input" step="0.01"  min="0" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''">
+                    </div>
+                    <div class="layui-inline">
+                        分钟
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <span class="layui-word-aux">已支付未发货的订单多久时间内允许客户自行取消</span>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label">已发货订单自动完成时长：</lable>
+                    <div class="layui-inline">
+                        <input type="number" min="0" name="order_auto_receipt_days" value="{$config.order_auto_receipt_days}" class="layui-input" step="0.01"  min="0" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''">
+                    </div>
+                    <div class="layui-inline">
+                        天
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <span class="layui-word-aux">已发货订单多久时间后自动收货完成订单，不填或填0表示订单不自动收货完成订单</span>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label">已完成订单售后退款时长：</lable>
+                    <div class="layui-inline">
+                        <input type="number" min="0" name="order_after_sale_days" value="{$config.order_after_sale_days}" class="layui-input" step="0.01"  min="0" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''">
+                    </div>
+                    <div class="layui-inline">
+                        天
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <span class="layui-word-aux">已完成订单多久时间内允许售后退款，不填或填0表示订单不限制售后退款时长</span>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <lable class="layui-form-label"></lable>
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="set">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).use(['form','element'], function(){
+        var $ = layui.$,form = layui.form,element = layui.element;
+        
+        form.verify({
+            Ndouble:[
+                /^[0-9]+([.]{1}[0-9]+){0,1}$/
+                ,'只能输入正数哦'
+            ],
+            max: function (value) {
+                if (value > 60) {
+                    return '最大值不能超过60';
+                }
+            }
+        });
+        form.on('submit(set)', function(data) {
+            like.ajax({
+                url:'{:url("setting.transaction/set")}',
+                data: data.field,
+                type:"post",
+                success:function(res)
+                {
+                    if(res.code == 1)
+                    {
+                        layui.layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1000
+                        });
+                    }
+                }
+            });
+        });
+
+    });
+</script>

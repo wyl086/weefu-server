@@ -1,0 +1,142 @@
+{layout name="layout2" /}
+<script src="__PUBLIC__/static/common/js/area.js"></script>
+<style>
+    .layui-form-label {
+        color: #6a6f6c;
+    }
+    .goods-li {
+        float: left;
+        opacity: 1;
+        position: relative;
+    }
+
+    .goods-img {
+        width: 80px;
+        height: 80px;
+        padding: 4px;
+    }
+    .goods-img-del-x {
+        position: absolute;
+        z-index: 100;
+        top: -4px;
+        right: -2px;
+        width: 20px;
+        height: 20px;
+        font-size: 16px;
+        line-height: 16px;
+        color: #fff;
+        text-align: center;
+        cursor: pointer;
+        background: hsla(0, 0%, 60%, .6);
+        border-radius: 10px;}
+    html{
+        background-color: #ffffff;
+    }
+</style>
+<div class="layui-form" lay-filter="layuiadmin-form-supplier" id="layuiadmin-form-supplier" style="padding: 20px 30px 0 0;background-color: #ffffff">
+    <input type="hidden" value="{$info.id}" name="id">
+    <div class="layui-form-item">
+        <label class="layui-form-label"><font color="red">*</font>快递公司：</label>
+        <div class="layui-input-inline" >
+            <input type="text" name="name" value="{$info.name}" lay-verify="required" lay-vertype="tips" placeholder="请输入快递公司" autocomplete="off" class="layui-input" >
+        </div>
+    </div>
+    <!--快递图标-->
+<!--    <div class="layui-form-item">-->
+<!--        <label class="layui-form-label"><font color="red">*</font>快递图标：</label>-->
+<!--        <div class="layui-inline">-->
+<!--            <div style="height:80px;line-height:80px">-->
+<!--                <input name="icon" type="hidden" value="{$info.icon}" >-->
+<!--                {if !empty($info.icon)}-->
+<!--                <div class="goods-img-add" style="display: none"></div>-->
+<!--                <div class="goods-li">-->
+<!--                    <img class="goods-img" src="{$info.abs_icon}">-->
+<!--                    <a class="goods-img-del-x" style="display: none">x</a>-->
+<!--                </div>-->
+<!--                {else}-->
+<!--                <div class="goods-img-add"></div>-->
+<!--                {/if}-->
+<!--            </div>-->
+<!--            <div class=" layui-form-mid layui-word-aux">快递图标，建议宽高尺寸200px*200px。</div>-->
+
+<!--        </div>-->
+<!--    </div>-->
+
+    <div class="layui-form-item" style="margin-bottom: 0px">
+        <label class="layui-form-label"><span class="form-label-asterisk">*</span>快递图标：</label>
+        <div class="layui-input-block" id="Couriericon">
+            <div class="upload-image-div">
+                <img src="{$info.abs_icon}" alt="img" />
+                <input type="hidden" name="poster" value="{$info.abs_icon}">
+                <div class="del-upload-btn">x</div>
+            </div>
+            <div class="upload-image-elem" style="display:none;"><a class="add-upload-image" id="courier_icon"> + 添加图片</a></div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">快递图标，建议宽高尺寸200px*200px。</span>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">公司网址：</label>
+        <div class="layui-input-inline" >
+            <input type="text" name="website" value="{$info.website}"  lay-vertype="tips" placeholder="请输入联系电话" autocomplete="off" class="layui-input" >
+            <label class=" layui-form-mid layui-word-aux" ></label>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">快递编码：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="code" value="{$info.code}"   placeholder="请输入快递编码" lay-vertype="tips" autocomplete="off" class="layui-input">
+            <label class=" layui-form-mid layui-word-aux" >快递公司拼音简称。</label>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="white-space: nowrap">快递100编码：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="code100" value="{$info.code100}"   placeholder="请输入快递100编码" lay-vertype="tips" autocomplete="off" class="layui-input">
+            <label class=" layui-form-mid layui-word-aux" style="white-space: nowrap" >快递公司在快递100平台的编码，方便快递查询跟踪。</label>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="white-space: nowrap;left: 10px;">快递鸟编码：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="codebird" value="{$info.codebird}"   placeholder="请输入快递鸟编码" lay-vertype="tips" autocomplete="off" class="layui-input">
+            <label class=" layui-form-mid layui-word-aux" style="white-space: nowrap" >快递公司在快递鸟平台的编码，方便快递查询跟踪。</label>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序：</label>
+        <div class="layui-input-inline">
+            <input type="text" name="sort" value="{$info.sort}"   placeholder="请输入排序" lay-vertype="tips" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="express-submit-edit" id="express-submit-edit" value="确认">
+    </div>
+</div>
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/'
+    }).extend({
+        likeedit: 'likeedit/likeedit'
+    }).use(['table', 'form', 'element', 'likeedit'], function() {
+        var form = layui.form
+            ,$ = layui.$
+            , element = layui.element
+            , likeedit = layui.likeedit;
+
+        like.delUpload();
+        // 快递图标上传
+        $(document).on("click", "#courier_icon", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "poster",
+                that: $(this),
+                content: '{:url("file/lists")}?type=10'
+            });
+        })
+
+    })
+</script>

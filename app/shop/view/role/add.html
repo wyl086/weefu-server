@@ -1,0 +1,47 @@
+{layout name="layout2" /}
+<style>
+    .layui-form-item .layui-input-inline {
+        width: 270px;
+    }
+</style>
+<div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" lay-verify="required"lay-vertype="tips"  placeholder="请输入名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">权限</label>
+        <div class="layui-input-block">
+            <div id="auth_lists" class="demo-tree-more"></div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">说明</label>
+        <div class="layui-input-inline">
+            <textarea type="text" name="desc" autocomplete="off" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <button class="layui-btn" lay-submit lay-filter="add-role-submit" id="add-role-submit">提交</button>
+    </div>
+</div>
+<script>
+    layui.use(['form','tree'], function(){
+        var $ = layui.$
+            ,form = layui.form
+            ,tree = layui.tree;
+
+        var data ={$auth_tree|raw};
+
+        tree.render({
+            elem: '#auth_lists'
+            ,data: data
+            ,showCheckbox: true
+            ,id: 'auth'
+            ,isJump: true
+        });
+
+    })
+</script>

@@ -1,0 +1,184 @@
+{layout name="layout1" /}
+<div class="wrapper">
+    <div class="layui-card">
+        <!--操作提示-->
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*商品栏目能很方便的聚合商品荐列表。</p>
+                        <p>*商品栏目在首页、购物车、个人中心显示，可任意删除，请谨慎操作。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <!--添加按钮-->
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layui-btn-sm layuiadmin-btn-goodsColumn {$view_theme_color}" data-type="add">新增商品栏目</button>
+            </div>
+
+            <!--表格-->
+            <table id="goodsColumn-lists" lay-filter="goodsColumn-lists"></table>
+
+            <script type="text/html" id="statusTpl">
+                <input type="checkbox"  lay-filter="switch-status" data-id={{d.id}} data-field='status'   lay-skin="switch"
+                       lay-text="显示|隐藏" {{#  if(d.status){ }} checked  {{#  } }} />
+            </script>
+
+            <script type="text/html" id="goodsColumn-operation">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    layui.use(['table'], function(){
+        var form = layui.form
+            ,table = layui.table;
+
+        //事件
+        var active = {
+            add: function(){
+                layer.open({
+                    type: 2
+                    ,title: '新增商品栏目'
+                    ,content: '{:url("goods.column/add")}'
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'goodsColumn-submit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("goods.column/add")}',
+                               data:field,
+                               type:"post",
+                               success:function(res)
+                               {
+                                   if(res.code == 1) {
+                                       layui.layer.msg(res.msg, {
+                                           offset: '15px'
+                                           , icon: 1
+                                           , time: 1000
+                                       });
+                                       layer.close(index);
+                                       table.reload('goodsColumn-lists');
+                                   }
+                               }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            }
+        };
+        $('.layui-btn.layuiadmin-btn-goodsColumn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+
+        like.tableLists('#goodsColumn-lists', '{:url("goods.column/lists")}', [
+            {field: 'id', width: 60, title: 'ID', sort: true}
+            ,{field: 'name', title: '栏目名称', align:"center"}
+            ,{field: 'remark', title: '栏目简介', align:"center"}
+            ,{field: 'status', title: '栏目状态', align:"center", templet:'#statusTpl'}
+            ,{title: '操作', align: 'center', fixed: 'right', toolbar: '#goodsColumn-operation'}
+        ]);
+
+
+        form.on('switch(switch-status)',function (obj) {
+            var id = obj.elem.attributes['data-id'].nodeValue;
+            var status = 0;
+            if(this.checked){
+                status = 1;
+            }
+            like.ajax({
+                url:'{:url("goods.column/switchStatus")}',
+                data:{id:id,status:status},
+                type:'post',
+                success:function (res) {
+                    if(res.code == 1) {
+                        layui.layer.msg(res.msg, {offset: '15px', icon: 1, time: 1000});
+                    }
+                }
+            });
+        });
+
+
+        //监听工具条
+        table.on('tool(goodsColumn-lists)', function(obj){
+            if(obj.event === 'del'){
+                var id = obj.data.id;
+                var unitName = "<span style='color: red;'>"+obj.data.name+"</span>";
+                layer.confirm('确定删除商品栏目: '+unitName, function(index){
+                    like.ajax({
+                        url:'{:url("goods.column/del")}',
+                        data:{'id':id},
+                        type:"post",
+                        success:function(res)
+                        {
+                            if(res.code == 1) {
+                                obj.del();
+                                layui.layer.msg(res.msg, {
+                                    offset: '15px'
+                                    , icon: 1
+                                    , time: 1000
+                                });
+                                layer.close(index);
+                            }
+                        }
+                    });
+                });
+
+            }else if(obj.event === 'edit'){
+                var id = obj.data.id;
+                layer.open({
+                    type: 2
+                    ,title: '编辑商品栏目'
+                    ,content: '{:url("goods.column/edit")}?id='+id
+                    ,area: ['60%', '60%']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submitID = 'goodsColumn-submit-edit'
+                            ,submit = layero.find('iframe').contents().find('#'+ submitID);
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit('+ submitID +')', function(data){
+                            var field = data.field;
+                            like.ajax({
+                                url:'{:url("goods.column/edit")}',
+                                data:field,
+                                type:"post",
+                                success:function(res)
+                                {
+                                    if(res.code == 1) {
+                                        layui.layer.msg(res.msg, {
+                                            offset: '15px'
+                                            , icon: 1
+                                            , time: 1000
+                                        });
+                                        layer.close(index);
+                                        table.reload('goodsColumn-lists');
+                                    }
+                                }
+                            });
+                        });
+
+                        submit.trigger('click');
+                    }
+                })
+            }
+        });
+    });
+</script>

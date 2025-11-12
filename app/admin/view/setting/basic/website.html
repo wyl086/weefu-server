@@ -1,0 +1,182 @@
+{layout name="layout1" /}
+<style>
+    .layui-form-label {
+        width: 140px;
+    }
+</style>
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!--操作提示-->
+        <div class="layui-card-body">
+            <div class="layui-collapse like-layui-collapse" lay-accordion="" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*商城名称、商城Logo、默认图片等信息的配置</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-tab layui-tab-card" lay-filter="like-tabs">
+            <ul class="layui-tab-title">
+                <li data-type='1' class="layui-this">商城信息</li>
+                <li data-type='2'>平台信息</li>
+                <li data-type='3'>商家信息</li>
+            </ul>
+            <div class="layui-tab-content">
+                <!--商城信息-->
+                <div class="layui-tab-item layui-show">
+                    {include file="setting/basic/website_base"/}
+                </div>
+                <!--平台信息-->
+                <div class="layui-tab-item">
+                    {include file="setting/basic/website_platform"/}
+                </div>
+                <!--商家信息-->
+                <div class="layui-tab-item">
+                    {include file="setting/basic/website_shop"/}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['table', 'form'], function () {
+        var $ = layui.$
+            , form = layui.form;
+
+        like.delUpload();
+        //商城设置
+        $(document).on("click", ".web_favicon", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "web_favicon",
+                that: $(this)
+            });
+        });
+        $(document).on("click", ".client_login_logo", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "client_login_logo",
+                that: $(this)
+            });
+        });
+        $(document).on("click", ".pc_client_login_logo", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "pc_client_login_logo",
+                that: $(this)
+            });
+        });
+        $(document).on("click", ".user_image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "user_image",
+                that: $(this)
+            });
+        });
+        $(document).on("click", ".goods_image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "goods_image",
+                that: $(this)
+            });
+        });
+
+        //平台
+        $(document).on("click", ".platform_login_logo", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "platform_login_logo",
+                that: $(this)
+            });
+        });
+        $(document).on("click", ".platform_login_image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "platform_login_image",
+                that: $(this)
+            });
+        });
+        $(document).on("click", ".platform_admin_logo", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "platform_admin_logo",
+                that: $(this)
+            });
+        });
+
+        //商家
+        $(document).on("click", ".shop_login_logo", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "shop_login_logo",
+                that: $(this)
+            });
+        });
+        $(document).on("click", ".shop_login_image", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "shop_login_image",
+                that: $(this)
+            });
+        });
+        $(document).on("click", ".shop_admin_logo", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "shop_admin_logo",
+                that: $(this)
+            });
+        });
+        $(document).on("click", ".shop_default_logo", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "shop_default_logo",
+                that: $(this)
+            });
+        });
+        $(document).on("click", ".shop_default_bg", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "shop_default_bg",
+                that: $(this)
+            });
+        });
+
+        form.on('submit(setWebsite)', function (data) {
+            submit('{:url("setting.Basic/setWebsite")}',data.field);
+        });
+
+        form.on('submit(setPlatform)', function (data) {
+            submit('{:url("setting.Basic/setWebsite")}',data.field);
+        });
+
+        form.on('submit(setShop)', function (data) {
+            submit('{:url("setting.Basic/setWebsite")}',data.field);
+        });
+
+        function submit(url, data) {
+            like.ajax({
+                url: url
+                , data: data
+                , type: 'post'
+                , success: function (res) {
+                    if (res.code == 1) {
+                        layer.msg(res.msg, {
+                            offset: '15px'
+                            , icon: 1
+                            , time: 1500
+                        }, function () {
+                            location.href = location.href;
+                        });
+                    }
+                }
+            });
+        }
+
+
+    });
+
+</script>

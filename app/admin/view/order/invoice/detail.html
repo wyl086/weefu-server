@@ -1,0 +1,106 @@
+{layout name="layout2" /}
+<style>
+    .div-flex {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+    }
+
+    .width-160 {
+        width: 200px;
+    }
+
+    .layui-table th {
+        text-align: center;
+    }
+
+    #layui-form-like{
+        margin-bottom: 50px;
+    }
+</style>
+
+<div class="layui-card-body">
+    <!--基本信息-->
+    <div class="layui-form" lay-filter="layui-form-like" id="layui-form-like">
+        <input type="hidden" class="id" name="id" value="{$detail.id}">
+
+        <div class="layui-form-item">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>发票信息</legend>
+            </fieldset>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label">发票类型:</label>
+            <div class="width-160">{$detail.type_text}</div>
+            <label class="layui-form-label">抬头类型:</label>
+            <div class="width-160">{$detail.header_type_text}</div>
+            <label class="layui-form-label">发票抬头:</label>
+            <div class="width-160">{$detail.name}</div>
+        </div>
+
+        {eq name="$detail.header_type" value="1"}
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label">税号:</label>
+            <div class="width-160">{$detail.duty_number}</div>
+            {eq name="$detail.type" value="1"}
+            <label class="layui-form-label">企业地址:</label>
+            <div class="width-160">{$detail.address}</div>
+            <label class="layui-form-label">企业电话:</label>
+            <div class="width-160">{$detail.mobile}</div>
+            {/eq}
+        </div>
+        {/eq}
+
+        {eq name="$detail.type" value="1"}
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label">开户银行:</label>
+            <div class="width-160">{$detail.bank}</div>
+            <label class="layui-form-label">银行账号:</label>
+            <div class="width-160">{$detail.bank_account}</div>
+        </div>
+        {/eq}
+
+        <div class="layui-form-item">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>联系信息</legend>
+            </fieldset>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">真实姓名:</label>
+            <div class="width-160">{$detail.order_data.consignee}</div>
+            <label class="layui-form-label ">联系电话:</label>
+            <div class="width-160">{$detail.order_data.mobile}</div>
+            <label class="layui-form-label ">联系邮箱:</label>
+            <div class="width-160">{$detail.email}</div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <fieldset class="layui-elem-field layui-field-title">
+                <legend>开票状态</legend>
+            </fieldset>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">开票状态:</label>
+            <div class="width-160">{if condition="$detail.status eq 1" } 已开票 {else/} 未开票 {/if}</div>
+        </div>
+
+        <div class="layui-form-item div-flex">
+            <label class="layui-form-label ">发票编号:</label>
+            <div class="width-160">{$detail.invoice_number}</div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    layui.config({
+        version: "{$front_version}",
+        base: '/static/lib/'
+    }).use(['form'], function () {
+        var $ = layui.$;
+
+    });
+</script>

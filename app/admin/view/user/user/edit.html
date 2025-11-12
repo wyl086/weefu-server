@@ -1,0 +1,130 @@
+{layout name="layout2" /}
+<style>
+    .reqRed::before {
+        content: '*';
+        color: red;
+    }
+</style>
+<div class="layui-form" lay-filter="layuiadmin-form-user" id="layuiadmin-form-user" style="padding: 20px 30px 0 0;">
+    <input type="hidden" name="id" value="{$info.id}">
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户编号：</label>
+        <div class="layui-input-inline" style="margin-top:10px">
+            {$info.sn}
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">用户昵称：</label>
+        <div class="layui-input-inline" style="width: 380px;">
+            <input class="layui-input" value="{$info.nickname}" name="nickname" type="text" placeholder="请输入会员昵称" >
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">用户头像：</label>
+        <div class="layui-input-block">
+            <div class="like-upload-image">
+                {if $info.avatar}
+                <div class="upload-image-div">
+                    <img src="{$info.avatar}" alt="img">
+                    <input type="hidden" name="avatar" value="{$info.avatar}">
+                    <div class="del-upload-btn">x</div>
+                </div>
+                <div class="upload-image-elem" style="display:none;"><a class="add-upload-image" id="avatar"> + 添加图片</a></div>
+                {else}
+                <div class="upload-image-elem"><a class="add-upload-image" id="avatar"> + 添加图片</a></div>
+                {/if}
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+        <span style="color: #a3a3a3;font-size: 9px">建议尺寸：宽200像素*高200像素的jpg，jpeg，png图片</span>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">手机号码：</label>
+        <div class="layui-input-inline" style="width: 380px;">
+            <input class="layui-input" value="{$info.mobile}" name="mobile" type="text" placeholder="请输入手机号码" >
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别：</label>
+        <div class="layui-input-block">
+            <input type="radio" name="sex" value="0" title="未知" {if $info.sex == 0}checked{/if} >
+            <input type="radio" name="sex" value="1" title="男"  {if $info.sex == 1}checked{/if} >
+            <input type="radio" name="sex" value="2" title="女"  {if $info.sex == 2}checked{/if} >
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">禁用状态：</label>
+        <div class="layui-input-block">
+            <input type="radio" name="disable" value="0" title="启用" {if $info.disable == 0}checked{/if} >
+            <input type="radio" name="disable" value="1" title="禁用"  {if $info.disable == 1}checked{/if} >
+        </div>
+        <div class=" layui-form-mid layui-word-aux">禁用后用户将无法正常登录</div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">生日：</label>
+        <div class="layui-input-inline" style="width: 380px;">
+            <input class="layui-input" value="{$info.birthday}" autocomplete="off"   name="birthday" id="birthday" type="text" placeholder="请输入生日" >
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">会员标签</label>
+        <div class="layui-input-block" style="width: 380px;">
+            <div id="tagList"></div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block" style="width: 380px">
+            <textarea name="remark" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="edit-submit"  id="edit-submit" value="确认">
+    </div>
+</div>
+</div>
+
+<script>
+    layui.config({
+        version:"{$front_version}",
+        base: '/static/lib/' //静态资源所在路径
+    }).extend({
+        xmSelect: 'xmSelect/xm-select'
+    }).use(['form','laydate', 'xmSelect'], function(){
+        var $ = layui.$,form = layui.form,laydate = layui.laydate;
+        var xmSelect = layui.xmSelect;
+        var tag_list = '{$tag_list|raw}';
+        var initValue = '{$info.tag_ids | raw}';
+
+        laydate.render({
+            elem: '#birthday'
+            ,format: 'yyyy-MM-dd'
+            ,value: "{$info['birthday']}"
+            ,trigger: 'click'
+        });
+
+        var xmIns = xmSelect.render({
+            el: '#tagList',
+            language: 'zn',
+            data: JSON.parse(tag_list),
+            prop: {
+                value: 'id'
+            },
+            initValue: JSON.parse(initValue)
+        })
+
+        // 图片上传
+        like.delUpload();
+        $(document).on("click", "#avatar", function () {
+            like.imageUpload({
+                limit: 1,
+                field: "avatar",
+                that: $(this)
+            });
+        })
+
+    })
+</script>

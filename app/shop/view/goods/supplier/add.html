@@ -1,0 +1,62 @@
+{layout name="layout2" /}
+<style>
+    .layui-form-label{
+        width: 100px;
+    }
+</style>
+
+<div class="layui-form" lay-filter="layui-form-add" id="layui-form-add" style="padding: 20px 30px 0 0;">
+    <!--供货商名称-->
+    <div class="layui-form-item">
+        <label class="layui-form-label"><font color="red">*</font>供货商名称：</label>
+        <div class="layui-input-block">
+            <div class="layui-col-md4">
+                <input type="text" name="name" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <!--联系人姓名-->
+    <div class="layui-form-item">
+        <label class="layui-form-label" ><font color="red">*</font>联系人姓名：</label>
+        <div class="layui-input-block">
+            <div class="layui-col-md4">
+                <input type="text" name="contact" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <!--联系电话-->
+    <div class="layui-form-item">
+        <label class="layui-form-label" ><font color="red">*</font>联系电话：</label>
+        <div class="layui-input-block">
+            <div class="layui-col-md4">
+                <input type="text" name="mobile" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <!--联系地址-->
+    <div class="layui-form-item">
+        <label class="layui-form-label" ><font color="red">*</font>联系地址：</label>
+        <div class="layui-input-block">
+            <div class="layui-col-md4">
+                <input type="text" name="address" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <!--备注-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注：</label>
+        <div class="layui-input-block">
+            <div class="layui-col-md4">
+                <textarea name="remark" class="layui-textarea"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="add-submit" id="add-submit" value="确认">
+    </div>
+</div>

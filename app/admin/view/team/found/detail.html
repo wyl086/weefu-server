@@ -1,0 +1,96 @@
+{layout name="layout2" /}
+
+<style>
+    .layui-input-block { line-height: 38px; }
+</style>
+
+<div class="layui-card" style="box-shadow:none;">
+    <div class="layui-card-body">
+
+        <div class="layui-form">
+            <!-- 团长信息 -->
+            <div class="layui-form-item" style="margin-bottom:0;">
+                <span>团长信息</span>
+            </div>
+            <div style="margin-left:30px">
+                <div class="layui-form-item" style="margin-bottom:0;">
+                    <label class="layui-form-label">会员编号：</label>
+                    <div class="layui-input-block">{$detail.teamFound.sn}</div>
+                </div>
+                <div class="layui-form-item" style="margin-bottom:0;">
+                    <label class="layui-form-label">会员昵称：</label>
+                    <div class="layui-input-block">{$detail.teamFound.nickname}</div>
+                </div>
+                <div class="layui-form-item" style="margin-bottom:0;">
+                    <label class="layui-form-label">手机号码：</label>
+                    <div class="layui-input-block">{$detail.teamFound.mobile ?: '无'}</div>
+                </div>
+            </div>
+            <!-- 拼团信息 -->
+            <div class="layui-form-item" style="margin-bottom:0;">
+                <span>拼团信息</span>
+            </div>
+            <div style="margin-left:30px">
+                <div class="layui-form-item" style="margin-bottom:0;">
+                    <label class="layui-form-label">成团人数：</label>
+                    <div class="layui-input-block">{$detail.teamFound.people} / {$detail.teamFound.join}</div>
+                </div>
+                <div class="layui-form-item" style="margin-bottom:0;">
+                    <label class="layui-form-label">开团时间：</label>
+                    <div class="layui-input-block">{$detail.teamFound.kaituan_time}</div>
+                </div>
+                <div class="layui-form-item" style="margin-bottom:0;">
+                    <label class="layui-form-label">结束时间：</label>
+                    <div class="layui-input-block">{$detail.teamFound.invalid_time}</div>
+                </div>
+                <div class="layui-form-item" style="margin-bottom:0;">
+                    <label class="layui-form-label">拼团状态：</label>
+                    <div class="layui-input-block">{$detail.teamFound.status_text}</div>
+                </div>
+            </div>
+            <!-- 拼团订单 -->
+            <div class="layui-form-item" style="margin-bottom:0;margin-top:20px;">
+                <span>拼团订单</span>
+            </div>
+            <div style="margin-left:30px">
+                <table id="like-table-lists" lay-filter="like-table-lists"></table>
+                <script type="text/html" id="table-userInfo">
+                    <img src="{{d.avatar}}" alt="头像" style="width:50px;height:50px;">
+                    <div class="layui-inline">
+                        <p>会员编号：{{d.sn}}</p>
+                        <p>会员昵称：{{d.nickname}}</p>
+                    </div>
+                </script>
+                <script type="text/html" id="table-teamGoods">
+                    <img src="{{d.order.orderGoods[0].image}}" alt="主图" style="width:50px;height:50px;">
+                    <div class="layui-inline">
+                        <p>{{d.order.orderGoods[0].goods_name}}</p>
+                    </div>
+                </script>
+                <script type="text/html" id="table-orderSn">{{ d.order.order_sn }}</script>
+                <script type="text/html" id="table-placeTime">{{ d.order.create_time }}</script>
+                <script type="text/html" id="table-orderAmount">{{ d.order.order_amount }}</script>
+                <script type="text/html" id="table-payStatus">{{ d.order.pay_status }}</script>
+                <script type="text/html" id="table-refundStatus">{{ d.order.refund_status }}</script>
+                <script type="text/html" id="table-orderStatus">{{ d.order.order_status }}</script>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use([], function () {
+        like.tableLists("#like-table-lists", "{:url('team.Found/join')}?team_id={$detail.teamFound.id}", [
+            {field:"id", width:60, align:"center", title:"ID"}
+            ,{field:"userInfo", width:220, align:"center",title:"参团人信息", templet:"#table-userInfo"}
+            ,{field:"identity", width:100, align:"center", title:"身份"}
+            ,{field:"orderSn", width:200, title:"订单编号", align:"center", templet:"#table-orderSn"}
+            ,{field:"teamGoods", width:200, align:"center", title:"商品信息", templet:"#table-teamGoods"}
+            ,{field:"placeTime", width:170, align:"center", title:"下单时间", templet:"#table-placeTime"}
+            ,{field:"order_amount", width:100, align:"center", title:"订单金额", templet:"#table-orderAmount"}
+            ,{field:"pay_status", width:100, align:"center", title:"支付状态", templet:"#table-payStatus"}
+            ,{field:"refund_status", width:100, align:"center", title:"退款状态", templet:"#table-refundStatus"}
+            ,{field:"order_status", width:100, align:"center", title:"订单状态", templet:"#table-orderStatus"}
+        ]);
+    })
+</script>

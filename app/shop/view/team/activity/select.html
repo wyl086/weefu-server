@@ -1,0 +1,85 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <!-- 搜索区域 -->
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label for="name" class="layui-form-label">商品名称：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="name" name="name" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+            <script type="text/html" id="table-activity">
+                {{#  if(d.is_activity=="正常"){ }}正常 {{#  } }}
+                {{#  if(d.is_activity!="正常"){ }}<span style="color:red;">{{d.is_activity}}</span> {{#  } }}
+            </script>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form"], function(){
+        var table   = layui.table;
+        var form    = layui.form;
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {type:"radio"}
+            ,{field:"name", title:"商品名称", templet:"#table-goods"}
+            ,{field:"market_price", width:100, align:"center",title:"最高价"}
+            ,{field:"min_price", width:100, align:"center",title:"最低价"}
+            ,{field:"market_price", width:100, align:"center",title:"市场价"}
+            ,{field:"stock", width:150, align:"center", title:"库存"}
+            ,{field:"activity", width:150, align:"center", title:"活动", templet:"#table-activity"}
+        ]);
+
+        form.on("submit(search)", function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        form.on("submit(clear-search)", function(){
+            $("#name").val("");
+            $("#cid").val("");
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+    });
+
+    /**
+     * 获取选择数据
+     * @returns {*}
+     */
+    var callbackData = function () {
+        var data = layui.table.checkStatus('like-table-lists').data;
+        if (data[0]['is_activity'] !== '正常') {
+            layer.msg("此商品正在参与其他活动,换一个吧", {time:1000});
+            return [];
+        }
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+        return data;
+    }
+</script>

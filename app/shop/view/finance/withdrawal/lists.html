@@ -1,0 +1,358 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+
+        <!-- 财务汇总-->
+        <h2 style="padding:20px;">财务汇总</h2>
+        <div class="layui-card-body">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-sm3 layui-col-md3" >
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">成交订单笔数</div>
+                        <div class="layui-card-body"><p>{$statistics.orderNum}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm3 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">营业额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.orderAmount}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm3 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">退款订单金额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.refundAmount}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm3 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">待退款订单金额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.refundAmountIng}</p></div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-sm3 layui-col-md3" >
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">售后退款金额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.salesRefundAmount}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm3 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">待售后退款金额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.salesRefundAmountIng}</p></div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-sm3 layui-col-md3" >
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">已结算成交订单数</div>
+                        <div class="layui-card-body"><p>{$statistics.settleOrederNum}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm3 layui-col-md3" >
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">已结算营业额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.settleOrederAmount}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm3 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">待结算营业额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.settleOrederAmountWait}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm3 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">已结算分销佣金金额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.settleDistributionAmount}</p></div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-sm3 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">已结算入账金额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.settleWithdrawalAmount}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm3 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">已结算交易服务费</div>
+                        <div class="layui-card-body"><p>￥{$statistics.settlePoundageAmount}</p></div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-sm3 layui-col-md3" >
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">已提现金额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.withdrawaLeftamount}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm3 layui-col-md3" >
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">提现手续费</div>
+                        <div class="layui-card-body"><p>￥{$statistics.procedMoney}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm3 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">提现中金额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.withdrawaLeftamountIng}</p></div>
+                    </div>
+                </div>
+                <div class="layui-col-sm3 layui-col-md3">
+                    <div class="layui-card" style="box-shadow:none;">
+                        <div class="layui-card-header" style="border-bottom:0;">可提现金额</div>
+                        <div class="layui-card-body"><p>￥{$statistics.shopWallet}</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <h2 style="padding:20px;">提现管理</h2>
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">提现时间：</label>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" >
+                            <input type="text" id="start_time" name="start_time" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">至</div>
+                    <div class="layui-inline" style="margin-right:0;">
+                        <div class="layui-input-inline" style="margin-right:0;">
+                            <input type="text" id="end_time" name="end_time" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-btn-group">
+                        <button type="button" day="1" class="layui-btn layui-btn-sm layui-btn-primary day">今天</button>
+                        <button type="button" day="-1" class="layui-btn layui-btn-sm layui-btn-primary day">昨天</button>
+                        <button type="button" day="7" class="layui-btn layui-btn-sm layui-btn-primary day">近7天</button>
+                        <button type="button" day="30" class="layui-btn layui-btn-sm layui-btn-primary day">近30天</button>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="data-export">导出</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <div class="layui-tab layui-tab-card" lay-filter="like-tab">
+                <ul class="layui-tab-title">
+                    <li lay-id="0" class="layui-this">待提现({$statistics.apply})</li>
+                    <li lay-id="1">提现中({$statistics.handle})</li>
+                    <li lay-id="2">提现成功({$statistics.success})</li>
+                    <li lay-id="3">提现失败({$statistics.error})</li>
+                </ul>
+                <div class="layui-tab-content" style="padding:20px;">
+                    <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layEvent" lay-event="add">提现</button>
+                    <table id="like-table-lists" lay-filter="like-table-lists"></table>
+                    <script type="text/html" id="table-poundage_amount">
+                        <span>{{d.poundage_amount}}（{{d.poundage_ratio}}%）</span>
+                    </script>
+                    <script type="text/html" id="table-operation">
+                        <a class="layui-btn layui-btn-sm layui-btn-primary" lay-event="detail">详情</a>
+                    </script>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form", "element", "laydate"], function(){
+        var table   = layui.table;
+        var form    = layui.form;
+        var element = layui.element;
+        var laydate = layui.laydate;
+
+        laydate.render({type:"datetime", elem:"#start_time", trigger:"click"});
+        laydate.render({type:"datetime", elem:"#end_time", trigger:"click"});
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {field:"id", width:60, title:"ID"}
+            ,{field:"sn", width:250, align:"center", title:"提现单号"}
+            ,{field:"apply_amount", width:100, align:"center",title:"提现金额"}
+            ,{field:"poundage", width:150, align:"center", title:"提现手续费", templet:"#table-poundage_amount"}
+            ,{field:"left_amount", width:90, align:"center", title:"到账金额"}
+            ,{field:"status", width:90, align:"center", title:"提现状态"}
+            ,{field:"create_time", width:160, align:"center", title:"提现时间"}
+            ,{title:"操作", width:100, align:"center", fixed:"right", toolbar:"#table-operation"}
+        ]);
+
+
+        var active = {
+            add: function() {
+                layer.open({
+                    type: 2
+                    ,title: "提现"
+                    ,content: "{:url('finance.Withdrawal/add')}"
+                    ,area: ["480px", "480px"]
+                    ,btn: ["确定", "取消"]
+                    ,yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#addSubmit");
+                        iframeWindow.layui.form.on("submit(addSubmit)", function(data){
+                            like.ajax({
+                                url: "{:url('finance.Withdrawal/add')}",
+                                data: data.field,
+                                type: "POST",
+                                success:function(res) {
+                                    if(res.code === 1) {
+                                        layui.layer.msg(res.msg);
+                                        layer.close(index);
+                                        active.statistics();
+                                        table.reload("like-table-lists", {
+                                            where: {},
+                                            page: { cur: 1 }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                        submit.trigger("click");
+                    }
+                });
+            },
+            detail: function (obj) {
+                layer.open({
+                    type: 2
+                    ,title: "提现详细"
+                    ,content: "{:url('finance.Withdrawal/detail')}?id="+obj.data.id
+                    ,area: ["60%", "80%"]
+                });
+            },
+            statistics: function () {
+                like.ajax({
+                    url: "{:url('finance.Withdrawal/statistics')}",
+                    data: {},
+                    type: "GET",
+                    success:function(res) {
+                        if(res.code === 1) {
+                            $(".layui-tab-title li[lay-id=0]").html("待提现("+res.data.apply+")");
+                            $(".layui-tab-title li[lay-id=1]").html("提现中("+res.data.handle+")");
+                            $(".layui-tab-title li[lay-id=2]").html("提现成功("+res.data.success+")");
+                            $(".layui-tab-title li[lay-id=3]").html("提现失败("+res.data.error+")");
+                        }
+                    }
+                });
+            }
+        };
+        like.eventClick(active);
+
+
+        element.on("tab(like-tab)", function(){
+            var type = this.getAttribute("lay-id");
+            table.reload("like-table-lists", {
+                where: {type: type},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(search)", function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+
+        form.on("submit(clear-search)", function(){
+            $("#start_time").val("");
+            $("#end_time").val("");
+            $(".day.layui-btn-normal").addClass("layui-btn-primary");
+            $("button.day.layui-btn-normal").removeClass("layui-btn-normal");
+            table.reload("like-table-lists", {
+                where: {},
+                page: {
+                    curr: 1
+                }
+            });
+        });
+
+        // 导出
+        form.on('submit(data-export)', function (data) {
+            var field = data.field;
+            field.type = $(".layui-tab-title li.layui-this").attr("lay-id")
+            like.ajax({
+                url: '{:url("finance.Withdrawal/export")}'
+                , data: field
+                , type: 'get'
+                , success: function (res) {
+                    if (res.code == 1) {
+                        window.location.href = res.data.url;
+                    }
+                }
+            });
+        });
+
+        $(document).on("click", ".day", function () {
+            var day   = parseInt($(this).attr("day"));
+            var type  = $(".layui-tab-title li.layui-this").attr("lay-id");
+            var start_time = "";
+            var end_time   = "";
+
+            switch (day) {
+                case 1:
+                    start_time = "{$dateTime.today[0]}";
+                    end_time   = "{$dateTime.today[1]}";
+                    break;
+                case -1:
+                    start_time = "{$dateTime.yesterday[0]}";
+                    end_time   = "{$dateTime.yesterday[1]}";
+                    console.log(start_time);
+                    break;
+                case 7:
+                    start_time = "{$dateTime.days_ago7[0]}";
+                    end_time   = "{$dateTime.days_ago7[1]}";
+                    break;
+                case 30:
+                    start_time = "{$dateTime.days_ago30[0]}";
+                    end_time   = "{$dateTime.days_ago30[1]}";
+                    break;
+            }
+
+            $(this).siblings().removeClass('layui-btn-normal');
+            $(this).siblings().addClass('layui-btn-primary');
+            $(this).removeClass("layui-btn-primary");
+            $(this).addClass('layui-btn-normal');
+
+            $("#start_time").val(start_time);
+            $("#end_time").val(end_time);
+            table.reload("like-table-lists", {
+                where: {type:type, start_time:start_time, end_time:end_time},
+                page: {
+                    curr: 1
+                }
+            });
+        })
+
+    })
+</script>

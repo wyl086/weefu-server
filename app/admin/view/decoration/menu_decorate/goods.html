@@ -1,0 +1,58 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card layui-form">
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title" style="background-color: #fff">操作提示</h2>
+                    <div class="layui-colla-content layui-show tips">
+                        *移动端商城商品详情页设置
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <label class="layui-form-label">店铺信息：</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="shop_hide_goods" value="1" title="显示" {if $shop_hide_goods==1}checked{/if}>
+                    <input type="radio" name="shop_hide_goods" value="0" title="隐藏" {if $shop_hide_goods==0}checked{/if}>
+                </div>
+                <div class="layui-form-mid layui-word-aux">设置商品详情页是否显示店铺信息以及店铺推荐商品</div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="addBtn">确定</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(["form"], function () {
+        var form = layui.form;
+
+        form.on('submit(addBtn)', function(data){
+            like.ajax({
+                url: "{:url('decoration.MenuDecorate/goods')}",
+                data: data.field,
+                type: "POST",
+                success:function(res) {
+                    if(res.code === 1) {
+                        layui.layer.msg(res.msg);
+                        setTimeout(function () {
+                            location.reload()
+                        }, 500);
+                    }
+                }
+            });
+
+        });
+    })
+
+</script>
