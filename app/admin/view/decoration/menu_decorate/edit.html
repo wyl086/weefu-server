@@ -67,6 +67,25 @@
         <div class="layui-form-item"><label class="layui-form-label"></label>
             <span style="color: #a3a3a3;font-size: 9px"> 如：https://www.likecms.net/。可设置关联公众号的文章，其它地址需登录微信小程序管理后台配置业务域名</span>
         </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-inline">
+                <input type="radio" name="link_type" value="3" title="跳转小程序" {if(3 == $detail.link_type)} checked {/if} >
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" name="appid" value="{$detail.appid|default=''}" placeholder="请输入目标小程序AppID" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-input-inline">
+                {if(3 == $detail.link_type)}
+                <input type="text" name="mini_url" value="{$detail.link_address}" placeholder="请输入小程序路径" autocomplete="off" class="layui-input">
+                {else /}
+                <input type="text" name="mini_url" value="" placeholder="请输入小程序路径" autocomplete="off" class="layui-input">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label"></label>
+            <span style="color: #a3a3a3;font-size: 9px">跳转至其它小程序时需填写AppID与页面路径，如：pages/index/index</span>
+        </div>
 
         <div class="layui-form-item">
             <label class="layui-form-label">排序</label>

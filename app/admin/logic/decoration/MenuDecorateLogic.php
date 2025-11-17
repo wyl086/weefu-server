@@ -51,12 +51,14 @@ class MenuDecorateLogic extends Logic {
      * @author: cjhao 2021/5/18 17:07
      */
     public static function add($post){
+        $linkAddress = self::buildLinkAddress($post);
         $data = [
             'name'              => $post['name'],
             'decorate_type'     => $post['decorate_type'],
             'image'             => clearDomain($post['image']),
             'link_type'         => $post['link_type'],
-            'link_address'      => $post['menu'] ?? $post['link_address'],
+            'link_address'      => $linkAddress,
+            'appid'             => 3 == $post['link_type'] ? trim($post['appid'] ?? '') : '',
             'sort'              => $post['sort'],
             'is_show'           => $post['is_show'],
             'create_time'       => time(),
@@ -71,17 +73,42 @@ class MenuDecorateLogic extends Logic {
      * @author: cjhao 2021/5/18 17:38
      */
     public static function edit($post){
+        $linkAddress = self::buildLinkAddress($post);
         $data = [
             'name'              => $post['name'],
             'image'             => clearDomain($post['image']),
             'link_type'         => $post['link_type'],
-            'link_address'      => 1 == $post['link_type'] ? $post['menu'] : $post['url'],
+            'link_address'      => $linkAddress,
+            'appid'             => 3 == $post['link_type'] ? trim($post['appid'] ?? '') : '',
             'sort'              => $post['sort'],
             'is_show'           => $post['is_show'],
             'update_time'       => time(),
         ];
 
         return Db::name('menu_decorate')->where(['id'=>$post['id']])->update($data);
+    }
+
+    /**
+     * 处理菜单跳转地址
+     * @param array $post
+     * @return string
+     */
+    protected static function buildLinkAddress($post)
+    {
+        $linkAddress = '';
+        switch ($post['link_type']) {
+            case 1:
+                $linkAddress = $post['menu'] ?? '';
+                break;
+            case 3:
+                $linkAddress = $post['mini_url'] ?? '';
+                break;
+            default:
+                $linkAddress = $post['url'] ?? '';
+                break;
+        }
+
+        return trim((string)$linkAddress);
     }
 
 

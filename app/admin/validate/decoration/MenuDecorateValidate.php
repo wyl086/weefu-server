@@ -57,11 +57,17 @@ class MenuDecorateValidate extends Validate{
                 return '菜单不存在';
             }
 
-        }else{
-            if(empty($value)){
+        } elseif (2 == $data['link_type']) {
+            if(empty(trim($data['url'] ?? ''))){
                 return '请输入自定义链接';
             }
-
+        } elseif (3 == $data['link_type']) {
+            if(empty($data['appid'] ?? '')){
+                return '请输入跳转小程序的appid';
+            }
+            if(empty(trim($data['mini_url'] ?? ''))){
+                return '请输入小程序链接地址';
+            }
         }
 
         return true;
