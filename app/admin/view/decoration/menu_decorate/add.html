@@ -56,6 +56,26 @@
         <div class="layui-form-item">
             <label class="layui-form-label"></label>
             <div class="layui-input-inline">
+                <input type="radio" name="link_type" value="4" title="平台商品分类">
+            </div>
+            <div class="layui-input-inline">
+                <select name="category_id" lay-search="">
+                    <option value="">请选择分类</option>
+                    {foreach $category_list as $category_id=>$category}
+                    <option value="{$category_id}">{$category.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" name="category_url" placeholder="请输入跳转链接" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label"></label>
+            <span style="color: #a3a3a3;font-size: 9px">选择平台商品分类并填写跳转链接</span>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-inline">
                 <input type="radio" name="link_type" value="3" title="跳转小程序">
             </div>
             <div class="layui-input-inline">
