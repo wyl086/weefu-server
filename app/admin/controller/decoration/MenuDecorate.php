@@ -9,6 +9,7 @@
 // +----------------------------------------------------------------------
 namespace app\admin\controller\decoration;
 use app\admin\logic\decoration\MenuDecorateLogic;
+use app\admin\logic\goods\CategoryLogic;
 use app\admin\validate\decoration\MenuDecorateValidate;
 use app\common\basics\AdminBase;
 use app\common\enum\MenuEnum;
@@ -58,7 +59,8 @@ class MenuDecorate extends AdminBase{
         if(2 == $type){
             $menu_type = MenuEnum::CENTRE;
         }
-        return view('',['menu_list'=>$menu_type]);
+        $category_list = CategoryLogic::categoryTwoTree();
+        return view('', ['menu_list' => $menu_type, 'category_list' => $category_list]);
     }
 
 
@@ -87,7 +89,8 @@ class MenuDecorate extends AdminBase{
         if(2 == $type){
             $menu_type = MenuEnum::CENTRE;
         }
-        return view('',['menu_list'=>$menu_type,'detail'=>$detail]);
+        $category_list = CategoryLogic::categoryTwoTree();
+        return view('', ['menu_list' => $menu_type, 'detail' => $detail, 'category_list' => $category_list]);
     }
 
     /**

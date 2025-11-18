@@ -10,6 +10,7 @@
 namespace app\admin\validate\decoration;
 use app\common\basics\Validate;
 use app\common\enum\MenuEnum;
+use app\common\model\goods\GoodsCategory;
 
 class MenuDecorateValidate extends Validate{
     protected $rule = [
@@ -67,6 +68,18 @@ class MenuDecorateValidate extends Validate{
             }
             if(empty(trim($data['mini_url'] ?? ''))){
                 return '请输入小程序链接地址';
+            }
+        } elseif (4 == $data['link_type']) {
+            $categoryId = intval($data['category_id'] ?? 0);
+            if ($categoryId <= 0) {
+                return '请选择商品分类';
+            }
+            $categoryExists = GoodsCategory::where([['id', '=', $categoryId], ['del', '=', 0]])->count();
+            if (empty($categoryExists)) {
+                return '商品分类不存在';
+            }
+            if (empty(trim($data['category_url'] ?? ''))) {
+                return '请输入跳转链接';
             }
         }
 

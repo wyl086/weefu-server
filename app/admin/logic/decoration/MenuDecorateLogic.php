@@ -12,6 +12,7 @@ use app\common\basics\Logic;
 use app\common\enum\MenuEnum;
 use app\common\server\ConfigServer;
 use app\common\server\UrlServer;
+use app\common\model\goods\GoodsCategory;
 use think\facade\Db;
 
 class MenuDecorateLogic extends Logic {
@@ -34,9 +35,12 @@ class MenuDecorateLogic extends Logic {
         $list = $lists->items();
         $count = $lists->total();
         $menu_type = 1 == $get['type'] ? 'index' : 'center';
+        $categoryNames = GoodsCategory::where('del', 0)->column('name', 'id');
         foreach ($list as $key => $menu){
             if(1 == $menu['link_type']){
                 $list[$key]['link_address'] = MenuEnum::getMenu($menu_type,$menu['link_address'])['name'] ?? '';
+            } elseif (4 == $menu['link_type']) {
+                $list[$key]['link_address'] = $categoryNames[$menu['category_id']] ?? '';
             }
             $list[$key]['image'] = empty($list[$key]['image']) ? '' : UrlServer::getFileUrl($list[$key]['image']);
         }
@@ -58,6 +62,7 @@ class MenuDecorateLogic extends Logic {
             'image'             => clearDomain($post['image']),
             'link_type'         => $post['link_type'],
             'link_address'      => $linkAddress,
+            'category_id'       => 4 == $post['link_type'] ? intval($post['category_id'] ?? 0) : 0,
             'appid'             => 3 == $post['link_type'] ? trim($post['appid'] ?? '') : '',
             'sort'              => $post['sort'],
             'is_show'           => $post['is_show'],
@@ -79,6 +84,7 @@ class MenuDecorateLogic extends Logic {
             'image'             => clearDomain($post['image']),
             'link_type'         => $post['link_type'],
             'link_address'      => $linkAddress,
+            'category_id'       => 4 == $post['link_type'] ? intval($post['category_id'] ?? 0) : 0,
             'appid'             => 3 == $post['link_type'] ? trim($post['appid'] ?? '') : '',
             'sort'              => $post['sort'],
             'is_show'           => $post['is_show'],
@@ -102,6 +108,9 @@ class MenuDecorateLogic extends Logic {
                 break;
             case 3:
                 $linkAddress = $post['mini_url'] ?? '';
+                break;
+            case 4:
+                $linkAddress = $post['category_url'] ?? '';
                 break;
             default:
                 $linkAddress = $post['url'] ?? '';
@@ -147,6 +156,7 @@ class MenuDecorateLogic extends Logic {
                 ->where(['del'=>0,'id'=>$id])
                 ->find();
         $info['image'] = empty($info['image']) ? '' : UrlServer::getFileUrl($info['image']);
+        $info['category_id'] = $info['category_id'] ?? 0;
 
         return $info;
 
