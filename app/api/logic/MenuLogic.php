@@ -14,7 +14,7 @@ class MenuLogic extends Logic
     public static function getMenu($type, $userId = null)
     {
         $list = MenuDecorate::where(['decorate_type' => $type, 'del' => 0, 'is_show' => 1])
-            ->field('name,image,link_type,link_address,appid')
+            ->field('name,image,link_type,link_address,appid,category_id')
             ->order('sort desc')
             ->select()
             ->toArray();
@@ -60,6 +60,7 @@ class MenuLogic extends Logic
                 'is_tab' => $menu_content['is_tab'] ?? '',
                 'link_type' => $menu_content['link_type'] ?? $menu['link_type'],
                 'appid' => $menu['appid'] ?? '',
+                'category_id' => $menu['category_id'] ?? 0,
             ];
         }
         return $menu_list;

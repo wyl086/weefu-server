@@ -70,6 +70,30 @@
         <div class="layui-form-item">
             <label class="layui-form-label"></label>
             <div class="layui-input-inline">
+                <input type="radio" name="link_type" value="4" title="平台商品分类" {if(4 == $detail.link_type)} checked {/if} >
+            </div>
+            <div class="layui-input-inline">
+                <select name="category_id" lay-search="">
+                    <option value="">请选择分类</option>
+                    {foreach $category_list as $category_id=>$category}
+                    <option value="{$category_id}" {if(4 == $detail.link_type && $category_id == $detail.category_id)} selected {/if}>{$category.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                {if(4 == $detail.link_type)}
+                <input type="text" name="category_url" value="{$detail.link_address}" placeholder="请输入跳转链接" autocomplete="off" class="layui-input">
+                {else /}
+                <input type="text" name="category_url" value="" placeholder="请输入跳转链接" autocomplete="off" class="layui-input">
+                {/if}
+            </div>
+        </div>
+        <div class="layui-form-item"><label class="layui-form-label"></label>
+            <span style="color: #a3a3a3;font-size: 9px">选择平台商品分类并填写跳转链接</span>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-inline">
                 <input type="radio" name="link_type" value="3" title="跳转小程序" {if(3 == $detail.link_type)} checked {/if} >
             </div>
             <div class="layui-input-inline">
