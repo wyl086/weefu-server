@@ -5,6 +5,7 @@ use app\common\server\UrlServer;
 use think\facade\Db;
 use app\common\model\user\User;
 use app\common\model\goods\Goods;
+use app\common\model\Agent;
 
 /**
  * Notes: 生成随机长度字符串
@@ -148,6 +149,38 @@ function generate_invite_code()
     $check = User::where('distribution_code', $code)->findOrEmpty();
     if (!$check->isEmpty()) {
         return generate_invite_code();
+    }
+    return $code;
+}
+
+/**
+ * 生成代理邀请码（全局唯一）
+ * @return string
+ */
+function generate_agent_invite_code()
+{
+    $letter_all = range('A', 'Z');
+    shuffle($letter_all);
+    //排除I、O字母
+    $letter_array = array_diff($letter_all, ['I', 'O', 'D']);
+    //排除1、0
+    $num_array = range('2', '9');
+    shuffle($num_array);
+
+    $pattern = array_merge($num_array, $letter_array, $num_array);
+    shuffle($pattern);
+    $pattern = array_values($pattern);
+
+    $code = '';
+    for ($i = 0; $i < 8; $i++) {
+        $code .= $pattern[mt_rand(0, count($pattern) - 1)];
+    }
+
+    $code = strtoupper($code);
+    // 检查agent表中的invite_code是否已存在
+    $check = Agent::where('invite_code', $code)->where('del', 0)->findOrEmpty();
+    if (!$check->isEmpty()) {
+        return generate_agent_invite_code();
     }
     return $code;
 }

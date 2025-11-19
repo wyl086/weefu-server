@@ -20,6 +20,7 @@ use app\common\model\Client_;
 use app\common\model\user\User;
 use app\common\model\user\UserAuth;
 use app\common\model\Session as SessionModel;
+use app\common\model\Agent;
 use EasyWeChat\Factory;
 use think\facade\Config;
 use think\facade\Cache;
@@ -299,6 +300,9 @@ class LoginLogic extends Logic
             //注册赠送
             self::registerAward($user->id);
 
+            // 同步创建代理数据
+            self::syncAgentData($user->id, $post['mobile']);
+
             Db::commit();
             return ['token' => $token];
         }catch(\Exception $e){
@@ -336,6 +340,54 @@ class LoginLogic extends Logic
             AccountLogLogic::AccountRecord($user_id,$register_growth,1,AccountLog::register_give_growth,'');
             // 更新用户会员等级
             LevelLogic::updateUserLevel([$user]);
+        }
+    }
+
+    /**
+     * 同步创建代理数据
+     * @param int $user_id 用户ID
+     * @param string $mobile 手机号码
+     * @return bool
+     */
+    public static function syncAgentData($user_id, $mobile)
+    {
+        try {
+            // 检查该手机号是否已在代理表中存在
+            $existAgent = Agent::where([
+                'mobile' => $mobile,
+                'del' => 0
+            ])->findOrEmpty();
+
+            // 如果已存在，则不重复添加
+            if (!$existAgent->isEmpty()) {
+                return true;
+            }
+
+            // 创建代理数据 - 用户端注册，source=2
+            $agent = new Agent();
+            $agent->pid = 1; // 推荐人ID，默认1
+            $agent->invite_code = generate_agent_invite_code(); // 生成全局唯一邀请码
+            $agent->source = 2; // 来源：2-用户（用户端注册）
+            $agent->source_id = $user_id; // 用户ID
+            $agent->mobile = $mobile;
+            $agent->province_id = 0;
+            $agent->city_id = 0;
+            $agent->district_id = 0;
+            $agent->is_city_agent = 0;
+            $agent->is_district_agent = 0;
+            $agent->is_service = 0;
+            $agent->is_promoter = 0;
+            $agent->status = 1; // 默认启用
+            $agent->remark = '用户注册自动创建';
+            $agent->create_time = time();
+            $agent->update_time = time();
+            $agent->save();
+
+            return true;
+        } catch (\Exception $e) {
+            // 记录错误但不影响注册流程
+            \think\facade\Log::error('同步代理数据失败：' . $e->getMessage());
+            return false;
         }
     }
 
