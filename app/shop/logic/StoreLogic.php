@@ -83,7 +83,8 @@ class StoreLogic extends Logic
                 'other_qualifications' => isset($post['other_qualifications']) ? json_encode($post['other_qualifications'], JSON_UNESCAPED_UNICODE) : '',
                 'open_invoice'  => $post['open_invoice'] ?? 0,
                 'spec_invoice'  => $post['spec_invoice'] ?? 0,
-                'delivery_type' => $post['delivery_type']
+                'delivery_type' => $post['delivery_type'],
+                'discount'      => $post['discount'] ?? 0.00
             ], ['id'=>$post['id']]);
 
             return true;

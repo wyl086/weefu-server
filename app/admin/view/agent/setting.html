@@ -1,0 +1,304 @@
+{layout name="layout1" /}
+
+<style>
+    .layui-form-label {
+        width: 200px;
+    }
+    .layui-input-inline {
+        width: 200px;
+    }
+    .rule-item {
+        border: 1px solid #e6e6e6;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        background-color: #fafafa;
+    }
+    .rule-item .rule-title {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+</style>
+
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*设置商家让利百分比对应的推荐人收益比例。</p>
+                        <p>*推荐人收益 = 商家让利金额 × 收益比例</p>
+                        <p>*设置各级代理的收益比例和管理奖金比例。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <form class="layui-form" lay-filter="agent-setting-form">
+                <!-- 规则1：商家让利3%到5% -->
+                <div class="rule-item">
+                    <div class="rule-title">规则一：商家让利3%到5%</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">推荐人收益比例：</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="rule1_commission" value="{$rule1}" 
+                                   min="0" max="100" step="0.1" 
+                                   onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                                   lay-verify="required" lay-verType="tips" 
+                                   class="layui-input" placeholder="请输入收益比例">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">推荐人可以获得让利部分的 <span id="rule1_text">{$rule1}</span>% 收益</div>
+                    </div>
+                </div>
+
+                <!-- 规则2：商家让利6%到10% -->
+                <div class="rule-item">
+                    <div class="rule-title">规则二：商家让利6%到10%</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">推荐人收益比例：</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="rule2_commission" value="{$rule2}" 
+                                   min="0" max="100" step="0.1" 
+                                   onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                                   lay-verify="required" lay-verType="tips" 
+                                   class="layui-input" placeholder="请输入收益比例">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">推荐人可以获得让利部分的 <span id="rule2_text">{$rule2}</span>% 收益</div>
+                    </div>
+                </div>
+
+                <!-- 规则3：商家让利11%到15% -->
+                <div class="rule-item">
+                    <div class="rule-title">规则三：商家让利11%到15%</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">推荐人收益比例：</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="rule3_commission" value="{$rule3}" 
+                                   min="0" max="100" step="0.1" 
+                                   onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                                   lay-verify="required" lay-verType="tips" 
+                                   class="layui-input" placeholder="请输入收益比例">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">推荐人可以获得让利部分的 <span id="rule3_text">{$rule3}</span>% 收益</div>
+                    </div>
+                </div>
+
+                <!-- 规则4：商家让利16%到30% -->
+                <div class="rule-item">
+                    <div class="rule-title">规则四：商家让利16%到30%</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">推荐人收益比例：</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="rule4_commission" value="{$rule4}" 
+                                   min="0" max="100" step="0.1" 
+                                   onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                                   lay-verify="required" lay-verType="tips" 
+                                   class="layui-input" placeholder="请输入收益比例">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">推荐人可以获得让利部分的 <span id="rule4_text">{$rule4}</span>% 收益</div>
+                    </div>
+                </div>
+
+                <!-- 代理收益规则设置 -->
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                    <legend>代理收益规则设置</legend>
+                </fieldset>
+
+                <!-- 市级代理收益 -->
+                <div class="rule-item">
+                    <div class="rule-title">市级代理收益</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">地区利润收益比例：</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="city_agent_rate" value="{$city_agent_rate}" 
+                                   min="0" max="100" step="0.1" 
+                                   onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                                   lay-verify="required" lay-verType="tips" 
+                                   class="layui-input" placeholder="请输入收益比例">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">市级代理收益根据地区利润的 <span id="city_agent_text">{$city_agent_rate}</span>%</div>
+                    </div>
+                </div>
+
+                <!-- 区级代理收益 -->
+                <div class="rule-item">
+                    <div class="rule-title">区级代理收益</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">地区利润收益比例：</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="district_agent_rate" value="{$district_agent_rate}" 
+                                   min="0" max="100" step="0.1" 
+                                   onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                                   lay-verify="required" lay-verType="tips" 
+                                   class="layui-input" placeholder="请输入收益比例">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">区级代理收益根据地区利润的 <span id="district_agent_text">{$district_agent_rate}</span>%</div>
+                    </div>
+                </div>
+
+                <!-- 服务商收益 -->
+                <div class="rule-item">
+                    <div class="rule-title">服务商收益</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">团队利润收益比例：</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="service_rate" value="{$service_rate}" 
+                                   min="0" max="100" step="0.1" 
+                                   onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                                   lay-verify="required" lay-verType="tips" 
+                                   class="layui-input" placeholder="请输入收益比例">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">服务商收益根据团队利润的 <span id="service_text">{$service_rate}</span>%（含推广商，业务员在内）</div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">管理奖金比例范围：</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="number" name="service_bonus_min" value="{$service_bonus_min}" 
+                                   min="0" max="100" step="0.1" 
+                                   onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                                   class="layui-input" placeholder="最小值">
+                        </div>
+                        <div class="layui-form-mid">% - </div>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="number" name="service_bonus_max" value="{$service_bonus_max}" 
+                                   min="0" max="100" step="0.1" 
+                                   onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                                   class="layui-input" placeholder="最大值">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">% 服务商和推广商可以拥有团队收益的 <span id="service_bonus_min_text">{$service_bonus_min}</span>% 到 <span id="service_bonus_max_text">{$service_bonus_max}</span>% 作为管理奖金</div>
+                    </div>
+                </div>
+
+                <!-- 推广商收益 -->
+                <div class="rule-item">
+                    <div class="rule-title">推广商收益</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">商家总流水利润收益比例：</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="promoter_rate" value="{$promoter_rate}" 
+                                   min="0" max="100" step="0.1" 
+                                   onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                                   lay-verify="required" lay-verType="tips" 
+                                   class="layui-input" placeholder="请输入收益比例">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">推广商收益根据所推广的商家总流水利润的 <span id="promoter_text">{$promoter_rate}</span>%（含业务员）</div>
+                    </div>
+                </div>
+
+                <!-- 业务员收益 -->
+                <div class="rule-item">
+                    <div class="rule-title">业务员收益</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">商家总流水利润收益比例：</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="salesman_rate" value="{$salesman_rate}" 
+                                   min="0" max="100" step="0.1" 
+                                   onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                                   lay-verify="required" lay-verType="tips" 
+                                   class="layui-input" placeholder="请输入收益比例">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">业务员根据自己推广的商家拿商家总流水利润的 <span id="salesman_text">{$salesman_rate}</span>%</div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">升级推广商条件：</label>
+                        <div class="layui-input-inline">
+                            <input type="number" name="salesman_upgrade_count" value="{$salesman_upgrade_count}" 
+                                   min="1" max="100" step="1" 
+                                   lay-verify="required" lay-verType="tips" 
+                                   class="layui-input" placeholder="请输入商家数量">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">业务员开发 <span id="salesman_upgrade_text">{$salesman_upgrade_count}</span> 户商家进驻升级推广商</div>
+                    </div>
+                </div>
+
+                <!-- 区级代理股份分拆说明 -->
+                <div class="rule-item">
+                    <div class="rule-title">区级代理股份分拆</div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">说明：</label>
+                        <div class="layui-input-block">
+                            <div class="layui-form-mid layui-word-aux" style="line-height: 1.8;">
+                                区代可根据代理的股份设定可分拆，后台手动设置，可以拆分百分百区域代理人，可多人拥有。<br>
+                                小程序可以看到区域的商家的入驻的数量，以及交易流水。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="setting-submit">保存设置</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form'], function(){
+        var form = layui.form;
+        var $ = layui.$;
+
+        // 实时更新提示文本
+        $('input[name="rule1_commission"]').on('input', function(){
+            $('#rule1_text').text($(this).val() || 1);
+        });
+        $('input[name="rule2_commission"]').on('input', function(){
+            $('#rule2_text').text($(this).val() || 2);
+        });
+        $('input[name="rule3_commission"]').on('input', function(){
+            $('#rule3_text').text($(this).val() || 3);
+        });
+        $('input[name="rule4_commission"]').on('input', function(){
+            $('#rule4_text').text($(this).val() || 5);
+        });
+        $('input[name="city_agent_rate"]').on('input', function(){
+            $('#city_agent_text').text($(this).val() || 4);
+        });
+        $('input[name="district_agent_rate"]').on('input', function(){
+            $('#district_agent_text').text($(this).val() || 3);
+        });
+        $('input[name="service_rate"]').on('input', function(){
+            $('#service_text').text($(this).val() || 13);
+        });
+        $('input[name="service_bonus_min"]').on('input', function(){
+            $('#service_bonus_min_text').text($(this).val() || 5);
+        });
+        $('input[name="service_bonus_max"]').on('input', function(){
+            $('#service_bonus_max_text').text($(this).val() || 10);
+        });
+        $('input[name="promoter_rate"]').on('input', function(){
+            $('#promoter_text').text($(this).val() || 8);
+        });
+        $('input[name="salesman_rate"]').on('input', function(){
+            $('#salesman_text').text($(this).val() || 3);
+        });
+        $('input[name="salesman_upgrade_count"]').on('input', function(){
+            $('#salesman_upgrade_text').text($(this).val() || 10);
+        });
+
+        // 提交表单
+        form.on('submit(setting-submit)', function(data){
+            like.ajax({
+                url: "{:url('Agent/setting')}",
+                data: data.field,
+                type: "POST",
+                success: function(res){
+                    if(res.code === 1){
+                        layer.msg(res.msg, {icon: 1, time: 1000});
+                    } else {
+                        layer.msg(res.msg, {icon: 2});
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+

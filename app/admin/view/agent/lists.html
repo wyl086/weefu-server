@@ -1,0 +1,473 @@
+{layout name="layout1" /}
+
+<div class="wrapper">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-collapse" style="border:1px dashed #c4c4c4">
+                <div class="layui-colla-item">
+                    <h2 class="layui-colla-title like-layui-colla-title">操作提示</h2>
+                    <div class="layui-colla-content layui-show">
+                        <p>*管理平台所有代理信息，包括商户代理和用户代理。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索区域 -->
+        <div class="layui-card-body layui-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">手机号码：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="keyword" name="keyword" autocomplete="off" class="layui-input" placeholder="请输入手机号码">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">邀请码：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="invite_code" name="invite_code" autocomplete="off" class="layui-input" placeholder="请输入邀请码">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">来源：</label>
+                    <div class="layui-input-inline">
+                        <select name="source" id="source">
+                            <option value="">全部</option>
+                            <option value="1">商户</option>
+                            <option value="2">用户</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">状态：</label>
+                    <div class="layui-input-inline">
+                        <select name="status" id="status">
+                            <option value="">全部</option>
+                            <option value="1">启用</option>
+                            <option value="0">禁用</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">市级代理：</label>
+                    <div class="layui-input-inline">
+                        <select name="is_city_agent" id="is_city_agent">
+                            <option value="">全部</option>
+                            <option value="1">是</option>
+                            <option value="0">否</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">区级代理：</label>
+                    <div class="layui-input-inline">
+                        <select name="is_district_agent" id="is_district_agent">
+                            <option value="">全部</option>
+                            <option value="1">是</option>
+                            <option value="0">否</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">服务商：</label>
+                    <div class="layui-input-inline">
+                        <select name="is_service" id="is_service">
+                            <option value="">全部</option>
+                            <option value="1">是</option>
+                            <option value="0">否</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">推广员：</label>
+                    <div class="layui-input-inline">
+                        <select name="is_promoter" id="is_promoter">
+                            <option value="">全部</option>
+                            <option value="1">是</option>
+                            <option value="0">否</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">创建时间：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="start_time" name="start_time" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-input-inline" style="width: 10px;margin-right: 5px;">
+                        <label class="layui-form-mid">-</label>
+                    </div>
+                    <div class="layui-input-inline">
+                        <input type="text" id="end_time" name="end_time" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-submit lay-filter="search">搜索</a>
+                    <a class="layui-btn layui-btn-sm layui-btn-primary" lay-submit lay-filter="clear-search">重置</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体区域 -->
+        <div class="layui-card-body">
+            <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layEvent" lay-event="add">新增代理</button>
+            <button type="button" class="layui-btn layui-btn-primary layui-btn-sm layEvent" lay-event="enable">批量启用</button>
+            <button type="button" class="layui-btn layui-btn-primary layui-btn-sm layEvent" lay-event="disable">批量禁用</button>
+            <button type="button" class="layui-btn layui-btn-danger layui-btn-sm layEvent" lay-event="del">批量删除</button>
+
+            <table id="like-table-lists" lay-filter="like-table-lists"></table>
+            <script type="text/html" id="table-agentInfo">
+                <div class="layui-inline" style="text-align:left;">
+                    <p>ID：{{d.id}}</p>
+                    <p style="display: flex; align-items: center; margin: 5px 0;">
+                        <span>手机号：{{d.mobile}}</span>
+                        {{# if(d.mobile){ }}
+                        <i class="layui-icon layui-icon-link copy-btn" data-copy="{{d.mobile}}" style="margin-left: 5px; cursor: pointer; color: #1E9FFF; font-size: 16px;" title="复制手机号"></i>
+                        {{# } }}
+                    </p>
+                    <p style="display: flex; align-items: center; margin: 5px 0;">
+                        <span>邀请码：{{d.invite_code || '-'}}</span>
+                        {{# if(d.invite_code){ }}
+                        <i class="layui-icon layui-icon-link copy-btn" data-copy="{{d.invite_code}}" style="margin-left: 5px; cursor: pointer; color: #1E9FFF; font-size: 16px;" title="复制邀请码"></i>
+                        {{# } }}
+                    </p>
+                    <p>来源：{{d.source_desc}}（{{d.source_name}}）</p>
+                </div>
+            </script>
+            <script type="text/html" id="table-region">
+                <div class="layui-inline" style="text-align:left;">
+                    <p>市：{{d.city_name || '-'}}</p>
+                    <p>区：{{d.district_name || '-'}}</p>
+                </div>
+            </script>
+            <script type="text/html" id="table-recommender">
+                <div class="layui-inline" style="text-align:left;">
+                    {{# if(d.recommender_id && d.recommender_mobile){ }}
+                    <p>ID：{{d.recommender_id}}</p>
+                    <p style="display: flex; align-items: center; margin: 5px 0;">
+                        <span>手机号：{{d.recommender_mobile}}</span>
+                        <i class="layui-icon layui-icon-link copy-btn" data-copy="{{d.recommender_mobile}}" style="margin-left: 5px; cursor: pointer; color: #1E9FFF; font-size: 16px;" title="复制手机号"></i>
+                    </p>
+                    {{# } else { }}
+                    <span style="color: #999;">-</span>
+                    {{# } }}
+                </div>
+            </script>
+            <script type="text/html" id="table-role">
+                <div class="layui-inline" style="text-align:left; line-height: 1.8; padding-right: 15px;">
+                    {{# if(d.is_city_agent == 1){ }}
+                    <span class="layui-badge layui-bg-blue" style="margin: 2px 2px; display: inline-block;">市级代理</span>
+                    {{# } }}
+                    {{# if(d.is_district_agent == 1){ }}
+                    <span class="layui-badge layui-bg-green" style="margin: 2px 2px; display: inline-block;">区级代理</span>
+                    {{# } }}
+                    {{# if(d.is_service == 1){ }}
+                    <span class="layui-badge layui-bg-orange" style="margin: 2px 2px; display: inline-block;">服务商</span>
+                    {{# } }}
+                    {{# if(d.is_promoter == 1){ }}
+                    <span class="layui-badge layui-bg-cyan" style="margin: 2px 2px; display: inline-block;">推广员</span>
+                    {{# } }}
+                    {{# if(d.is_city_agent != 1 && d.is_district_agent != 1 && d.is_service != 1 && d.is_promoter != 1){ }}
+                    <span style="color: #999;">-</span>
+                    {{# } }}
+                </div>
+            </script>
+            <script type="text/html" id="table-operation">
+                <a class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="del">删除</a>
+            </script>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(["table", "form", "laydate"], function(){
+        var table = layui.table;
+        var form = layui.form;
+        var laydate = layui.laydate;
+
+        // 日期时间范围
+        laydate.render({
+            elem: '#start_time',
+            type: 'datetime',
+            theme: '#1E9FFF'
+        });
+
+        laydate.render({
+            elem: '#end_time',
+            type: 'datetime',
+            theme: '#1E9FFF'
+        });
+
+        like.tableLists("#like-table-lists", "{:url()}", [
+            {type: 'checkbox'},
+            {field: "id", width: 80, title: "ID"},
+            {field: "agentInfo", width: 300, title: "代理信息", templet: "#table-agentInfo"},
+            {field: "recommender", width: 200, title: "推荐人", templet: "#table-recommender"},
+            {field: "region", width: 180, title: "地区", templet: "#table-region"},
+            {field: "role", width: 250, title: "角色", templet: "#table-role"},
+            {field: "status", width: 100, align: "center", title: "状态", templet: function(d){
+                return d.status == 1 ? '<span style="color: green">启用</span>' : '<span style="color: red">禁用</span>';
+            }},
+            {field: "create_time", width: 180, align: "center", title: "创建时间"},
+            {title: "操作", width: 180, align: "center", fixed: "right", toolbar: "#table-operation"}
+        ]);
+
+        // 搜索
+        form.on('submit(search)', function(data){
+            table.reload("like-table-lists", {
+                where: data.field,
+                page: {curr: 1}
+            });
+            return false;
+        });
+
+        // 重置
+        form.on('submit(clear-search)', function(data){
+            $('input[name="keyword"]').val('');
+            $('input[name="invite_code"]').val('');
+            $('select[name="source"]').val('');
+            $('select[name="status"]').val('');
+            $('select[name="is_city_agent"]').val('');
+            $('select[name="is_district_agent"]').val('');
+            $('select[name="is_service"]').val('');
+            $('select[name="is_promoter"]').val('');
+            $('input[name="start_time"]').val('');
+            $('input[name="end_time"]').val('');
+            form.render('select');
+            table.reload("like-table-lists", {
+                where: {},
+                page: {curr: 1}
+            });
+            return false;
+        });
+
+        // 工具栏事件
+        table.on('tool(like-table-lists)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'edit'){
+                layer.open({
+                    type: 2,
+                    title: "编辑代理",
+                    content: "{:url('edit')}?id=" + data.id,
+                    area: ["90%", "90%"],
+                    btn: ["确定", "取消"],
+                    yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#edit-submit");
+                        iframeWindow.layui.form.on("submit(edit-submit)", function(data){
+                            like.ajax({
+                                url: "{:url('edit')}",
+                                data: data.field,
+                                type: "POST",
+                                success: function(res){
+                                    if(res.code === 1){
+                                        layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists");
+                                    } else {
+                                        layer.msg(res.msg);
+                                    }
+                                }
+                            });
+                            return false;
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            } else if(obj.event === 'del'){
+                layer.confirm('确定删除该代理吗？', function(index){
+                    like.ajax({
+                        url: "{:url('del')}",
+                        data: {ids: [data.id]},
+                        type: "POST",
+                        success: function(res){
+                            if(res.code === 1){
+                                layer.msg(res.msg);
+                                table.reload("like-table-lists");
+                            } else {
+                                layer.msg(res.msg);
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+
+        // 头部工具栏事件
+        var active = {
+            add: function(){
+                layer.open({
+                    type: 2,
+                    title: "新增代理",
+                    content: "{:url('add')}",
+                    area: ["90%", "90%"],
+                    btn: ["确定", "取消"],
+                    yes: function(index, layero){
+                        var iframeWindow = window["layui-layer-iframe" + index];
+                        var submit = layero.find("iframe").contents().find("#add-submit");
+                        iframeWindow.layui.form.on("submit(add-submit)", function(data){
+                            like.ajax({
+                                url: "{:url('add')}",
+                                data: data.field,
+                                type: "POST",
+                                success: function(res){
+                                    if(res.code === 1){
+                                        layer.msg(res.msg);
+                                        layer.close(index);
+                                        table.reload("like-table-lists");
+                                    } else {
+                                        layer.msg(res.msg);
+                                    }
+                                }
+                            });
+                            return false;
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            },
+            enable: function(){
+                var checkStatus = table.checkStatus('like-table-lists');
+                if(checkStatus.data.length === 0){
+                    layer.msg('请选择要操作的数据');
+                    return;
+                }
+                var ids = [];
+                layui.each(checkStatus.data, function(index, item){
+                    ids.push(item.id);
+                });
+                like.ajax({
+                    url: "{:url('status')}",
+                    data: {ids: ids, status: 1},
+                    type: "POST",
+                    success: function(res){
+                        if(res.code === 1){
+                            layer.msg(res.msg);
+                            table.reload("like-table-lists");
+                        } else {
+                            layer.msg(res.msg);
+                        }
+                    }
+                });
+            },
+            disable: function(){
+                var checkStatus = table.checkStatus('like-table-lists');
+                if(checkStatus.data.length === 0){
+                    layer.msg('请选择要操作的数据');
+                    return;
+                }
+                var ids = [];
+                layui.each(checkStatus.data, function(index, item){
+                    ids.push(item.id);
+                });
+                like.ajax({
+                    url: "{:url('status')}",
+                    data: {ids: ids, status: 0},
+                    type: "POST",
+                    success: function(res){
+                        if(res.code === 1){
+                            layer.msg(res.msg);
+                            table.reload("like-table-lists");
+                        } else {
+                            layer.msg(res.msg);
+                        }
+                    }
+                });
+            },
+            del: function(){
+                var checkStatus = table.checkStatus('like-table-lists');
+                if(checkStatus.data.length === 0){
+                    layer.msg('请选择要删除的数据');
+                    return;
+                }
+                layer.confirm('确定删除选中的数据吗？', function(index){
+                    var ids = [];
+                    layui.each(checkStatus.data, function(index, item){
+                        ids.push(item.id);
+                    });
+                    like.ajax({
+                        url: "{:url('del')}",
+                        data: {ids: ids},
+                        type: "POST",
+                        success: function(res){
+                            if(res.code === 1){
+                                layer.msg(res.msg);
+                                table.reload("like-table-lists");
+                            } else {
+                                layer.msg(res.msg);
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        };
+
+        $('.layEvent').on('click', function(){
+            var type = $(this).attr('lay-event');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        // 复制功能
+        $(document).on('click', '.copy-btn', function(e){
+            e.stopPropagation(); // 阻止事件冒泡
+            var copyText = $(this).data('copy');
+            if (!copyText) {
+                layer.msg('复制内容为空', {icon: 2});
+                return;
+            }
+            
+            // 创建临时输入框
+            var aux = document.createElement("input");
+            aux.setAttribute("value", copyText);
+            document.body.appendChild(aux);
+            aux.select();
+            
+            try {
+                // 使用现代 Clipboard API（如果支持）
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(copyText).then(function() {
+                        layer.msg('复制成功', {icon: 1, time: 1000});
+                    }).catch(function() {
+                        // 降级到传统方法
+                        document.execCommand("copy");
+                        layer.msg('复制成功', {icon: 1, time: 1000});
+                    });
+                } else {
+                    // 降级到传统方法
+                    document.execCommand("copy");
+                    layer.msg('复制成功', {icon: 1, time: 1000});
+                }
+            } catch (err) {
+                layer.msg('复制失败', {icon: 2});
+            }
+            
+            document.body.removeChild(aux);
+        });
+    });
+</script>
+
+<style>
+    .copy-btn:hover {
+        color: #009688 !important;
+        transform: scale(1.2);
+        transition: all 0.2s;
+    }
+    #table-role .layui-badge {
+        word-break: keep-all;
+        white-space: nowrap;
+    }
+    .layui-table-cell {
+        height: auto;
+        padding: 8px 15px;
+    }
+    /* 角色列右边距 */
+    #like-table-lists .layui-table td[data-field="role"] .layui-table-cell {
+        padding-right: 20px;
+    }
+</style>
+
+

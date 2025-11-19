@@ -1,0 +1,112 @@
+{layout name="layout2" /}
+
+<style>
+    .reqRed::before {
+        content: '*';
+        color: red;
+    }
+    .layui-form-item .layui-form-label {
+        width: 120px;
+    }
+    .layui-form-item .layui-input-inline {
+        width: 300px;
+    }
+    .role-checkbox-group {
+        margin-top: 5px;
+    }
+    .role-checkbox-group .layui-form-checkbox {
+        margin-right: 15px;
+    }
+</style>
+
+<div class="layui-form" lay-filter="layuiadmin-form-agent" id="layuiadmin-form-agent" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">来源：</label>
+        <div class="layui-input-block">
+            <input type="radio" name="source" value="1" title="商户" checked>
+            <input type="radio" name="source" value="2" title="用户">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">来源对象：</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" name="source_id" placeholder="请输入商户ID或用户ID" lay-verify="required">
+        </div>
+        <div class="layui-form-mid layui-word-aux">根据选择的来源类型，输入对应的商户ID或用户ID</div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">手机号码：</label>
+        <div class="layui-input-inline">
+            <input class="layui-input" name="mobile" type="text" placeholder="请输入手机号码" lay-verify="required|phone">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">所在地区：</label>
+        <div class="layui-input-block">
+            <div class="layui-input-inline" style="width:150px;">
+                <select name="province_id" id="province" lay-filter="province">
+                    <option value="">请选择省份</option>
+                </select>
+            </div>
+            <div class="layui-input-inline" style="width:150px;">
+                <select name="city_id" id="city" lay-filter="city">
+                    <option value="">请选择城市</option>
+                </select>
+            </div>
+            <div class="layui-input-inline" style="width:150px;">
+                <select name="district_id" id="district">
+                    <option value="">请选择区域</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色类型：</label>
+        <div class="layui-input-block">
+            <div class="role-checkbox-group">
+                <input type="checkbox" name="is_city_agent" value="1" title="市级代理" lay-skin="primary">
+                <input type="checkbox" name="is_district_agent" value="1" title="区级代理" lay-skin="primary">
+                <input type="checkbox" name="is_service" value="1" title="服务商" lay-skin="primary">
+                <input type="checkbox" name="is_promoter" value="1" title="推广员" lay-skin="primary">
+            </div>
+            <div class="layui-form-mid layui-word-aux">可多选，至少选择一个角色类型</div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label reqRed">状态：</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="1" title="启用" checked>
+            <input type="radio" name="status" value="0" title="禁用">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">备注：</label>
+        <div class="layui-input-inline" style="width: 500px;">
+            <textarea name="remark" class="layui-textarea" placeholder="请输入备注信息" rows="3"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="add-submit" id="add-submit" value="确认">
+    </div>
+</div>
+
+<script src="__PUBLIC__/static/common/js/area.js"></script>
+<script>
+    layui.config({
+        base: "/static/lib/"
+    }).extend({
+        likeArea: "likeArea/likeArea"
+    }).use(['form', 'likeArea'], function(){
+        var form = layui.form;
+        var likeArea = layui.likeArea;
+        
+        // 初始化省市区选择器
+        likeArea.init(
+            "province", "city", "district", "province_id", "city_id", "district_id",
+            "", "", ""
+        );
+        
+        form.render();
+    });
+</script>
+

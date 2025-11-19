@@ -8,6 +8,7 @@ use app\common\basics\Logic;
 use app\common\enum\ShopEnum;
 use app\common\model\shop\Shop;
 use app\common\model\shop\ShopAdmin;
+use app\common\model\Agent;
 use app\common\server\UrlServer;
 use Exception;
 use think\facade\Db;
@@ -149,6 +150,7 @@ class StoreLogic extends Logic
                 'intro'             => $post['intro'] ?? '',
                 'weight'            => $post['weight'] ?? 0,
                 'trade_service_fee' => $post['trade_service_fee'],
+                'discount'          => $post['discount'] ?? 0.00,
                 'is_run'            => $post['is_run'],
                 'is_freeze'         => $post['is_freeze'],
                 'is_product_audit'  => $post['is_product_audit'],
@@ -179,6 +181,9 @@ class StoreLogic extends Logic
                 'disable' => 0,
                 'del' => 0
             ]);
+
+            // 同步创建代理数据
+            self::syncAgentData($shop->id, $post['mobile'], $post['province_id'] ?? 0, $post['city_id'] ?? 0, $post['district_id'] ?? 0);
 
             Db::commit();
             return true;
@@ -211,6 +216,7 @@ class StoreLogic extends Logic
                 'keywords'          => $post['keywords'] ?? '',
                 'intro'             => $post['intro'] ?? '',
                 'trade_service_fee' => $post['trade_service_fee'],
+                'discount'          => $post['discount'] ?? 0.00,
                 'is_run'            => $post['is_run'],
                 'is_freeze'         => $post['is_freeze'],
                 'is_product_audit'  => $post['is_product_audit'],
@@ -344,5 +350,56 @@ class StoreLogic extends Logic
             }
         }
         return true;
+    }
+
+    /**
+     * 同步创建代理数据
+     * @param int $shop_id 商户ID
+     * @param string $mobile 手机号码
+     * @param int $province_id 省份ID
+     * @param int $city_id 城市ID
+     * @param int $district_id 区域ID
+     * @return bool
+     */
+    public static function syncAgentData($shop_id, $mobile, $province_id = 0, $city_id = 0, $district_id = 0)
+    {
+        try {
+            // 检查该手机号是否已在代理表中存在
+            $existAgent = Agent::where([
+                'mobile' => $mobile,
+                'del' => 0
+            ])->findOrEmpty();
+
+            // 如果已存在，则不重复添加（保证mobile唯一）
+            if (!$existAgent->isEmpty()) {
+                return true;
+            }
+
+            // 创建代理数据 - 商户端创建，source=1
+            $agent = new Agent();
+            $agent->pid = 1; // 推荐人ID，默认1
+            $agent->invite_code = generate_agent_invite_code(); // 生成全局唯一邀请码
+            $agent->source = 1; // 来源：1-商户
+            $agent->source_id = $shop_id; // 商户ID
+            $agent->mobile = $mobile;
+            $agent->province_id = $province_id;
+            $agent->city_id = $city_id;
+            $agent->district_id = $district_id;
+            $agent->is_city_agent = 0;
+            $agent->is_district_agent = 0;
+            $agent->is_service = 0;
+            $agent->is_promoter = 0;
+            $agent->status = 1; // 默认启用
+            $agent->remark = '商户创建自动生成';
+            $agent->create_time = time();
+            $agent->update_time = time();
+            $agent->save();
+
+            return true;
+        } catch (\Exception $e) {
+            // 记录错误但不影响商户创建流程
+            \think\facade\Log::error('同步代理数据失败：' . $e->getMessage());
+            return false;
+        }
     }
 }

@@ -169,6 +169,9 @@
             ,{field:"is_run", width:90, align:"center", title:"营业状态"}
             ,{field:"is_freeze", width:90, align:"center", title:"商家状态"}
             ,{field:"is_recommend", width:90, align:"center", title:"推荐商家"}
+            ,{field:"discount", width:100, align:"center", title:"让利百分比", templet: function(d){
+                return (d.discount || 0) + '%';
+            }}
             ,{field:"create_time", width:160, align:"center", title:"开通日期"}
             ,{field:"expire_desc", width:160, align:"center", title:"到期状态"}
             ,{field:"expire_time", width:160, align:"center", title:"到期时间"}

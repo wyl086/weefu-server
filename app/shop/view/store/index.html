@@ -87,6 +87,16 @@
                             <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商家暂停营业后，则不能对外提供服务</div>
                         </div>
                     </div>
+                    <div class="layui-form-item">
+                        <label for="discount" class="layui-form-label">让利百分比：</label>
+                        <div class="layui-input-inline">
+                            <input type="number" min="0" max="100" name="discount" id="discount" value="{$detail.discount|default=0}"
+                                   onkeyup="value=value.replace(/^\D*(\d*(?:\.\d{0,2})?).*$/g, '$1')"
+                                   autocomplete="off" class="layui-input">
+                            <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">商家让利给平台的百分比。请填写百分比，填0表示不让利</div>
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">%</div>
+                    </div>
 
                     <div class="layui-form-item">
                         <label class="layui-form-label"><span style="color:red;">*</span>配送方式：</label>
