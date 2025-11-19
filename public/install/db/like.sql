@@ -1760,7 +1760,6 @@ CREATE TABLE `ls_menu_decorate`  (
   `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '菜单图标',
   `link_type` tinyint(1) NOT NULL COMMENT '链接类型：1-商场模块；2-自定义链接；3-跳转小程序；4-平台商品分类',
   `link_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '链接地址',
-  `category_id` int(10) NULL DEFAULT 0 COMMENT '平台商品分类ID',
   `sort` int(10) NULL DEFAULT 0 COMMENT '菜单排序',
   `is_show` tinyint(1) NULL DEFAULT 1 COMMENT '是否显示；1-是；0-否',
   `create_time` int(10) NULL DEFAULT NULL COMMENT '创建时间',

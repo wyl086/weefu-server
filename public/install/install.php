@@ -3,6 +3,8 @@
 include "model.php";
 include "YxEnv.php";
 
+use think\facade\Console;
+
 define('install', true);
 define('INSTALL_ROOT', __DIR__);
 define('TESTING_TABLE', 'config');
@@ -84,6 +86,7 @@ if ($step == 4) {
         if ($canNext) {
             $yxEnv->putEnv($envFilePath, $post);
             $modelInstall->mkLockFile();
+
         }
     }
 

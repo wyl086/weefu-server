@@ -1,56 +1,28 @@
-ThinkPHP 6.0
-===============
-
-> 运行环境要求PHP7.1+，兼容PHP8.0。
-
-[官方应用服务市场](https://market.topthink.com) | [`ThinkAPI`——官方统一API服务](https://docs.topthink.com/think-api)
-
-ThinkPHPV6.0版本由[亿速云](https://www.yisu.com/)独家赞助发布。
-
-## 主要新特性
-
-* 采用`PHP7`强类型（严格模式）
-* 支持更多的`PSR`规范
-* 原生多应用支持
-* 更强大和易用的查询
-* 全新的事件系统
-* 模型事件和数据库事件统一纳入事件系统
-* 模板引擎分离出核心
-* 内部功能中间件化
-* SESSION/Cookie机制改进
-* 对Swoole以及协程支持改进
-* 对IDE更加友好
-* 统一和精简大量用法
+# 微付团购商城
 
 ## 安装
 
-~~~
-composer create-project topthink/think tp 6.0.*
-~~~
+1. 安装composer依赖
 
-如果需要更新框架使用
-~~~
-composer update topthink/framework
+~~~shell
+composer install
 ~~~
 
-## 文档
+2. 运行
 
-[完全开发手册](https://www.kancloud.cn/manual/thinkphp6_0/content)
+```shell
+php think run -H 0.0.0.0 -p 8000
+```
 
-## 参与开发
+- 在打包或部署之前可以缓存配置和路由。
 
-请参阅 [ThinkPHP 核心框架包](https://github.com/top-think/framework)。
+```shell
+php think optimize:config && php think optimize:route
+```
 
-## 版权信息
+3. 访问 http://localhost:8000/install/install.php 执行完安装的步骤后执行迁移命令
 
-ThinkPHP遵循Apache2开源协议发布，并提供免费使用。
+```shell
+php think migrate:run
+```
 
-本项目包含的第三方源码和二进制文件之版权信息另行标注。
-
-版权所有Copyright © 2006-2020 by ThinkPHP (http://thinkphp.cn)
-
-All rights reserved。
-
-ThinkPHP® 商标和著作权所有者为上海顶想信息科技有限公司。
-
-更多细节参阅 [LICENSE.txt](LICENSE.txt)
