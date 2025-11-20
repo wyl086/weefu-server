@@ -38,7 +38,7 @@ class TeamLogic extends Logic
 
             $model = new TeamActivity();
             $lists = $model->alias('T')->field([
-                    'T.id,T.goods_id,T.people_num,T.team_max_price,T.team_min_price,sales_volume',
+                    'T.id,T.goods_id,T.people_num,T.winning_people_num,T.team_max_price,T.team_min_price,sales_volume',
                     'G.name,G.image,G.max_price,G.min_price,G.market_price'
                 ])
                 ->where([
@@ -83,7 +83,7 @@ class TeamLogic extends Logic
         try {
             $teamActivity = (new TeamActivity())->alias('T')
                ->field([
-                   'T.id as team_activity_id,T.shop_id,T.effective_time,GI.goods_id,GI.id as item_id,T.people_num,TG.team_price',
+                   'T.id as team_activity_id,T.shop_id,T.effective_time,GI.goods_id,GI.id as item_id,T.people_num,T.winning_people_num,TG.team_price',
                    'G.name,G.image,GI.spec_value_str,GI.spec_value_ids,GI.market_price',
                    'GI.price,GI.stock,G.delivery_type,G.type'
                ])->where([
@@ -408,6 +408,7 @@ class TeamLogic extends Logic
                     'order_id'   => $item['order_id'],
                     'shop_name'  => $item['shop_name'],
                     'people_num' => $item['team_snap']['people_num'],
+                    'winning_people_num' => $item['team_snap']['winning_people_num'] ?? 0,
                     'name'       => $item['team_snap']['name'],
                     'image'      => $item['team_snap']['image'],
                     'price'      => $item['team_snap']['price'],
@@ -447,7 +448,7 @@ class TeamLogic extends Logic
         try {
             $teamActivity = (new TeamActivity())->alias('T')
                 ->field([
-                    'T.id as team_activity_id,T.shop_id,T.effective_time,GI.goods_id,GI.id as item_id,T.people_num,TG.team_price',
+                    'T.id as team_activity_id,T.shop_id,T.effective_time,GI.goods_id,GI.id as item_id,T.people_num,T.winning_people_num,TG.team_price',
                     'G.name,G.image,GI.spec_value_str,GI.spec_value_ids,GI.market_price',
                     'GI.price,GI.stock'
                 ])->where([

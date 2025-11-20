@@ -1445,6 +1445,7 @@ class OrderLogic extends Logic
                 'team_id' => $teamJoin['team_id'],
                 'identity' => $teamJoin['identity'] == 1 ? '团长' : '团员',
                 'people_num' => $teamJoin['team_snap']['people_num'],
+                'winning_people_num' => $teamJoin['team_snap']['winning_people_num'] ?? 0,
                 'status' => $teamJoin['status'],
                 'status_text' => TeamEnum::getStatusDesc($teamJoin['status'])
             ];

@@ -193,11 +193,16 @@ class ActivityLogic extends Logic
                 throw new \think\Exception('团活动开始时间不能少于等于结束时间');
             }
 
+            if ((int)$post['winning_people_num'] > (int)$post['people_num']) {
+                throw new \think\Exception('中奖人数不能大于成团人数');
+            }
+
             // 新增拼团活动信息
             $team = TeamActivity::create([
                 'shop_id'        => $shop_id,
                 'goods_id'       => $post['goods_id'],
                 'people_num'     => $post['people_num'],
+                'winning_people_num' => $post['winning_people_num'],
                 'share_title'    => $post['share_title'] ?? '',
                 'share_intro'    => $post['share_intro'] ?? '',
                 'team_max_price' => self::getMaxOrMinPrice($post)['max'],
@@ -255,12 +260,17 @@ class ActivityLogic extends Logic
             $activity = (new TeamActivity())->findOrEmpty($post['id'])->toArray();
             $audit = $activity['audit'] != 1 ? 0 : 1;
 
+            if ((int)$post['winning_people_num'] > (int)$post['people_num']) {
+                throw new \think\Exception('中奖人数不能大于成团人数');
+            }
+
 
             // 编辑拼团活动信息
             TeamActivity::update([
                 'shop_id'             => $shop_id,
                 'goods_id'            => $post['goods_id'],
                 'people_num'          => $post['people_num'],
+                'winning_people_num'  => $post['winning_people_num'],
                 'share_title'         => $post['share_title'] ?? '',
                 'share_intro'         => $post['share_intro'] ?? '',
                 'team_max_price'      => self::getMaxOrMinPrice($post)['max'],
