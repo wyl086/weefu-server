@@ -227,7 +227,7 @@ class GoodsLogic extends Logic
 
             // 判断是否是拼团商品
             $teamActivity = (new TeamActivity())
-                ->field(['id,people_num,team_max_price,team_min_price,sales_volume,activity_end_time,share_title,share_intro'])
+                ->field(['id,people_num,winning_people_num,team_max_price,team_min_price,sales_volume,activity_end_time,share_title,share_intro'])
                 ->where([
                     ['goods_id', '=', $goodsId],
                     ['audit', '=', 1],

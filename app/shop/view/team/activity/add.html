@@ -41,6 +41,18 @@
             </div>
             <div class="layui-form-mid">人</div>
         </div>
+        <!-- 中奖人数 -->
+        <div class="layui-form-item" style="margin-bottom: 0;">
+            <label for="winning_people_num" class="layui-form-label"><font color="red">*</font>中奖人数：</label>
+            <div class="layui-input-inline">
+                <input type="number" min="1" id="winning_people_num" name="winning_people_num"
+                       class="layui-input" autocomplete="off"
+                       onkeyup="value=value.replace(/[^\d]/g,'')"
+                       lay-verType="tips" lay-verify="required|number">
+                <div class="layui-form-mid layui-word-aux" style="white-space:nowrap;">设置中商品的人数，不可超过成团人数</div>
+            </div>
+            <div class="layui-form-mid">人</div>
+        </div>
         <!-- 拼团时效 -->
         <div class="layui-form-item" style="margin-bottom: 0;">
             <label for="effective_time" class="layui-form-label"><font color="red">*</font>成团有效期：</label>
