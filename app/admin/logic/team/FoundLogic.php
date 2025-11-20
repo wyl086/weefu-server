@@ -27,27 +27,28 @@ class FoundLogic extends Logic
         try {
             $where = [];
             if (isset($get['type']) and is_numeric($get['type']) and $get['type'] != 100) {
-                $where[] = ['status', '=', (int)$get['type']];
+                $where[] = ['TF.status', '=', (int)$get['type']];
             }
 
             if (!empty($get['team_sn']) and $get['team_sn']) {
-                $where[] = ['team_sn', 'like', '%'.$get['team_sn'].'%'];
+                $where[] = ['TF.team_sn', 'like', '%'.$get['team_sn'].'%'];
             }
 
             if (!empty($get['goods']) and $get['goods']) {
-                $where[] = ['goods_snap->name', 'like', '%'.$get['goods'].'%'];
+                $where[] = ['TF.goods_snap->name', 'like', '%'.$get['goods'].'%'];
             }
 
             if (!empty($get['datetime']) and $get['datetime']) {
                 list($start, $end) = explode(' - ', $get['datetime']);
-                $where[] = ['kaituan_time', '>=', strtotime($start.' 00:00:00')];
-                $where[] = ['kaituan_time', '<=', strtotime($end.' 23:59:59')];
+                $where[] = ['TF.kaituan_time', '>=', strtotime($start.' 00:00:00')];
+                $where[] = ['TF.kaituan_time', '<=', strtotime($end.' 23:59:59')];
             }
 
             $model = new TeamFound();
-            $lists = $model->alias('TF')->field(['TF.*,U.nickname,U.sn,U.avatar'])
+            $lists = $model->alias('TF')->field(['TF.*,U.nickname,U.sn,U.avatar,TA.winning_people_num'])
                 ->join('user U', 'U.id = TF.user_id')
-                ->order('id desc')
+                ->join('team_activity TA', 'TA.id = TF.team_activity_id')
+                ->order('TF.id desc')
                 ->where($where)
                 ->paginate([
                     'page'      => $get['page'] ?? 1,
@@ -95,8 +96,9 @@ class FoundLogic extends Logic
     public static function detail($id)
     {
         $teamFound = (new TeamFound())->alias('TF')
-            ->field(['TF.*,U.sn,U.nickname,U.mobile'])
+            ->field(['TF.*,U.sn,U.nickname,U.mobile,TA.winning_people_num'])
             ->join('user U', 'U.id = TF.user_id')
+            ->join('team_activity TA', 'TA.id = TF.team_activity_id')
             ->where('TF.id', '=', intval($id))
             ->findOrEmpty()->toArray();
         $teamFound['kaituan_time'] = date('Y-m-d H:i:s', $teamFound['kaituan_time']);

@@ -89,12 +89,13 @@
 
         laydate.render({elem:"#datetime", range: true, trigger:"click"});
 
-        like.tableLists("#like-table-lists", "{:url()}?team_activity_id={$team_activity_id}&shop_id={$shop_id}", [
+            like.tableLists("#like-table-lists", "{:url()}?team_activity_id={$team_activity_id}&shop_id={$shop_id}", [
             {field:"id", width:80, align:"center", title:"ID"}
             ,{field:"team_sn", width:200, align:"center",title:"拼团编号"}
             ,{field:"user", width:220, title:"团长", templet:"#table-user"}
             ,{field:"teamGoods", width:220, title:"拼团商品", templet:"#table-teamGoods"}
             ,{field:"peopleJoin", width:130, align:"center", title:"参团/成团人数"}
+            ,{field:"winning_people_num", width:120, align:"center", title:"中奖人数"}
             ,{field:"status_text", width:100, align:"center", title:"拼团状态"}
             ,{field:"kaituan_time", width:160, align:"center", title:"开团时间"}
             ,{title:"操作", width:100, align:"center", fixed:"right", toolbar:"#table-operation"}

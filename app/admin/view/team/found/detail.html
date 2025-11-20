@@ -36,6 +36,10 @@
                     <div class="layui-input-block">{$detail.teamFound.people} / {$detail.teamFound.join}</div>
                 </div>
                 <div class="layui-form-item" style="margin-bottom:0;">
+                    <label class="layui-form-label">中奖人数：</label>
+                    <div class="layui-input-block">{$detail.teamFound.winning_people_num|default='0'}</div>
+                </div>
+                <div class="layui-form-item" style="margin-bottom:0;">
                     <label class="layui-form-label">开团时间：</label>
                     <div class="layui-input-block">{$detail.teamFound.kaituan_time}</div>
                 </div>
